@@ -42,9 +42,23 @@ python -m pytest -q tests/integration/test_upstream_build.py
 
 That test performs a clean original Make build in a temporary copy, performs a
 separate out-of-source CMake build, and runs only `k=3` and `k=4` under a
-ten-second subprocess timeout. Exit `0` is ordinary upstream completion and
-exit `100` means the source printed a candidate; neither is certificate
-semantics.
+ten-second subprocess timeout. Exit `0` is the only ordinary successful
+outcome for both known tiny cases. Timeout, spawn failure, signal, exit `100`,
+or any other exit code fails with captured diagnostics.
+
+Exit `100` means that the upstream source printed a candidate, so the test
+takes a surprising diagnostic path rather than accepting smoke completion. A
+project-authored interface adapter parses the complete adjacency-list output
+and rejects malformed syntax, duplicate declarations or neighbors, loops,
+asymmetry, undeclared endpoints, and noncanonical labels. It constructs the
+project-authored `egverify.graph.Graph` and uses independent verifier
+predicates—not upstream parsing or predicate code—to check simplicity, minimum
+degree at least 3, induced-`P_k` absence, and absence of every relevant
+power-of-two cycle. Successful parsing reports canonical graph bytes and their
+SHA-256 together with every predicate result. An invalid candidate is an
+upstream correctness failure; a candidate passing all independent predicates
+is a surprising mathematical result requiring a separate freeze-and-verify
+task. Both dispositions fail, and neither is acceptance or certification.
 
 ### Project CMake interface
 
@@ -137,6 +151,24 @@ The bootstrap harness execution terminated with upstream exit `0` and its
 result validated. Its generated JSON/stdout/stderr were then removed; no
 benchmark measurement is committed. A benchmark remains performance/process
 evidence only and never proves search correctness or completeness.
+
+The case now declares one exact accepted process outcome:
+`termination_reason: "exited"` paired with `exit_code: 0`. Every case requires
+a nonempty array of exact pairs; accepted reasons and codes are not independent
+lists and cannot admit Cartesian-product combinations. The runner normalizes
+and records those pairs, the actual reason and code, and
+`outcome_accepted`. It returns `0` only for an exact match, returns `3` for an
+attempted child outcome that is not accepted, and returns `1` for
+configuration, schema, or artifact failures.
+
+After execution is attempted, an unaccepted exit, timeout, signal, or spawn
+error still produces captured stdout/stderr and a schema-validated result JSON
+before the runner returns `3`. Its machine-readable diagnostic includes the
+case ID, accepted and actual pairs, paths, and SHA-256 hashes, with `ok: false`.
+CI independently validates that result even after the runner step fails and
+surfaces bounded stream diagnostics without masking the failure. These remain
+`EMPIRICAL_OBSERVATION` engineering artifacts and do not establish search
+coverage, reproduction, a certificate, or a mathematical result.
 
 ## Search-run discipline
 

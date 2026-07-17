@@ -10,6 +10,7 @@
     "artifact_kind",
     "classification",
     "case_id",
+    "accepted_outcomes",
     "project_revision",
     "project_commit",
     "working_tree_status",
@@ -33,6 +34,7 @@
     "peak_memory_bytes",
     "exit_code",
     "termination_reason",
+    "outcome_accepted",
     "stdout_path",
     "stderr_path",
     "stdout_sha256",
@@ -51,6 +53,14 @@
     },
     "case_id": {
       "$ref": "#/$defs/identifier"
+    },
+    "accepted_outcomes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/process_outcome"
+      }
     },
     "project_revision": {
       "type": "string",
@@ -183,6 +193,9 @@
         "signal"
       ]
     },
+    "outcome_accepted": {
+      "type": "boolean"
+    },
     "stdout_path": {
       "$ref": "#/$defs/repository_path"
     },
@@ -203,7 +216,123 @@
       }
     }
   },
+  "allOf": [
+    {
+      "oneOf": [
+        {
+          "properties": {
+            "termination_reason": {
+              "const": "exited"
+            },
+            "exit_code": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        {
+          "properties": {
+            "termination_reason": {
+              "const": "signal"
+            },
+            "exit_code": {
+              "type": "integer",
+              "maximum": -1
+            }
+          }
+        },
+        {
+          "properties": {
+            "termination_reason": {
+              "const": "timeout"
+            },
+            "exit_code": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "termination_reason": {
+              "const": "spawn-error"
+            },
+            "exit_code": {
+              "type": "null"
+            }
+          }
+        }
+      ]
+    }
+  ],
   "$defs": {
+    "process_outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "termination_reason",
+        "exit_code"
+      ],
+      "properties": {
+        "termination_reason": {
+          "enum": [
+            "exited",
+            "timeout",
+            "spawn-error",
+            "signal"
+          ]
+        },
+        "exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "termination_reason": {
+              "const": "exited"
+            },
+            "exit_code": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        {
+          "properties": {
+            "termination_reason": {
+              "const": "signal"
+            },
+            "exit_code": {
+              "type": "integer",
+              "maximum": -1
+            }
+          }
+        },
+        {
+          "properties": {
+            "termination_reason": {
+              "const": "timeout"
+            },
+            "exit_code": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "termination_reason": {
+              "const": "spawn-error"
+            },
+            "exit_code": {
+              "type": "null"
+            }
+          }
+        }
+      ]
+    },
     "identifier": {
       "type": "string",
       "minLength": 1,

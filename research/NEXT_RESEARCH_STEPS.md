@@ -28,35 +28,38 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### Current corrective governance task
+### Current process-outcome engineering task
 
-`TASK-20260717__repair_postcommit_review_state` is the active corrective
-governance task. Candidate
-`5dbf0d4a54eef1cac90deb0dd04d7251f609f9cf` was rejected. The accepted review
-baseline remains `164d6756fd2f6725f2de0bedbe13f1e8c444ba0c`, and the next
-review remains cumulative from that unchanged baseline through the corrective
-candidate HEAD resolved by the reviewer from Git. This task does not begin
-`RS-001`, mathematical research, CI remediation, or CI design.
+`TASK-20260717__enforce_process_outcome_semantics` is the active candidate at
+`READY_FOR_REVIEW`. The preceding task
+`TASK-20260717__repair_postcommit_review_state` was accepted at
+`f8271e74509a017d1631dea72aaa652f44d8c3df` with verdict
+`ACCEPT WITH FOLLOW-UP`; that commit is the current accepted review baseline.
+The candidate SHA is intentionally resolved from Git by the reviewer.
 
-All six `REVIEW_STATE.yaml` follow-ups remain unchanged and `OPEN`:
+This candidate addresses `RFU-CI-001` and `RFU-CI-002` by requiring exit `0`
+for the known tiny cases, treating exit `100` as an independently inspected
+surprise that still fails, and enforcing exact accepted process-outcome pairs
+in benchmark execution and CI. Both follow-ups remain `OPEN` pending review and
+acceptance.
 
-- `RFU-CI-001`: exit `0` versus exit `100` semantics in tiny cases;
-- `RFU-CI-002`: benchmark child-process outcome validation;
+The four medium follow-ups remain untouched and `OPEN`:
+
 - `RFU-WORKFLOW-001`: the heavy-workflow task ID;
 - `RFU-CI-003`: committed-range whitespace checking;
 - `RFU-SUPPLY-001`: immutable action references;
 - `RFU-ENV-001`: complete environment locking.
 
-The two high-severity outcome follow-ups, `RFU-CI-001` and `RFU-CI-002`, are
-not started. They may be addressed only in a later atomic task after this
-corrective governance task is accepted. `RS-001` remains `NOT STARTED`.
+`RS-001` remains `NOT STARTED`; no upstream reproduction or mathematical
+research is part of this candidate.
 
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
-Status: NOT STARTED. Do not execute before this corrective governance task is
-accepted and applicable CI evidence gaps are explicitly accounted for.
+Status: NOT STARTED. Do not execute before the process-outcome candidate is
+reviewed and accepted and applicable CI evidence gaps are explicitly
+accounted for.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.

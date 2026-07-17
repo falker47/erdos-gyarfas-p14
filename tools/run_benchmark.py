@@ -4,6 +4,11 @@
 The runner executes exactly the argv array in a reviewed case definition; it
 never invokes a shell. Results are performance/process observations only and
 must not be used as evidence of search completeness or a mathematical claim.
+
+Exit status 0 means that the actual child-process outcome exactly matched one
+declared accepted pair. Exit status 3 means that execution was attempted and
+the resulting pair was not accepted; the validated result and captured streams
+are still preserved. Configuration, schema, and artifact failures return 1.
 """
 
 from __future__ import annotations
@@ -24,14 +29,24 @@ from jsonschema import FormatChecker
 from jsonschema.exceptions import SchemaError, ValidationError
 from jsonschema.validators import validator_for
 
-from _common import (
-    REPOSITORY_ROOT,
-    load_upstream_provenance,
-    repository_relative,
-    repository_state,
-    sha256_file,
-    write_json,
-)
+try:
+    from ._common import (
+        REPOSITORY_ROOT,
+        load_upstream_provenance,
+        repository_relative,
+        repository_state,
+        sha256_file,
+        write_json,
+    )
+except ImportError:  # pragma: no cover - direct script execution
+    from _common import (
+        REPOSITORY_ROOT,
+        load_upstream_provenance,
+        repository_relative,
+        repository_state,
+        sha256_file,
+        write_json,
+    )
 
 try:
     import resource
@@ -43,6 +58,7 @@ CASE_KEYS = {
     "schema_version",
     "case_id",
     "description",
+    "accepted_outcomes",
     "executable",
     "arguments",
     "working_directory",
@@ -53,6 +69,105 @@ CASE_KEYS = {
     "environment",
     "limitations",
 }
+
+OUTCOME_KEYS = frozenset({"termination_reason", "exit_code"})
+TERMINATION_REASON_ORDER = {
+    "exited": 0,
+    "signal": 1,
+    "timeout": 2,
+    "spawn-error": 3,
+}
+UNACCEPTED_OUTCOME_EXIT_CODE = 3
+
+
+def normalize_process_outcome(
+    termination_reason: Any,
+    exit_code: Any,
+    *,
+    location: str = "process outcome",
+) -> dict[str, str | int | None]:
+    """Validate and normalize one exact process-outcome pair."""
+
+    if (
+        not isinstance(termination_reason, str)
+        or termination_reason not in TERMINATION_REASON_ORDER
+    ):
+        raise ValueError(
+            f"{location}.termination_reason must be one of "
+            f"{list(TERMINATION_REASON_ORDER)}"
+        )
+    is_integer = isinstance(exit_code, int) and not isinstance(exit_code, bool)
+    if termination_reason == "exited" and (not is_integer or exit_code < 0):
+        raise ValueError(
+            f"{location} with termination_reason 'exited' requires a "
+            "nonnegative integer exit_code"
+        )
+    if termination_reason == "signal" and (not is_integer or exit_code >= 0):
+        raise ValueError(
+            f"{location} with termination_reason 'signal' requires a "
+            "negative integer exit_code"
+        )
+    if (
+        termination_reason in {"timeout", "spawn-error"}
+        and exit_code is not None
+    ):
+        raise ValueError(
+            f"{location} with termination_reason {termination_reason!r} "
+            "requires exit_code null"
+        )
+    return {
+        "termination_reason": termination_reason,
+        "exit_code": exit_code,
+    }
+
+
+def normalize_accepted_outcomes(value: Any) -> list[dict[str, str | int | None]]:
+    """Return a deterministic, duplicate-free list of accepted exact pairs."""
+
+    if not isinstance(value, list) or not value:
+        raise ValueError("accepted_outcomes must be a nonempty array")
+
+    normalized: list[dict[str, str | int | None]] = []
+    seen: set[tuple[str, int | None]] = set()
+    for index, item in enumerate(value):
+        location = f"accepted_outcomes[{index}]"
+        if not isinstance(item, dict):
+            raise ValueError(f"{location} must be an object")
+        unknown = set(item) - OUTCOME_KEYS
+        if unknown:
+            raise ValueError(f"unknown {location} fields: {sorted(unknown)}")
+        missing = OUTCOME_KEYS - set(item)
+        if missing:
+            raise ValueError(f"missing {location} fields: {sorted(missing)}")
+        outcome = normalize_process_outcome(
+            item["termination_reason"],
+            item["exit_code"],
+            location=location,
+        )
+        pair = (str(outcome["termination_reason"]), outcome["exit_code"])
+        if pair in seen:
+            raise ValueError(f"duplicate accepted process outcome: {pair!r}")
+        seen.add(pair)
+        normalized.append(outcome)
+
+    return sorted(
+        normalized,
+        key=lambda outcome: (
+            TERMINATION_REASON_ORDER[str(outcome["termination_reason"])],
+            0 if outcome["exit_code"] is None else int(outcome["exit_code"]),
+        ),
+    )
+
+
+def outcome_is_accepted(
+    termination_reason: Any,
+    exit_code: Any,
+    accepted_outcomes: list[dict[str, str | int | None]],
+) -> bool:
+    """Return whether an actual pair exactly equals one normalized pair."""
+
+    actual = normalize_process_outcome(termination_reason, exit_code)
+    return any(actual == accepted for accepted in accepted_outcomes)
 
 
 def timestamp() -> str:
@@ -76,6 +191,9 @@ def load_case(path: Path) -> dict[str, Any]:
         raise ValueError("case_id must be a non-empty string")
     if not isinstance(value["description"], str) or not value["description"]:
         raise ValueError("description must be a non-empty string")
+    value["accepted_outcomes"] = normalize_accepted_outcomes(
+        value["accepted_outcomes"]
+    )
     if not isinstance(value["executable"], str) or not value["executable"]:
         raise ValueError("executable must be a non-empty repository-relative path")
     if not isinstance(value["arguments"], list) or not all(
@@ -275,8 +393,8 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main() -> int:
-    args = build_parser().parse_args()
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
     case_path = args.case if args.case.is_absolute() else REPOSITORY_ROOT / args.case
     output_path = args.output if args.output.is_absolute() else REPOSITORY_ROOT / args.output
     try:
@@ -337,6 +455,11 @@ def main() -> int:
             float(case["timeout_seconds"]),
         )
         finished_at = timestamp()
+        outcome_accepted = outcome_is_accepted(
+            termination_reason,
+            exit_code,
+            case["accepted_outcomes"],
+        )
         stdout_path.write_bytes(stdout)
         stderr_path.write_bytes(stderr)
 
@@ -345,6 +468,7 @@ def main() -> int:
             "artifact_kind": "engineering_benchmark",
             "classification": "EMPIRICAL_OBSERVATION",
             "case_id": case["case_id"],
+            "accepted_outcomes": case["accepted_outcomes"],
             "project_revision": project_revision,
             "project_commit": project_commit,
             "working_tree_status": working_tree_status,
@@ -368,6 +492,7 @@ def main() -> int:
             "peak_memory_bytes": peak_memory_bytes,
             "exit_code": exit_code,
             "termination_reason": termination_reason,
+            "outcome_accepted": outcome_accepted,
             "stdout_path": repository_relative(stdout_path),
             "stderr_path": repository_relative(stderr_path),
             "stdout_sha256": sha256_file(stdout_path),
@@ -389,6 +514,30 @@ def main() -> int:
         validator_type.check_schema(schema)
         validator_type(schema, format_checker=FormatChecker()).validate(result)
         write_json(output_path, result)
+        diagnostic = {
+            "accepted_outcomes": case["accepted_outcomes"],
+            "actual_outcome": {
+                "termination_reason": termination_reason,
+                "exit_code": exit_code,
+            },
+            "artifacts": {
+                "result": {
+                    "path": repository_relative(output_path),
+                    "sha256": sha256_file(output_path),
+                },
+                "stdout": {
+                    "path": repository_relative(stdout_path),
+                    "sha256": sha256_file(stdout_path),
+                },
+                "stderr": {
+                    "path": repository_relative(stderr_path),
+                    "sha256": sha256_file(stderr_path),
+                },
+            },
+            "case_id": case["case_id"],
+            "ok": outcome_accepted,
+            "outcome_accepted": outcome_accepted,
+        }
     except (
         OSError,
         KeyError,
@@ -401,19 +550,8 @@ def main() -> int:
         print(json.dumps({"ok": False, "error": str(exc)}, sort_keys=True))
         return 1
 
-    print(
-        json.dumps(
-            {
-                "case_id": case["case_id"],
-                "exit_code": exit_code,
-                "ok": True,
-                "output": repository_relative(output_path),
-                "termination_reason": termination_reason,
-            },
-            sort_keys=True,
-        )
-    )
-    return 0
+    print(json.dumps(diagnostic, sort_keys=True))
+    return 0 if outcome_accepted else UNACCEPTED_OUTCOME_EXIT_CODE
 
 
 if __name__ == "__main__":

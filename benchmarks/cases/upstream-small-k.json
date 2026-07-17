@@ -1,4 +1,10 @@
 {
+  "accepted_outcomes": [
+    {
+      "exit_code": 0,
+      "termination_reason": "exited"
+    }
+  ],
   "arguments": [
     "3"
   ],
