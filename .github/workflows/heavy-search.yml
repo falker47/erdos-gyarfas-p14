@@ -69,6 +69,17 @@ jobs:
       - name: Install manifest dependencies
         run: python -m pip install -e ".[test]"
 
+      - name: Resolve canonical manifest task identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          resolved_task_id="$(
+            python tools/resolve_review_task_id.py \
+              --state REVIEW_STATE.yaml \
+              --require-dossier
+          )"
+          printf 'RESOLVED_TASK_ID=%s\n' "$resolved_task_id" >> "$GITHUB_ENV"
+
       - name: Guard unsupported execution and record inputs
         shell: bash
         run: |
@@ -126,8 +137,11 @@ jobs:
       - name: Emit refused or not-run manifest
         shell: bash
         run: |
-          set -u
+          set -euo pipefail
           finished_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          task_status_path="ops/${RESOLVED_TASK_ID}/TASK_STATUS.md"
+          review_state_sha256="$(sha256sum REVIEW_STATE.yaml | awk '{print $1}')"
+          task_status_sha256="$(sha256sum "$task_status_path" | awk '{print $1}')"
           claim_option=()
           if [[ "$REQUESTED_TARGET" != "none" ]]; then
             claim_option=(--claim-id "$REQUESTED_TARGET")
@@ -144,7 +158,7 @@ jobs:
           python tools/make_manifest.py \
             --output artifacts/manifests/heavy-search-scaffold.json \
             --run-id "heavy-scaffold-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
-            --task-id TASK-20260715__bootstrap_reproducible_baseline \
+            --task-id "$RESOLVED_TASK_ID" \
             "${claim_option[@]}" \
             --classification ENGINEERING_ASSUMPTION \
             --target-statement "Manual workflow interface guard; no search was executed." \
@@ -157,6 +171,10 @@ jobs:
             --parameter-string "requested_partition_id=$REQUESTED_PARTITION_ID" \
             --parameter-string "requested_time_limit_seconds=$REQUESTED_TIME_LIMIT_SECONDS" \
             --parameter-string "requested_memory_limit_mb=$REQUESTED_MEMORY_LIMIT_MB" \
+            --parameter-string "task_id_source=REVIEW_STATE.yaml:active_task_id" \
+            --parameter-string "task_dossier_status_path=$task_status_path" \
+            --parameter-string "review_state_sha256=$review_state_sha256" \
+            --parameter-string "task_status_sha256=$task_status_sha256" \
             --search-mode scaffold-only \
             "${k_option[@]}" \
             --partition-id "$SAFE_PARTITION_ID" \

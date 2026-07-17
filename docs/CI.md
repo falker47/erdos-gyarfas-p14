@@ -129,6 +129,21 @@ preserving their original strings, and uploads the manifest and log even when
 a guard rejects the request. It cannot emit
 `COMPUTER_CERTIFIED_RESULT`.
 
+Before the guard or manifest producer runs, the workflow invokes
+`tools/resolve_review_task_id.py` on the checked-out `REVIEW_STATE.yaml` with a
+required dossier check. The resolver accepts only strict JSON schema version
+`1.0`, a canonical `active_task_id`, and a regular non-symlink
+`ops/<active_task_id>/TASK_STATUS.md` inside the repository. It has no manual
+task-ID input or fallback. Resolution failure fails the job and no substitute
+manifest is emitted.
+
+The manifest receives the resolved ID and records its source, the canonical
+dossier-status path, and checkout-computed SHA-256 hashes of both
+`REVIEW_STATE.yaml` and the resolved `TASK_STATUS.md`. These fields bind the
+scaffold record to versioned task-governance files from the same checkout;
+schema and hash validation do not establish run semantics or a mathematical
+result.
+
 Enabling real work later requires a separate reviewed task covering resource
 enforcement, checkpointing, invariant and pruning status, partition coverage,
 certificate replay, and failure preservation.

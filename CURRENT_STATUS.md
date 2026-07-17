@@ -4,30 +4,29 @@ Last updated: 2026-07-17 UTC
 
 ## Current state
 
-- Current phase: hardening surprising process-outcome preservation before
-  research.
-- Active task: `TASK-20260717__harden_surprising_outcome_preservation`.
+- Current phase: binding manual heavy-workflow manifest provenance to canonical
+  repository task identity before research.
+- Active task: `TASK-20260717__bind_heavy_workflow_task_identity`.
 - Task status: `READY_FOR_REVIEW`.
 - Repository: Git worktree for `falker47/erdos-gyarfas-p14`.
 - Working branch: `main`.
 - Accepted review baseline:
-  `f8271e74509a017d1631dea72aaa652f44d8c3df`.
-- Task-start HEAD: `be179265919566b44d40cb1e472cd3db50811502`.
+  `0d08a58d87e7aaa5749ed2d3428cc0906a6bade6`.
+- Task-start HEAD: `0d08a58d87e7aaa5749ed2d3428cc0906a6bade6`.
 - Last reviewed candidate HEAD:
-  `be179265919566b44d40cb1e472cd3db50811502`.
-- Last review verdict: `REJECT`.
-- Accepted task: `TASK-20260717__repair_postcommit_review_state`.
-- Next review: cumulative from the accepted review baseline through this
-  corrective preservation candidate; the candidate SHA is intentionally
+  `0d08a58d87e7aaa5749ed2d3428cc0906a6bade6`.
+- Last review verdict: `ACCEPT WITH FOLLOW-UP`.
+- Accepted task: `TASK-20260717__harden_surprising_outcome_preservation`.
+- Next review: this workflow-provenance candidate from the accepted review
+  baseline; the candidate SHA is intentionally
   resolved from Git by the reviewer.
 
-The governance task `TASK-20260717__repair_postcommit_review_state` was
-accepted at `f8271e74509a017d1631dea72aaa652f44d8c3df`; both accepted-baseline
-fields remain fixed there. The subsequent process-outcome candidate at
-`be179265919566b44d40cb1e472cd3db50811502` was rejected because surprising
-streams were not durably uploaded and exit-100 inspection could block before a
-durable freeze. This corrective candidate hardens those paths without changing
-mathematical semantics. Its SHA is intentionally resolved from Git by the
+The process-outcome hardening task
+`TASK-20260717__harden_surprising_outcome_preservation` was accepted at
+`0d08a58d87e7aaa5749ed2d3428cc0906a6bade6` with verdict
+`ACCEPT WITH FOLLOW-UP`. This candidate addresses only `RFU-WORKFLOW-001` by
+binding the manual scaffold manifest task identity to the versioned review
+state and its dossier. Its SHA is intentionally resolved from Git by the
 reviewer, so this wording remains true before and after the user's manual
 commit.
 `REVIEW_STATE.yaml` is the machine-readable review truth.
@@ -52,33 +51,26 @@ These are bounded engineering and predicate checks only. The accepted verdict
 does not convert them into an upstream reproduction, exhaustive computation,
 certificate, or mathematical proof.
 
-## Corrective outcome-preservation candidate and open follow-ups
+## Workflow-provenance candidate and open follow-ups
 
-The rejected candidate attempted to address `RFU-CI-001` and `RFU-CI-002`;
-both remain `OPEN`. This corrective candidate preserves the exact outcome
-contract while repairing the review blockers:
-
-- known `k=3` and `k=4` cases require `(exited, 0)` as the only ordinary
-  successful outcome;
-- every nonordinary tiny outcome writes byte-exact stdout/stderr, file hashes,
-  and a deterministic `EMPIRICAL_OBSERVATION` record before inspection;
-- exit `100` is independently inspected in a direct child with a separate
-  cross-platform timeout, and `completed`, `timeout`, and `error` are recorded
-  without accepting any mathematical claim;
-- benchmark cases declare exact accepted outcome pairs, and the runner returns
-  success only for an exact match after immediately preserving stdout/stderr;
-- CI retains producer failures, still runs result/inventory/hygiene checks, and
-  uploads complete tiny and benchmark artifact directories on failure.
-
-The four medium follow-ups remain untouched and `OPEN`:
+`RFU-CI-001` and `RFU-CI-002` were removed from pending follow-ups after
+acceptance of the process-outcome hardening task. The four remaining follow-ups
+are `OPEN`:
 
 - `RFU-WORKFLOW-001`: remove the hardcoded bootstrap task ID from the manual
-  heavy-workflow manifest path;
+  heavy-workflow manifest path; it remains open pending review of this
+  candidate;
 - `RFU-CI-003`: check whitespace over the committed comparison interval;
 - `RFU-SUPPLY-001`: pin GitHub Action references immutably;
 - `RFU-ENV-001`: complete environment and system-package locking.
 
-No follow-up is removed or closed by this unreviewed corrective candidate.
+No remaining follow-up is closed by this candidate before review.
+
+The candidate adds a read-only strict-JSON resolver, requires the canonical
+task dossier, and records the review-state source, dossier path, and both file
+hashes in scaffold parameters. Resolution failure stops the job before
+manifest creation. The workflow still validates any emitted manifest and
+uploads the manifest and log with `if: always()`.
 
 ## Current mathematical claim boundary
 

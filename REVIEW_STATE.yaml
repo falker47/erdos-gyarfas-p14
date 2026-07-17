@@ -2,34 +2,14 @@
   "schema_version": "1.0",
   "repository": "falker47/erdos-gyarfas-p14",
   "branch": "main",
-  "review_base_commit": "f8271e74509a017d1631dea72aaa652f44d8c3df",
-  "last_reviewed_head": "be179265919566b44d40cb1e472cd3db50811502",
-  "last_verdict": "REJECT",
-  "accepted_baseline_commit": "f8271e74509a017d1631dea72aaa652f44d8c3df",
-  "accepted_task_id": "TASK-20260717__repair_postcommit_review_state",
-  "active_task_id": "TASK-20260717__harden_surprising_outcome_preservation",
-  "updated_at_utc": "2026-07-17T14:35:19Z",
+  "review_base_commit": "0d08a58d87e7aaa5749ed2d3428cc0906a6bade6",
+  "last_reviewed_head": "0d08a58d87e7aaa5749ed2d3428cc0906a6bade6",
+  "last_verdict": "ACCEPT WITH FOLLOW-UP",
+  "accepted_baseline_commit": "0d08a58d87e7aaa5749ed2d3428cc0906a6bade6",
+  "accepted_task_id": "TASK-20260717__harden_surprising_outcome_preservation",
+  "active_task_id": "TASK-20260717__bind_heavy_workflow_task_identity",
+  "updated_at_utc": "2026-07-17T17:04:29Z",
   "pending_follow_ups": [
-    {
-      "id": "RFU-CI-001",
-      "severity": "HIGH",
-      "affected_paths": [
-        ".github/workflows/ci.yml",
-        "tests/integration/test_upstream_build.py"
-      ],
-      "status": "OPEN",
-      "description": "Make tiny known-completion CI cases require exit 0 and validate any exit 100 candidate separately."
-    },
-    {
-      "id": "RFU-CI-002",
-      "severity": "HIGH",
-      "affected_paths": [
-        ".github/workflows/ci.yml",
-        "tools/run_benchmark.py"
-      ],
-      "status": "OPEN",
-      "description": "Make benchmark CI fail unless the recorded child process outcome matches the case's accepted exit and termination semantics."
-    },
     {
       "id": "RFU-WORKFLOW-001",
       "severity": "MEDIUM",

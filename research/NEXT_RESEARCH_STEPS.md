@@ -28,41 +28,39 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### Current process-outcome correction
+### Current workflow-provenance correction
 
-`TASK-20260717__harden_surprising_outcome_preservation` is the active
-corrective candidate at `READY_FOR_REVIEW`. The governance task
-`TASK-20260717__repair_postcommit_review_state` was accepted at
-`f8271e74509a017d1631dea72aaa652f44d8c3df` with verdict
+`TASK-20260717__bind_heavy_workflow_task_identity` is the active candidate at
+`READY_FOR_REVIEW`. The process-outcome hardening task
+`TASK-20260717__harden_surprising_outcome_preservation` was accepted at
+`0d08a58d87e7aaa5749ed2d3428cc0906a6bade6` with verdict
 `ACCEPT WITH FOLLOW-UP`; that commit is the current accepted review baseline.
 The candidate SHA is intentionally resolved from Git by the reviewer.
 
-The intervening process-outcome candidate at
-`be179265919566b44d40cb1e472cd3db50811502` received `REJECT`. The accepted
-baseline therefore remains unchanged. This correction freezes raw surprising
-streams before inspection, bounds exit-100 inspection in a separate process,
-records incomplete inspection explicitly, uploads complete failure artifacts,
-and keeps post-failure checks active. It does not change the exact outcome
-semantics introduced by the rejected candidate. `RFU-CI-001` and `RFU-CI-002`
-remain `OPEN` pending cumulative review and acceptance.
+`RFU-CI-001` and `RFU-CI-002` are no longer pending after that acceptance.
+This candidate addresses only the provenance defect identified by
+`RFU-WORKFLOW-001`: the manual non-certifying scaffold must derive manifest
+task identity from versioned canonical review state and require the matching
+dossier. It does not enable a search or change mathematical semantics.
 
-The four medium follow-ups remain untouched and `OPEN`:
+The four remaining follow-ups are `OPEN`:
 
-- `RFU-WORKFLOW-001`: the heavy-workflow task ID;
+- `RFU-WORKFLOW-001`: the heavy-workflow task ID, pending review of this
+  candidate;
 - `RFU-CI-003`: committed-range whitespace checking;
 - `RFU-SUPPLY-001`: immutable action references;
 - `RFU-ENV-001`: complete environment locking.
 
 `RS-001` remains `NOT STARTED`; no upstream reproduction or mathematical
-research result is part of this corrective candidate.
+research result is part of this workflow-provenance candidate.
 
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
-Status: NOT STARTED. Do not execute before the corrective process-outcome
-candidate is reviewed and accepted and applicable CI evidence gaps are
-explicitly accounted for.
+Status: NOT STARTED. Do not execute before the current workflow-provenance
+candidate is reviewed and accepted and applicable follow-ups are explicitly
+accounted for.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.

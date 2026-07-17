@@ -219,6 +219,17 @@ record environment/resources/failures, hash every artifact, and undergo
 independent certificate verification. The current search-partition and
 certificate schemas are provisional and cannot support a certifying claim.
 
+The current manual heavy workflow is only a non-executing scaffold. Its
+manifest task ID is resolved from strict JSON
+`REVIEW_STATE.yaml:active_task_id` in the checked-out commit, with the matching
+regular non-symlink dossier status file required under `ops/`. The manifest
+records the source field, canonical dossier-status path, and observed SHA-256
+of both governance files. A missing, malformed, duplicate-key, non-finite,
+noncanonical, escaping, or dossier-incomplete state fails before manifest
+creation; there is no operator-supplied task identity or fallback. This
+provenance binding does not run a search and does not make schema validation a
+semantic or mathematical verification.
+
 ## Tested local toolchain and residual portability
 
 The native Windows checks used GCC 13.1.0, CMake 3.26.4, Ninja 1.11.1, and GNU
