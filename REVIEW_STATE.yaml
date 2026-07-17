@@ -3,12 +3,12 @@
   "repository": "falker47/erdos-gyarfas-p14",
   "branch": "main",
   "review_base_commit": "164d6756fd2f6725f2de0bedbe13f1e8c444ba0c",
-  "last_reviewed_head": "d7b28390482ca026aa6180728992fa2c0c816a60",
+  "last_reviewed_head": "5dbf0d4a54eef1cac90deb0dd04d7251f609f9cf",
   "last_verdict": "REJECT",
   "accepted_baseline_commit": "164d6756fd2f6725f2de0bedbe13f1e8c444ba0c",
   "accepted_task_id": "TASK-20260715__bootstrap_reproducible_baseline",
-  "active_task_id": "TASK-20260717__repair_review_governance",
-  "updated_at_utc": "2026-07-17T10:16:00Z",
+  "active_task_id": "TASK-20260717__repair_postcommit_review_state",
+  "updated_at_utc": "2026-07-17T11:02:13Z",
   "pending_follow_ups": [
     {
       "id": "RFU-CI-001",

@@ -96,6 +96,16 @@ Read-only Git commands are allowed, including:
 
 The user reviews and commits manually.
 
+### Commit-neutral handoff wording
+
+Codex cannot know the final SHA of the commit that the user creates after
+handoff. Canonical current-state files must therefore use wording that remains
+true after that manual commit. They may state that the candidate SHA is
+intentionally resolved from Git by the reviewer, but must not describe the
+candidate work as uncommitted, not yet committed, or nonexistent. Task-local
+dossier chronology may record that the SHA was unavailable at execution time
+only as a clearly historical fact, not as current repository state.
+
 Successful modified work ends in `READY_FOR_REVIEW`.
 
 ## 4. Required startup protocol

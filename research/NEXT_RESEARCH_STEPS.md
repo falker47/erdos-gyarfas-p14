@@ -30,26 +30,26 @@ Completion does not imply mathematical reproduction.
 
 ### Current corrective governance task
 
-`TASK-20260717__repair_review_governance` is the active task. It repairs the
-governance candidate at task-start HEAD
-`d7b28390482ca026aa6180728992fa2c0c816a60`, which received verdict `REJECT`.
-The accepted review baseline remains
-`164d6756fd2f6725f2de0bedbe13f1e8c444ba0c`, and the next review remains
-cumulative from that baseline. This task does not begin `RS-001`, mathematical
-research, or CI implementation or design.
+`TASK-20260717__repair_postcommit_review_state` is the active corrective
+governance task. Candidate
+`5dbf0d4a54eef1cac90deb0dd04d7251f609f9cf` was rejected. The accepted review
+baseline remains `164d6756fd2f6725f2de0bedbe13f1e8c444ba0c`, and the next
+review remains cumulative from that unchanged baseline through the corrective
+candidate HEAD resolved by the reviewer from Git. This task does not begin
+`RS-001`, mathematical research, CI remediation, or CI design.
 
-All six `REVIEW_STATE.yaml` follow-ups remain `OPEN`:
+All six `REVIEW_STATE.yaml` follow-ups remain unchanged and `OPEN`:
 
-- exit `0` versus exit `100` semantics in tiny cases;
-- benchmark child-process outcome validation;
-- the heavy-workflow task ID;
-- committed-range whitespace checking;
-- immutable action references;
-- complete environment locking.
+- `RFU-CI-001`: exit `0` versus exit `100` semantics in tiny cases;
+- `RFU-CI-002`: benchmark child-process outcome validation;
+- `RFU-WORKFLOW-001`: the heavy-workflow task ID;
+- `RFU-CI-003`: committed-range whitespace checking;
+- `RFU-SUPPLY-001`: immutable action references;
+- `RFU-ENV-001`: complete environment locking.
 
-The two high-severity outcome follow-ups, `RFU-CI-001` and `RFU-CI-002`, may be
-addressed only in a later atomic task after this corrective governance task is
-accepted. No CI correction is started or designed here.
+The two high-severity outcome follow-ups, `RFU-CI-001` and `RFU-CI-002`, are
+not started. They may be addressed only in a later atomic task after this
+corrective governance task is accepted. `RS-001` remains `NOT STARTED`.
 
 ## Planned sequence
 

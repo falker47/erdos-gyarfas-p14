@@ -5,26 +5,28 @@ Last updated: 2026-07-17 UTC
 ## Current state
 
 - Current phase: corrective governance after a rejected review candidate.
-- Active task: `TASK-20260717__repair_review_governance`.
+- Active task: `TASK-20260717__repair_postcommit_review_state`.
 - Task status: `READY_FOR_REVIEW`.
 - Repository: Git worktree for `falker47/erdos-gyarfas-p14`.
 - Working branch: `main`.
 - Accepted review baseline:
   `164d6756fd2f6725f2de0bedbe13f1e8c444ba0c`.
-- Task-start HEAD: `d7b28390482ca026aa6180728992fa2c0c816a60`.
+- Task-start HEAD: `5dbf0d4a54eef1cac90deb0dd04d7251f609f9cf`.
 - Last reviewed candidate HEAD:
-  `d7b28390482ca026aa6180728992fa2c0c816a60`.
+  `5dbf0d4a54eef1cac90deb0dd04d7251f609f9cf`.
 - Last review verdict: `REJECT`.
-- Next review: cumulative from the accepted review baseline through the
-  candidate HEAD resolved by the reviewer from Git; the future corrective
-  commit SHA is intentionally not stored before it exists.
+- Next review: cumulative from the unchanged accepted review baseline through
+  the corrective candidate HEAD; the candidate SHA is intentionally resolved
+  from Git by the reviewer.
 
 The bootstrap task `TASK-20260715__bootstrap_reproducible_baseline` remains
 accepted at `164d6756fd2f6725f2de0bedbe13f1e8c444ba0c` with verdict
 `ACCEPT WITH FOLLOW-UP`. Candidate
-`d7b28390482ca026aa6180728992fa2c0c816a60` was rejected, so neither it nor the
-uncommitted correction advances the accepted review baseline. The next review
-therefore includes the rejected candidate and this correction cumulatively.
+`5dbf0d4a54eef1cac90deb0dd04d7251f609f9cf` was rejected, so it does not advance
+the accepted review baseline. This task prepares a corrective candidate whose
+SHA is intentionally resolved from Git by the reviewer. The next review
+therefore includes the rejected candidate and the corrective candidate
+cumulatively from the unchanged accepted baseline.
 `REVIEW_STATE.yaml` is the machine-readable review truth.
 
 ## Accepted bootstrap scope

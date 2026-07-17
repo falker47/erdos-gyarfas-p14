@@ -222,6 +222,16 @@ After `REJECT`, `review_base_commit` and `accepted_baseline_commit` remain the
 last accepted SHA. A later fix is reviewed cumulatively from that unchanged
 base. `Solo audit` never advances the baseline.
 
+### Commit-neutral candidate wording
+
+Codex cannot know the final SHA of the commit that the user creates after
+handoff. Canonical current-state files must therefore use wording that remains
+true after that manual commit. They may state that the candidate SHA is
+intentionally resolved from Git by the reviewer, but must not describe the
+candidate work as uncommitted, not yet committed, or nonexistent. Task-local
+dossier chronology may record that the SHA was unavailable at execution time
+only as a clearly historical fact, not as current repository state.
+
 ## 11. Mandatory review output
 
 Every normal review report must contain the following ten categories, exactly
