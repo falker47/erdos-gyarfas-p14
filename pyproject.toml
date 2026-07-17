@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools==82.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "egverify"
+version = "0.1.0"
+description = "Auditable small-graph verifier for the erdos-gyarfas-p14 project"
+readme = "verifier/README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+  "jsonschema==4.26.0",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest==9.0.2",
+]
+
+[project.scripts]
+egverify = "egverify.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "verifier" }
+
+[tool.setuptools.packages.find]
+where = ["verifier"]
+include = ["egverify*"]
+
+[tool.pytest.ini_options]
+addopts = "-p no:cacheprovider --strict-config --strict-markers"
+pythonpath = ["verifier"]
+testpaths = ["tests"]
+markers = [
+  "integration: bounded subprocess or build integration test",
+]

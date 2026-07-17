@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "repository": "https://github.com/rbsandeep/Erdos-Gyarfas",
+  "recorded_at_utc": "2026-07-17T07:41:18Z",
+  "resolution_command": "git ls-remote --heads https://github.com/rbsandeep/Erdos-Gyarfas.git main cilk tests logs special-graphs 4-8-cycles",
+  "refs": {
+    "main": {
+      "full_ref": "refs/heads/main",
+      "status": "resolved",
+      "sha": "27d9cb22705905fac32314c5e95addf6e11ce283"
+    },
+    "cilk": {
+      "full_ref": "refs/heads/cilk",
+      "status": "resolved",
+      "sha": "baf9004e54f3af82e4a79c4aaf04710fd1c92592"
+    },
+    "tests": {
+      "full_ref": "refs/heads/tests",
+      "status": "resolved",
+      "sha": "cc608b9311c79d15c8471d3f208f46f4a48951ee"
+    },
+    "logs": {
+      "full_ref": "refs/heads/logs",
+      "status": "resolved",
+      "sha": "13a2ebe79d67b030fef0b30ea33563b9ed9f028e"
+    },
+    "special-graphs": {
+      "full_ref": "refs/heads/special-graphs",
+      "status": "resolved",
+      "sha": "f7bea75afecb07dab552047ece2d551722f32272"
+    },
+    "4-8-cycles": {
+      "full_ref": "refs/heads/4-8-cycles",
+      "status": "resolved",
+      "sha": "fa72f40dbbc8fdb1f5bc8ba78376bd89202619ed"
+    }
+  },
+  "summary": {
+    "requested_count": 6,
+    "resolved_count": 6,
+    "absent_count": 0,
+    "inaccessible_count": 0,
+    "unresolved_count": 0
+  },
+  "notes": [
+    "Each SHA was returned directly by git ls-remote for the named branch.",
+    "Resolution records availability only; no branch other than main was acquired into the snapshot."
+  ]
+}

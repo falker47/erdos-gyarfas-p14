@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:erdos-gyarfas-p14:schema:search-partition:0.1",
+  "title": "Search partition manifest",
+  "description": "Provisional partition record. Structural validity does not prove that a partition scheme is total, disjoint, or complete.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "partition_scheme_id",
+    "partition_id",
+    "parent_run_id",
+    "parent_configuration_sha256",
+    "root_state_path",
+    "root_state_sha256",
+    "project_commit",
+    "search_program_sha256",
+    "certificate_format_version",
+    "status",
+    "started_at_utc",
+    "finished_at_utc",
+    "state_counters",
+    "output_path",
+    "output_sha256",
+    "verifier_result",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1-provisional"
+    },
+    "partition_scheme_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "partition_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "parent_run_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "parent_configuration_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "root_state_path": {
+      "$ref": "#/$defs/repository_path"
+    },
+    "root_state_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "project_commit": {
+      "$ref": "#/$defs/git_commit"
+    },
+    "search_program_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "certificate_format_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "pending",
+        "running",
+        "completed",
+        "failed",
+        "interrupted"
+      ]
+    },
+    "started_at_utc": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "finished_at_utc": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "state_counters": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "output_path": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/repository_path"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "output_sha256": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "verifier_result": {
+      "enum": [
+        "not-run",
+        "passed",
+        "failed",
+        "error"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "completed"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "started_at_utc": {
+            "$ref": "#/$defs/timestamp"
+          },
+          "finished_at_utc": {
+            "$ref": "#/$defs/timestamp"
+          },
+          "output_path": {
+            "$ref": "#/$defs/repository_path"
+          },
+          "output_sha256": {
+            "$ref": "#/$defs/sha256"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+    },
+    "git_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "repository_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_.@+:/-]+$"
+    }
+  }
+}

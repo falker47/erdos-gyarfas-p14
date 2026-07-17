@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "repository": "https://github.com/rbsandeep/Erdos-Gyarfas",
+  "requested_ref": "main",
+  "resolved_commit": "27d9cb22705905fac32314c5e95addf6e11ce283",
+  "tree_sha": "35707222c62e2bc14b90f385f593a66799405eba",
+  "design_time_observed_commit": "27d9cb22705905fac32314c5e95addf6e11ce283",
+  "matches_design_time_observation": true,
+  "acquired_at_utc": "2026-07-17T08:04:38Z",
+  "initial_acquisition_attempt_at_utc": "2026-07-17T07:34:12Z",
+  "snapshot_path": "third_party/erdos-gyarfas",
+  "snapshot_sha256": "6fcd2f09dae6618b968a3981748c5cc16f8321478cee6f6b831071463ec7756c",
+  "snapshot_hash_algorithm": "sha256 over sorted records: relative_path_utf8 + NUL + raw_file_sha256_lowercase_ascii + LF",
+  "snapshot_file_count": 10,
+  "acquisition_archive_sha256": "91cb8d491b03d9728fc231827aa2e8ebc49e7558f30fac909414b767e673487a",
+  "acquisition_archive_size_bytes": 30720,
+  "acquisition_archive_core_autocrlf": true,
+  "acquisition_archive_usable_as_snapshot_hash": false,
+  "raw_git_archive_sha256": "38f50dc5957e2fb50bd59de08a5f9ad3fea6aa9384a0fa842feb8ddd0c314d41",
+  "raw_git_archive_size_bytes": 30720,
+  "raw_git_archive_core_autocrlf": false,
+  "license": "MIT",
+  "license_path": "third_party/erdos-gyarfas/LICENSE",
+  "license_sha256": "6c87527a065e12d3be189d606cf243b10dc97445a0b3e436ea1605062968be74",
+  "modified": false,
+  "file_sha256": {
+    ".gitignore": "f8fc530ae527e8a6d42ea97a32179e2ba39dec147d6fb0739a21a5775a90465d",
+    "CITATION.cff": "a50294c6e14e9a5a80b5ae0806670b2ed68949b83a76607feb5544995dc9b3cc",
+    "LICENSE": "6c87527a065e12d3be189d606cf243b10dc97445a0b3e436ea1605062968be74",
+    "Makefile": "dc6cd1d4c56700dc7535336dc68848df60c2cbee2eef66a3a9f45b7f25dde35e",
+    "README.md": "5ebe79372c98613c1af7bff9af2a975f280bb017e98576b28ba86d894c8e6349",
+    "include/graph.h": "1c0a2272df05da78ad6c178ef2e6052d2256a9adbf5e2cbd1d8e60c80abfdb12",
+    "include/lib.h": "cbda4598ede04c5cc30a669ed3fdcc5f55e6c0b3ff3c6fcbd55660196aee7322",
+    "src/graph.cpp": "7494142a14f664acafaa116e65a8de75186ebac6f550705ebe4aea1a98d9b186",
+    "src/lib.cpp": "12bec2c62a169142e718d88ee7771f6336b0a5d49cad3c3eb1bbfc2e68298bcb",
+    "src/main.cpp": "b3e6695238287a94c18da7370cc598717c1d3f95e7f1cc0136855444df708845"
+  },
+  "acquisition_commands": [
+    "git ls-remote --heads https://github.com/rbsandeep/Erdos-Gyarfas.git main cilk tests logs special-graphs 4-8-cycles",
+    "git clone --bare https://github.com/rbsandeep/Erdos-Gyarfas.git C:\\tmp\\eg-upstream-bootstrap-27d9cb2.git",
+    "git -C C:\\tmp\\eg-upstream-bootstrap-27d9cb2.git rev-parse 27d9cb22705905fac32314c5e95addf6e11ce283^{tree}",
+    "git -c core.autocrlf=false -C C:\\tmp\\eg-upstream-bootstrap-27d9cb2.git archive --format=tar --output=C:\\tmp\\eg-upstream-bootstrap-27d9cb2-raw.tar 27d9cb22705905fac32314c5e95addf6e11ce283",
+    "tar -xf C:\\tmp\\eg-upstream-bootstrap-27d9cb2-raw.tar -C third_party\\erdos-gyarfas",
+    "Get-FileHash -Algorithm SHA256 -LiteralPath C:\\tmp\\eg-upstream-bootstrap-27d9cb2-raw.tar",
+    "Get-FileHash -Algorithm SHA256 -LiteralPath third_party\\erdos-gyarfas\\LICENSE",
+    "python tools\\hash_artifacts.py tree third_party\\erdos-gyarfas",
+    "git hash-object --no-filters -- <each extracted snapshot file>"
+  ],
+  "rejected_acquisition_attempts": [
+    {
+      "command": "git -C C:\\tmp\\eg-upstream-bootstrap-27d9cb2.git archive --format=tar --output=C:\\tmp\\eg-upstream-bootstrap-27d9cb2.tar 27d9cb22705905fac32314c5e95addf6e11ce283",
+      "artifact_sha256": "91cb8d491b03d9728fc231827aa2e8ebc49e7558f30fac909414b767e673487a",
+      "status": "rejected",
+      "reason": "Git for Windows inherited global core.autocrlf=true and wrote CRLF-converted archive members instead of raw Git blob bytes."
+    }
+  ],
+  "notes": [
+    "The selected bootstrap commit equals the design-time observed commit.",
+    "The committed snapshot contains no nested Git metadata.",
+    "No branch-specific source was merged into the main snapshot.",
+    "The raw Git archive generated with core.autocrlf=false is an uncommitted acquisition artifact; the canonical snapshot hash is the file-inventory digest.",
+    "The per-file hashes cover every regular file in the extracted snapshot.",
+    "An initial archive inherited global core.autocrlf=true and converted LF bytes to CRLF; it was rejected and replaced before handoff.",
+    "Every final extracted file matched its selected-tree Git blob under git hash-object --no-filters."
+  ]
+}

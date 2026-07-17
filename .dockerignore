@@ -1,0 +1,21 @@
+.git
+.git/**
+.venv
+.venv/**
+build
+build/**
+dist
+dist/**
+*.egg-info
+*.egg-info/**
+.pytest_cache
+.pytest_cache/**
+**/__pycache__
+**/__pycache__/**
+**/*.pyc
+**/*.pyo
+
+# Benchmark output is generated machine-local state. Case definitions remain
+# in the context and results should instead be mounted or copied explicitly.
+benchmarks/results
+benchmarks/results/**

@@ -1,0 +1,19 @@
+{
+  "arguments": [
+    "3"
+  ],
+  "build_directory": "build/release",
+  "case_id": "upstream-serial-k3",
+  "description": "Tiny serial upstream invocation for engineering smoke timing only.",
+  "environment": {},
+  "executable": "build/release/bin/eg-upstream-serial",
+  "k": 3,
+  "limitations": [
+    "The upstream exit and output semantics are not mathematical certificate semantics.",
+    "A tiny k=3 invocation does not test P13, P14, or search completeness."
+  ],
+  "schema_version": "1.0",
+  "thread_count": 1,
+  "timeout_seconds": 10,
+  "working_directory": "."
+}

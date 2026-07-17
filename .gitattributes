@@ -1,0 +1,3 @@
+# Preserve the vendored upstream bytes while keeping project whitespace checks
+# actionable. Snapshot identity is enforced by the recorded SHA-256 inventory.
+third_party/erdos-gyarfas/** -diff

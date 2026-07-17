@@ -1,0 +1,33 @@
+# Out-of-source CMake builds
+/build/
+/build-*/
+/out/
+
+# Python environments and caches
+/.venv/
+/venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Local run products (reviewed artifacts are added deliberately)
+/artifacts/manifests/*
+!/artifacts/manifests/.gitkeep
+/artifacts/certificates/*
+!/artifacts/certificates/.gitkeep
+/artifacts/counterexamples/*
+!/artifacts/counterexamples/.gitkeep
+/artifacts/checkpoints/*
+!/artifacts/checkpoints/.gitkeep
+/benchmarks/results/*
+!/benchmarks/results/.gitkeep
+*.log
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

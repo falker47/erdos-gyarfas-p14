@@ -1,0 +1,184 @@
+name: Manual heavy-search scaffold
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Only scaffold-only is enabled; certifying-request is recorded and refused."
+        required: true
+        type: choice
+        default: scaffold-only
+        options:
+          - scaffold-only
+          - certifying-request
+      target:
+        description: "Any mathematical target is recorded and refused by this scaffold."
+        required: true
+        type: choice
+        default: none
+        options:
+          - none
+          - EG-P14
+          - EG-P13-C4C8
+      k:
+        description: "Requested induced-path vertex count; k=13 and k=14 are never run here."
+        required: true
+        type: string
+        default: "4"
+      partition_id:
+        description: "Provisional partition label for interface review only."
+        required: true
+        type: string
+        default: scaffold-0000
+      time_limit_seconds:
+        description: "Requested future limit; no process currently consumes it."
+        required: true
+        type: string
+        default: "60"
+      memory_limit_mb:
+        description: "Requested future memory limit; no process currently consumes it."
+        required: true
+        type: string
+        default: "1024"
+
+permissions:
+  contents: read
+
+jobs:
+  refuse-or-scaffold:
+    name: Emit non-certifying scaffold record
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      REQUESTED_MODE: ${{ inputs.mode }}
+      REQUESTED_TARGET: ${{ inputs.target }}
+      REQUESTED_K: ${{ inputs.k }}
+      REQUESTED_PARTITION_ID: ${{ inputs.partition_id }}
+      REQUESTED_TIME_LIMIT_SECONDS: ${{ inputs.time_limit_seconds }}
+      REQUESTED_MEMORY_LIMIT_MB: ${{ inputs.memory_limit_mb }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install manifest dependencies
+        run: python -m pip install -e ".[test]"
+
+      - name: Guard unsupported execution and record inputs
+        shell: bash
+        run: |
+          set -u
+          started_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          termination_reason="not-run"
+          guard_message="Scaffold reviewed; no executable was launched."
+          valid_k="$REQUESTED_K"
+
+          if [[ ! "$REQUESTED_K" =~ ^[0-9]{1,3}$ ]] || (( 10#$REQUESTED_K < 1 )); then
+            termination_reason="refused"
+            guard_message="Refused: k must be a positive integer."
+            valid_k=""
+          elif [[ ! "$REQUESTED_TIME_LIMIT_SECONDS" =~ ^[0-9]{1,9}$ ]] || (( 10#$REQUESTED_TIME_LIMIT_SECONDS < 1 )); then
+            termination_reason="refused"
+            guard_message="Refused: time_limit_seconds must be a positive integer."
+          elif [[ ! "$REQUESTED_MEMORY_LIMIT_MB" =~ ^[0-9]{1,9}$ ]] || (( 10#$REQUESTED_MEMORY_LIMIT_MB < 1 )); then
+            termination_reason="refused"
+            guard_message="Refused: memory_limit_mb must be a positive integer."
+          elif [[ "$REQUESTED_MODE" != "scaffold-only" ]]; then
+            termination_reason="refused"
+            guard_message="Refused: certifying execution is not implemented or authorized."
+          elif [[ "$REQUESTED_TARGET" != "none" ]]; then
+            termination_reason="refused"
+            guard_message="Refused: P13/P14 mathematical searches are disabled in this scaffold."
+          elif (( 10#$REQUESTED_K >= 13 )); then
+            termination_reason="refused"
+            guard_message="Refused: k=13 and k=14 searches are disabled in this scaffold."
+          fi
+
+          partition_id="$REQUESTED_PARTITION_ID"
+          if [[ ! "$partition_id" =~ ^[A-Za-z0-9][A-Za-z0-9_.:-]*$ ]]; then
+            termination_reason="refused"
+            guard_message="Refused: partition_id is not a canonical identifier."
+            partition_id="invalid-input"
+          fi
+
+          memory_limit_bytes=""
+          if [[ "$REQUESTED_MEMORY_LIMIT_MB" =~ ^[0-9]{1,9}$ ]] && (( 10#$REQUESTED_MEMORY_LIMIT_MB > 0 )); then
+            memory_limit_bytes="$((10#$REQUESTED_MEMORY_LIMIT_MB * 1024 * 1024))"
+          fi
+
+          mkdir -p artifacts/manifests artifacts/workflow-logs
+          printf '%s\n' "$guard_message" > artifacts/workflow-logs/heavy-search-scaffold.log
+          printf '%s\n' "No search command was executed." >> artifacts/workflow-logs/heavy-search-scaffold.log
+
+          {
+            echo "STARTED_AT=$started_at"
+            echo "TERMINATION_REASON=$termination_reason"
+            echo "SAFE_PARTITION_ID=$partition_id"
+            echo "VALID_K=$valid_k"
+            echo "MEMORY_LIMIT_BYTES=$memory_limit_bytes"
+          } >> "$GITHUB_ENV"
+
+      - name: Emit refused or not-run manifest
+        shell: bash
+        run: |
+          set -u
+          finished_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          claim_option=()
+          if [[ "$REQUESTED_TARGET" != "none" ]]; then
+            claim_option=(--claim-id "$REQUESTED_TARGET")
+          fi
+          memory_option=()
+          if [[ -n "$MEMORY_LIMIT_BYTES" ]]; then
+            memory_option=(--memory-limit-bytes "$MEMORY_LIMIT_BYTES")
+          fi
+          k_option=()
+          if [[ -n "$VALID_K" ]]; then
+            k_option=(--k "$VALID_K")
+          fi
+
+          python tools/make_manifest.py \
+            --output artifacts/manifests/heavy-search-scaffold.json \
+            --run-id "heavy-scaffold-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --task-id TASK-20260715__bootstrap_reproducible_baseline \
+            "${claim_option[@]}" \
+            --classification ENGINEERING_ASSUMPTION \
+            --target-statement "Manual workflow interface guard; no search was executed." \
+            --project-commit "$GITHUB_SHA" \
+            --working-tree-status clean \
+            --command-json '[]' \
+            --parameter-string "requested_mode=$REQUESTED_MODE" \
+            --parameter-string "requested_target=$REQUESTED_TARGET" \
+            --parameter-string "requested_k=$REQUESTED_K" \
+            --parameter-string "requested_partition_id=$REQUESTED_PARTITION_ID" \
+            --parameter-string "requested_time_limit_seconds=$REQUESTED_TIME_LIMIT_SECONDS" \
+            --parameter-string "requested_memory_limit_mb=$REQUESTED_MEMORY_LIMIT_MB" \
+            --search-mode scaffold-only \
+            "${k_option[@]}" \
+            --partition-id "$SAFE_PARTITION_ID" \
+            --started-at-utc "$STARTED_AT" \
+            --finished-at-utc "$finished_at" \
+            --termination-reason "$TERMINATION_REASON" \
+            "${memory_option[@]}" \
+            --artifact artifacts/workflow-logs/heavy-search-scaffold.log \
+            --limitation "No search executable was launched." \
+            --limitation "No P13, P14, or certifying mode is enabled." \
+            --limitation "The search-certificate format remains provisional and non-certifying."
+
+      - name: Validate emitted manifest and artifact hashes
+        run: python tools/verify_manifest.py artifacts/manifests/heavy-search-scaffold.json
+
+      - name: Upload scaffold evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: heavy-search-scaffold-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/manifests/heavy-search-scaffold.json
+            artifacts/workflow-logs/heavy-search-scaffold.log
+          if-no-files-found: error
+          retention-days: 30

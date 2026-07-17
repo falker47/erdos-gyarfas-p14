@@ -1,0 +1,646 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:erdos-gyarfas-p14:schema:experiment-manifest:1.0",
+  "title": "Experiment manifest",
+  "description": "Run-level provenance and outcome record. Validity confirms structure only; it does not establish search completeness, pruning soundness, or artifact semantics.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "task_id",
+    "claim_ids",
+    "classification",
+    "target_statement",
+    "project_commit",
+    "working_tree_status",
+    "upstream_repository",
+    "upstream_commit",
+    "executable_sha256",
+    "command",
+    "parameters",
+    "search_mode",
+    "k",
+    "forbidden_cycle_lengths",
+    "pruning_rule_ids",
+    "partition_id",
+    "seed",
+    "started_at_utc",
+    "finished_at_utc",
+    "exit_code",
+    "termination_reason",
+    "completed",
+    "host",
+    "operating_system",
+    "architecture",
+    "compiler",
+    "compiler_flags",
+    "runtime_dependencies",
+    "environment",
+    "cpu_count",
+    "memory_limit_bytes",
+    "peak_memory_bytes",
+    "wall_time_seconds",
+    "cpu_time_seconds",
+    "counters",
+    "artifacts",
+    "artifact_sha256",
+    "stdout_sha256",
+    "stderr_sha256",
+    "verifier",
+    "verifier_result",
+    "limitations"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "run_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^TASK-[0-9]{8}__[a-z0-9_]+$"
+    },
+    "claim_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "classification": {
+      "enum": [
+        "COMPUTER_CERTIFIED_RESULT",
+        "VERIFIED_BOUNDED_COMPUTATION",
+        "REPRODUCED_UPSTREAM_RESULT",
+        "EMPIRICAL_OBSERVATION",
+        "ENGINEERING_ASSUMPTION",
+        "HEURISTIC",
+        "NEGATIVE_RESULT"
+      ]
+    },
+    "target_statement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_commit": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/git_commit"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "working_tree_status": {
+      "enum": [
+        "clean",
+        "dirty",
+        "unborn",
+        "not-a-git-repository",
+        "unknown"
+      ]
+    },
+    "upstream_repository": {
+      "type": "string",
+      "format": "uri"
+    },
+    "upstream_commit": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/git_commit"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "executable_sha256": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "command": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "search_mode": {
+      "enum": [
+        "upstream-power2",
+        "p14-power2",
+        "p13-c4c8",
+        "heuristic",
+        "scaffold-only"
+      ]
+    },
+    "k": {
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "forbidden_cycle_lengths": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "integer",
+        "minimum": 3
+      }
+    },
+    "pruning_rule_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^PR-[A-Z0-9-]+$"
+      }
+    },
+    "partition_id": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/identifier"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "seed": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "started_at_utc": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "finished_at_utc": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "exit_code": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "termination_reason": {
+      "enum": [
+        "completed",
+        "failed",
+        "timeout",
+        "cancelled",
+        "interrupted",
+        "out-of-memory",
+        "refused",
+        "not-run",
+        "error"
+      ]
+    },
+    "completed": {
+      "type": "boolean"
+    },
+    "host": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "operating_system": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "architecture": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "compiler": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "compiler_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "runtime_dependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "integer",
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "cpu_count": {
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "memory_limit_bytes": {
+      "$ref": "#/$defs/nullable_nonnegative_integer"
+    },
+    "peak_memory_bytes": {
+      "$ref": "#/$defs/nullable_nonnegative_integer"
+    },
+    "wall_time_seconds": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "cpu_time_seconds": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "counters": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/repository_path"
+      }
+    },
+    "artifact_sha256": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/repository_path"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/sha256"
+      }
+    },
+    "stdout_sha256": {
+      "$ref": "#/$defs/nullable_sha256"
+    },
+    "stderr_sha256": {
+      "$ref": "#/$defs/nullable_sha256"
+    },
+    "verifier": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/verifier"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "verifier_result": {
+      "enum": [
+        "not-run",
+        "passed",
+        "failed",
+        "error"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "completed": {
+            "const": true
+          }
+        },
+        "required": [
+          "completed"
+        ]
+      },
+      "then": {
+        "properties": {
+          "termination_reason": {
+            "const": "completed"
+          },
+          "exit_code": {
+            "type": "integer"
+          },
+          "started_at_utc": {
+            "$ref": "#/$defs/timestamp"
+          },
+          "finished_at_utc": {
+            "$ref": "#/$defs/timestamp"
+          },
+          "wall_time_seconds": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "search_mode": {
+            "const": "scaffold-only"
+          }
+        },
+        "required": [
+          "search_mode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "completed": {
+            "const": false
+          },
+          "termination_reason": {
+            "enum": [
+              "refused",
+              "not-run"
+            ]
+          },
+          "classification": {
+            "enum": [
+              "EMPIRICAL_OBSERVATION",
+              "ENGINEERING_ASSUMPTION"
+            ]
+          },
+          "verifier_result": {
+            "const": "not-run"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "termination_reason": {
+            "not": {
+              "enum": [
+                "not-run",
+                "refused"
+              ]
+            }
+          }
+        },
+        "required": [
+          "termination_reason"
+        ]
+      },
+      "then": {
+        "properties": {
+          "started_at_utc": {
+            "$ref": "#/$defs/timestamp"
+          },
+          "finished_at_utc": {
+            "$ref": "#/$defs/timestamp"
+          },
+          "wall_time_seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "operating_system": {
+            "type": "string",
+            "minLength": 1
+          },
+          "architecture": {
+            "type": "string",
+            "minLength": 1
+          },
+          "command": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "termination_reason": {
+            "const": "completed"
+          }
+        },
+        "required": [
+          "termination_reason"
+        ]
+      },
+      "then": {
+        "properties": {
+          "completed": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verifier_result": {
+            "enum": [
+              "passed",
+              "failed",
+              "error"
+            ]
+          }
+        },
+        "required": [
+          "verifier_result"
+        ]
+      },
+      "then": {
+        "properties": {
+          "verifier": {
+            "$ref": "#/$defs/verifier"
+          }
+        },
+        "required": [
+          "verifier"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "classification": {
+            "const": "COMPUTER_CERTIFIED_RESULT"
+          }
+        },
+        "required": [
+          "classification"
+        ]
+      },
+      "then": {
+        "properties": {
+          "completed": {
+            "const": true
+          },
+          "verifier_result": {
+            "const": "passed"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+    },
+    "git_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullable_sha256": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullable_nonnegative_integer": {
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "command": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "repository_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_.@+:/-]+$"
+    },
+    "verifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "command",
+        "executable_sha256"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command": {
+          "$ref": "#/$defs/command"
+        },
+        "executable_sha256": {
+          "$ref": "#/$defs/nullable_sha256"
+        }
+      }
+    }
+  }
+}

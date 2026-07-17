@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:erdos-gyarfas-p14:schema:search-certificate:0.1",
+  "title": "Provisional search certificate scaffold",
+  "description": "Bootstrap-only scaffold. Conformance is explicitly non-certifying and cannot support a mathematical conclusion.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "provisional",
+    "certifying_use_permitted",
+    "artifact_kind",
+    "classification",
+    "status",
+    "claim_id",
+    "target_statement",
+    "project_commit",
+    "search_configuration_sha256",
+    "partition_scheme_id",
+    "expected_partition_ids",
+    "partition_manifests",
+    "coverage",
+    "completion_summary",
+    "generator",
+    "independent_verifier",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1-provisional"
+    },
+    "provisional": {
+      "const": true
+    },
+    "certifying_use_permitted": {
+      "const": false
+    },
+    "artifact_kind": {
+      "const": "search_certificate_scaffold"
+    },
+    "classification": {
+      "const": "ENGINEERING_ASSUMPTION"
+    },
+    "status": {
+      "const": "provisional_non_certifying"
+    },
+    "claim_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_statement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_commit": {
+      "$ref": "#/$defs/git_commit"
+    },
+    "search_configuration_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "partition_scheme_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "expected_partition_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "partition_manifests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "partition_id",
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "partition_id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "path": {
+            "$ref": "#/$defs/repository_path"
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          }
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "totality_proof_status",
+        "disjointness_proof_status",
+        "coverage_verifier_result"
+      ],
+      "properties": {
+        "totality_proof_status": {
+          "const": "not-accepted"
+        },
+        "disjointness_proof_status": {
+          "const": "not-accepted"
+        },
+        "coverage_verifier_result": {
+          "const": "not-run"
+        }
+      }
+    },
+    "completion_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected",
+        "completed",
+        "failed",
+        "interrupted"
+      ],
+      "properties": {
+        "expected": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "completed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "interrupted": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "generator": {
+      "$ref": "#/$defs/program"
+    },
+    "independent_verifier": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/program"
+        },
+        {
+          "properties": {
+            "result": {
+              "const": "not-run"
+            }
+          }
+        }
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+    },
+    "git_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "repository_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_.@+:/-]+$"
+    },
+    "program": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "executable_sha256",
+        "result"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "executable_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "result": {
+          "enum": [
+            "not-run",
+            "passed",
+            "failed",
+            "error"
+          ]
+        }
+      }
+    }
+  }
+}

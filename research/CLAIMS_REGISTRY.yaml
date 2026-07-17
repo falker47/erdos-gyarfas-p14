@@ -1,0 +1,136 @@
+schema_version: "1.0"
+last_reviewed: "2026-07-17"
+
+allowed_statuses:
+  - definition
+  - external_theorem
+  - external_computational_result
+  - project_proof
+  - computer_certified_result
+  - verified_bounded_computation
+  - reproduced_upstream_result
+  - empirical_observation
+  - engineering_assumption
+  - heuristic
+  - conjecture
+  - idea
+  - negative_result
+  - open_question
+  - disproved
+  - retracted
+  - superseded
+  - decision
+
+claims:
+  - id: "EG-GENERAL"
+    title: "General Erdős–Gyárfás conjecture"
+    status: "conjecture"
+    scope: "all finite simple graphs with minimum degree at least 3"
+    canonical_source: "research/PROBLEM_STATEMENT.md"
+    evidence: ["E1997"]
+    project_verified: false
+    notes: "External open conjecture; not the direct computational target."
+
+  - id: "EG-P14"
+    title: "Power-of-two cycle in every P14-free graph of minimum degree at least 3"
+    status: "open_question"
+    scope: "finite simple P14-free graphs"
+    canonical_source: "research/PROBLEM_STATEMENT.md"
+    evidence: []
+    project_verified: false
+    notes: "Primary project target; no project result."
+
+  - id: "CE-P14"
+    title: "Existence of a counterexample to EG-P14"
+    status: "open_question"
+    scope: "finite simple graphs satisfying the CE-P14 predicate"
+    canonical_source: "research/PROBLEM_STATEMENT.md"
+    evidence: []
+    project_verified: false
+    notes: "Alternative outcome; no candidate exists in project evidence."
+
+  - id: "EG-P13-C4C8"
+    title: "C4 or C8 in every P13-free graph of minimum degree at least 3"
+    status: "open_question"
+    scope: "finite simple P13-free graphs"
+    canonical_source: "research/PROBLEM_STATEMENT.md"
+    evidence: []
+    project_verified: false
+    notes: "Intermediate project target; no project result."
+
+  - id: "EXT-P8-C4C8"
+    title: "P8-free C4-or-C8 theorem"
+    status: "external_theorem"
+    scope: "finite simple P8-free graphs with minimum degree at least 3"
+    canonical_source: "research/KNOWN_RESULTS.md"
+    evidence: ["GS2022"]
+    project_verified: false
+    notes: "Published external theorem; not independently checked here."
+
+  - id: "EXT-P10-C4C8"
+    title: "P10-free C4-or-C8 theorem"
+    status: "external_theorem"
+    scope: "finite simple P10-free graphs with minimum degree at least 3"
+    canonical_source: "research/KNOWN_RESULTS.md"
+    evidence: ["HS2024"]
+    project_verified: false
+    notes: "Published external theorem; not independently checked here."
+
+  - id: "EXT-P13-POWER2"
+    title: "Reported P13-free power-of-two-cycle result"
+    status: "external_computational_result"
+    scope: "finite simple P13-free graphs with minimum degree at least 3"
+    canonical_source: "research/KNOWN_RESULTS.md"
+    evidence: ["HSS2025"]
+    project_verified: false
+    notes: "External computer-assisted result; not reproduced or certified."
+
+  - id: "EXT-P12-C4C8"
+    title: "Reported P12-free C4-or-C8 result"
+    status: "external_computational_result"
+    scope: "finite simple P12-free graphs with minimum degree at least 3"
+    canonical_source: "research/KNOWN_RESULTS.md"
+    evidence: ["HSS2025"]
+    project_verified: false
+    notes: "External computer-assisted result; not reproduced or certified."
+
+  - id: "UPSTREAM-MAIN-RESOLVED"
+    title: "Required upstream refs resolved during bootstrap"
+    status: "empirical_observation"
+    scope: "read-only Git ref resolution on 2026-07-17"
+    canonical_source: "upstream/UPSTREAM_REFS.json"
+    evidence:
+      - "ops/TASK-20260715__bootstrap_reproducible_baseline/EVIDENCE.md#ev-002--exact-upstream-branch-refs"
+    project_verified: true
+    notes: "Ref identity does not imply source correctness."
+
+  - id: "UPSTREAM-SNAPSHOT-PRESERVED"
+    title: "Exact upstream main snapshot preserved with hashes"
+    status: "empirical_observation"
+    scope: "third_party/erdos-gyarfas"
+    canonical_source: "upstream/UPSTREAM_PROVENANCE.json"
+    evidence:
+      - "upstream/UPSTREAM_PROVENANCE.json"
+      - "ops/TASK-20260715__bootstrap_reproducible_baseline/EVIDENCE.md#ev-004--upstream-snapshot-integrity"
+    project_verified: true
+    notes: "All ten raw files matched selected-tree blobs; provenance does not imply algorithm correctness."
+
+  - id: "VERIFIER-SMALL-GRAPH-AGREEMENT"
+    title: "Independent verifier predicates agree with test-local oracles on the bootstrap bounded domain"
+    status: "verified_bounded_computation"
+    scope: "all 1,100 labelled simple graphs on vertex sets of orders 0 through 5"
+    canonical_source: "tests/differential/test_small_graph_oracles.py"
+    evidence:
+      - "ops/TASK-20260715__bootstrap_reproducible_baseline/EVIDENCE.md#ev-006--python-verifier-and-bounded-differential-tests"
+    project_verified: true
+    notes: "No implication for larger graphs, generator coverage, or search completeness."
+
+  - id: "BOOTSTRAP-BASELINE"
+    title: "Reproducible engineering baseline passes bounded verification"
+    status: "verified_bounded_computation"
+    scope: "TASK-20260715__bootstrap_reproducible_baseline"
+    canonical_source: "CURRENT_STATUS.md"
+    evidence:
+      - "ops/TASK-20260715__bootstrap_reproducible_baseline/EVIDENCE.md"
+    project_verified: true
+    notes: "Engineering claim only; Docker/CI were not executed locally and no mathematical result follows."

@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: >-
+  This research repository has no archival release yet. Cite the software
+  snapshot by its reviewed commit and also cite the external mathematical
+  sources identified in research/BIBLIOGRAPHY.md.
+title: "Certified Computational Study of the Erdős–Gyárfás Conjecture for P14-Free Graphs"
+type: software
+authors:
+  - name: "erdos-gyarfas-p14 contributors"
+version: 0.0.0
+date-released: 2026-07-17
+license: MIT
