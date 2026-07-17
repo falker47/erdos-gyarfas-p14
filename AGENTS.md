@@ -105,18 +105,20 @@ At the start of every task:
 1. locate the repository root;
 2. read this `AGENTS.md`;
 3. read `start.md`;
-4. read `CURRENT_STATUS.md`;
-5. read `PROJECT_KNOWLEDGE.md`;
-6. read `research/PROBLEM_STATEMENT.md`;
-7. read `research/VERIFICATION_PROTOCOL.md`;
-8. read `research/CLAIMS_REGISTRY.yaml`;
-9. read `research/PRUNING_REGISTRY.md` when search or pruning is relevant;
-10. read the active task dossier;
-11. inspect relevant prior dossiers and decisions;
-12. inspect the actual Git status and current HEAD;
-13. require a clean working tree unless the prompt explicitly concerns existing
+4. read `CHATGPT_REVIEW_PROTOCOL.md`;
+5. read `REVIEW_STATE.yaml`;
+6. read `CURRENT_STATUS.md`;
+7. read `PROJECT_KNOWLEDGE.md`;
+8. read `research/PROBLEM_STATEMENT.md`;
+9. read `research/VERIFICATION_PROTOCOL.md`;
+10. read `research/CLAIMS_REGISTRY.yaml`;
+11. read `research/PRUNING_REGISTRY.md` when search or pruning is relevant;
+12. read the active task dossier;
+13. inspect relevant prior dossiers and decisions;
+14. inspect the actual Git status and current HEAD;
+15. require a clean working tree unless the prompt explicitly concerns existing
     uncommitted work;
-14. inspect actual source, tests, manifests, and artifacts before reasoning from
+16. inspect actual source, tests, manifests, and artifacts before reasoning from
     documentation.
 
 If required files are missing during the initial bootstrap task, create them as
@@ -130,6 +132,8 @@ Use:
 
 - `AGENTS.md` for operating rules;
 - `start.md` for project identity and reading order;
+- `CHATGPT_REVIEW_PROTOCOL.md` for cumulative scientific-review procedure;
+- `REVIEW_STATE.yaml` for the machine-readable accepted review baseline;
 - `PROJECT_KNOWLEDGE.md` for stable project-internal facts;
 - `CURRENT_STATUS.md` for current state only;
 - `RESEARCH_LOG.md` for concise global chronology;

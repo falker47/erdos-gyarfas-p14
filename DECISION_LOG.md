@@ -99,3 +99,22 @@ A superseding decision must identify the earlier decision explicitly.
   independent checker.
 - Consequence:
   later performance rewrites require differential equivalence evidence.
+
+## D-009 — Machine-readable cumulative review baseline
+
+- Date: 2026-07-17
+- Status: ACCEPTED
+- Decision:
+  use JSON-compatible `REVIEW_STATE.yaml` as the canonical machine-readable
+  record of the last accepted review baseline, verdict, active task, and open
+  review follow-ups.
+- Rationale:
+  cumulative review needs an unambiguous base commit that survives new chats
+  and prevents rejected changes from being treated as accepted implicitly.
+- Consequence:
+  ordinary review covers `review_base_commit..HEAD`; acceptance advances the
+  logical baseline to the reviewed existing HEAD, while rejection leaves the
+  prior accepted baseline unchanged. A later governance task persists the new
+  exact SHA and never guesses an uncreated commit ID. The initial persisted
+  accepted baseline is `164d6756fd2f6725f2de0bedbe13f1e8c444ba0c`, with
+  verdict `ACCEPT WITH FOLLOW-UP`.

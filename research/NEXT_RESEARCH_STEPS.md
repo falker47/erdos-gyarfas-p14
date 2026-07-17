@@ -8,9 +8,8 @@ It must not duplicate known results or task histories.
 
 ### RS-000 — Bootstrap reproducible baseline
 
-Status: READY_FOR_REVIEW in
-`TASK-20260715__bootstrap_reproducible_baseline`; not accepted until user
-review and manual commit.
+Status: COMPLETED and accepted with `ACCEPT WITH FOLLOW-UP` at commit
+`164d6756fd2f6725f2de0bedbe13f1e8c444ba0c`.
 
 Objectives:
 
@@ -29,11 +28,29 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
+### Current synchronization task
+
+`TASK-20260717__establish_review_state` is the active governance task. It
+persists the accepted baseline, cumulative-review protocol, and unresolved
+follow-ups. It does not begin `RS-001` or any mathematical research.
+
+Before relying on CI as evidentiary support, retain and resolve the explicit
+`REVIEW_STATE.yaml` follow-ups for:
+
+- exit `0` versus exit `100` semantics in tiny cases;
+- benchmark child-process outcome validation;
+- the heavy-workflow task ID;
+- committed-range whitespace checking;
+- immutable action references;
+- complete environment locking.
+
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
-Status: PROPOSED NEXT ATOMIC TASK AFTER BOOTSTRAP ACCEPTANCE
+Status: PROPOSED; NOT STARTED. Do not execute before review-state
+synchronization is accepted and applicable CI evidence gaps are explicitly
+accounted for.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.

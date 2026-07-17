@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "repository": "falker47/erdos-gyarfas-p14",
+  "branch": "main",
+  "review_base_commit": "164d6756fd2f6725f2de0bedbe13f1e8c444ba0c",
+  "last_reviewed_head": "164d6756fd2f6725f2de0bedbe13f1e8c444ba0c",
+  "last_verdict": "ACCEPT WITH FOLLOW-UP",
+  "accepted_baseline_commit": "164d6756fd2f6725f2de0bedbe13f1e8c444ba0c",
+  "accepted_task_id": "TASK-20260715__bootstrap_reproducible_baseline",
+  "active_task_id": "TASK-20260717__establish_review_state",
+  "updated_at_utc": "2026-07-17T09:19:19Z",
+  "pending_follow_ups": [
+    {
+      "id": "RFU-CI-001",
+      "severity": "HIGH",
+      "affected_paths": [
+        ".github/workflows/ci.yml",
+        "tests/integration/test_upstream_build.py"
+      ],
+      "status": "OPEN",
+      "description": "Make tiny known-completion CI cases require exit 0 and validate any exit 100 candidate separately."
+    },
+    {
+      "id": "RFU-CI-002",
+      "severity": "HIGH",
+      "affected_paths": [
+        ".github/workflows/ci.yml",
+        "tools/run_benchmark.py"
+      ],
+      "status": "OPEN",
+      "description": "Make benchmark CI fail unless the recorded child process outcome matches the case's accepted exit and termination semantics."
+    },
+    {
+      "id": "RFU-WORKFLOW-001",
+      "severity": "MEDIUM",
+      "affected_paths": [
+        ".github/workflows/heavy-search.yml"
+      ],
+      "status": "OPEN",
+      "description": "Remove the bootstrap task ID hardcoded into manifests emitted by the manual heavy-workflow scaffold."
+    },
+    {
+      "id": "RFU-CI-003",
+      "severity": "MEDIUM",
+      "affected_paths": [
+        ".github/workflows/ci.yml"
+      ],
+      "status": "OPEN",
+      "description": "Run whitespace validation over the committed comparison range instead of only the clean checkout worktree."
+    },
+    {
+      "id": "RFU-SUPPLY-001",
+      "severity": "MEDIUM",
+      "affected_paths": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/heavy-search.yml"
+      ],
+      "status": "OPEN",
+      "description": "Replace mutable major-tag GitHub Action references with reviewed immutable commit SHAs."
+    },
+    {
+      "id": "RFU-ENV-001",
+      "severity": "MEDIUM",
+      "affected_paths": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/heavy-search.yml",
+        "Dockerfile"
+      ],
+      "status": "OPEN",
+      "description": "Complete environment locking for hosted runners and archive-installed system packages, recording resolved versions and immutable provenance."
+    }
+  ]
+}

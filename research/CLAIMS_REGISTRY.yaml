@@ -132,5 +132,6 @@ claims:
     canonical_source: "CURRENT_STATUS.md"
     evidence:
       - "ops/TASK-20260715__bootstrap_reproducible_baseline/EVIDENCE.md"
+      - "ops/TASK-20260717__establish_review_state/EVIDENCE.md#ev-002--accepted-bootstrap-review-state"
     project_verified: true
-    notes: "Engineering claim only; Docker/CI were not executed locally and no mathematical result follows."
+    notes: "Accepted at commit 164d6756fd2f6725f2de0bedbe13f1e8c444ba0c with verdict ACCEPT WITH FOLLOW-UP. Engineering claim only; Docker/CI were not executed locally and no mathematical result follows."

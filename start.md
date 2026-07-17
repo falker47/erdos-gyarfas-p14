@@ -38,15 +38,17 @@ machine-readable manifests.
 
 1. `AGENTS.md`
 2. `start.md`
-3. `CURRENT_STATUS.md`
-4. `PROJECT_KNOWLEDGE.md`
-5. `research/PROBLEM_STATEMENT.md`
-6. `research/KNOWN_RESULTS.md`
-7. `research/VERIFICATION_PROTOCOL.md`
-8. `research/CLAIMS_REGISTRY.yaml`
-9. `research/PRUNING_REGISTRY.md` when search/pruning is relevant
-10. the active task dossier under `ops/`
-11. relevant decisions, prior dossiers, manifests, source, and tests
+3. `CHATGPT_REVIEW_PROTOCOL.md`
+4. `REVIEW_STATE.yaml`
+5. `CURRENT_STATUS.md`
+6. `PROJECT_KNOWLEDGE.md`
+7. `research/PROBLEM_STATEMENT.md`
+8. `research/KNOWN_RESULTS.md`
+9. `research/VERIFICATION_PROTOCOL.md`
+10. `research/CLAIMS_REGISTRY.yaml`
+11. `research/PRUNING_REGISTRY.md` when search/pruning is relevant
+12. the active task dossier under `ops/`
+13. relevant decisions, prior dossiers, manifests, source, and tests
 
 ## Initial phases
 

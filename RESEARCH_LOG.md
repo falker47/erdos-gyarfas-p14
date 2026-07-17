@@ -33,3 +33,13 @@ reasoning, and evidence belong in task dossiers and machine-readable manifests.
   only; no theorem, counterexample, exhaustive search, reproduced published
   result, certifying pruning rule, or certificate was produced.
 - Status: awaiting user review and manual commit.
+
+## 2026-07-17 — Bootstrap baseline accepted with follow-up
+
+- The user accepted `TASK-20260715__bootstrap_reproducible_baseline` at commit
+  `164d6756fd2f6725f2de0bedbe13f1e8c444ba0c` with verdict
+  `ACCEPT WITH FOLLOW-UP`.
+- The accepted scope remains an engineering baseline plus the recorded
+  `VERIFIED_BOUNDED_COMPUTATION`; no mathematical target advanced.
+- Open CI, workflow provenance, action-pinning, and environment-locking items
+  remain follow-ups and do not become accepted evidence implicitly.
