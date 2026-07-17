@@ -102,6 +102,9 @@ jobs:
         run: cmake --build build/release --target eg-upstream-serial --parallel 2
 
       - name: Build original Makefile in a copy and run bounded smoke tests
+        env:
+          EG_CANDIDATE_INSPECTION_TIMEOUT_SECONDS: "5"
+          EG_SURPRISING_OUTCOME_DIR: artifacts/counterexamples/${{ matrix.compiler }}/tiny-upstream
         run: python -m pytest -q tests/integration/test_upstream_build.py
 
       - name: Exercise benchmark runner and enforce accepted outcome
@@ -112,14 +115,20 @@ jobs:
           --output benchmarks/results/ci-upstream-serial-k3.json
 
       - name: Validate ephemeral benchmark result even after runner failure
-        if: ${{ always() }}
-        run: >-
-          python tools/validate_schemas.py
-          --schema benchmark-result
-          --instance benchmarks/results/ci-upstream-serial-k3.json
+        if: ${{ always() && steps.benchmark-runner.outcome != 'skipped' }}
+        shell: bash
+        run: |
+          result=benchmarks/results/ci-upstream-serial-k3.json
+          if [[ ! -f "$result" ]]; then
+            echo "::error file=$result::Benchmark runner executed but produced no result JSON."
+            exit 1
+          fi
+          python tools/validate_schemas.py \
+            --schema benchmark-result \
+            --instance "$result"
 
       - name: Surface bounded benchmark diagnostics on failure
-        if: ${{ failure() }}
+        if: ${{ failure() && steps.benchmark-runner.outcome != 'skipped' }}
         run: |
           python - <<'PY'
           import hashlib
@@ -161,9 +170,11 @@ jobs:
           PY
 
       - name: Verify preserved upstream inventory after tests
+        if: ${{ always() }}
         run: python tools/verify_upstream_snapshot.py
 
       - name: Reject tracked generated build products
+        if: ${{ always() }}
         run: |
           if git ls-files | grep -E '(^|/)(build|out)/|\.(o|obj|a|so|dll|dylib|exe|pyc)$'; then
             echo "Generated build product is tracked."
@@ -171,7 +182,27 @@ jobs:
           fi
 
       - name: Check diff whitespace
+        if: ${{ always() }}
         run: git diff --check
 
       - name: Ensure checks did not modify tracked files
+        if: ${{ always() }}
         run: test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Upload complete tiny outcome artifacts after failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiny-outcomes-${{ matrix.compiler }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/counterexamples/
+          if-no-files-found: warn
+          include-hidden-files: false
+
+      - name: Upload complete benchmark artifacts after failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ matrix.compiler }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: benchmarks/results/
+          if-no-files-found: warn
+          include-hidden-files: false

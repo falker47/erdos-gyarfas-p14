@@ -44,21 +44,52 @@ That test performs a clean original Make build in a temporary copy, performs a
 separate out-of-source CMake build, and runs only `k=3` and `k=4` under a
 ten-second subprocess timeout. Exit `0` is the only ordinary successful
 outcome for both known tiny cases. Timeout, spawn failure, signal, exit `100`,
-or any other exit code fails with captured diagnostics.
+or any other exit code fails. Before each child starts, the integration path
+collects the command, executable path/hash, project revision/commit, and
+upstream commit. An ordinary exit `0` produces no surprising-outcome artifact.
+
+For every nonordinary outcome, stdout and stderr are first written as complete
+raw `.bin` files in a configured directory below
+`artifacts/counterexamples/`. Their sizes and SHA-256 hashes are recomputed from
+the closed files. Only then is a deterministic immutable outcome JSON written,
+with classification `EMPIRICAL_OBSERVATION`, the upstream timeout, the original
+outcome, artifact-relative stream paths, and initial inspection state. No graph
+parsing or recursive predicate runs before these three files exist. Existing
+evidence is not overwritten. `launcher_error` records a spawn failure
+separately because no child stderr exists in that disposition.
 
 Exit `100` means that the upstream source printed a candidate, so the test
 takes a surprising diagnostic path rather than accepting smoke completion. A
-project-authored interface adapter parses the complete adjacency-list output
-and rejects malformed syntax, duplicate declarations or neighbors, loops,
+separate Python inspector process reads the already-frozen raw files and
+verifies their sizes and hashes before decoding. A project-authored interface
+adapter rejects malformed syntax, duplicate declarations or neighbors, loops,
 asymmetry, undeclared endpoints, and noncanonical labels. It constructs the
 project-authored `egverify.graph.Graph` and uses independent verifier
 predicates—not upstream parsing or predicate code—to check simplicity, minimum
 degree at least 3, induced-`P_k` absence, and absence of every relevant
 power-of-two cycle. Successful parsing reports canonical graph bytes and their
-SHA-256 together with every predicate result. An invalid candidate is an
-upstream correctness failure; a candidate passing all independent predicates
-is a surprising mathematical result requiring a separate freeze-and-verify
-task. Both dispositions fail, and neither is acceptance or certification.
+SHA-256 together with every predicate result.
+
+The inspector has an autonomous default five-second timeout, distinct from the
+upstream ten-second limit. The parent uses a direct binary-pipe subprocess and,
+on Windows or POSIX timeout, kills, drains, and waits for that child. It owns a
+separate inspection JSON whose status is `completed`, `timeout`, or `error`.
+Parsing and predicate failures are completed inspections; inspector timeout,
+spawn failure, nonzero exit, or invalid/incomplete JSON protocol are explicit
+non-completions. The parent pins the outcome-record hash before launch, rebuilds
+the source-bound inspection envelope itself, schema-validates it, and rechecks
+the record and both raw streams after the child terminates. All dispositions
+leave the integration test failed. A candidate passing all predicates is
+described only as a surprising result frozen for a separate task. It is not
+accepted as a counterexample, reproduction, certificate, or mathematical
+result.
+
+The CI integration step sets repository-relative
+`EG_SURPRISING_OUTCOME_DIR` and an explicit
+`EG_CANDIDATE_INSPECTION_TIMEOUT_SECONDS`. Local integration tests use a pytest
+temporary directory when the artifact variable is absent; unit tests likewise
+use temporary directories and synthetic direct inspector children to verify
+timeout/error preservation without retaining measurement artifacts.
 
 ### Project CMake interface
 
@@ -165,10 +196,20 @@ After execution is attempted, an unaccepted exit, timeout, signal, or spawn
 error still produces captured stdout/stderr and a schema-validated result JSON
 before the runner returns `3`. Its machine-readable diagnostic includes the
 case ID, accepted and actual pairs, paths, and SHA-256 hashes, with `ok: false`.
-CI independently validates that result even after the runner step fails and
-surfaces bounded stream diagnostics without masking the failure. These remain
-`EMPIRICAL_OBSERVATION` engineering artifacts and do not establish search
-coverage, reproduction, a certificate, or a mathematical result.
+The runner writes and hashes both streams immediately after `execute()`
+returns, before outcome matching, timestamps, result construction, or schema
+work. Thus even a post-execution matching/configuration error cannot discard
+the child streams.
+
+If the producer ran, CI checks that the result JSON exists and independently
+schema-validates it even after runner failure. Bounded stream diagnostics do
+not replace the full files. On any compiler-job failure, the complete
+`benchmarks/results/` directory and the complete tiny-surprise directory are
+uploaded under names containing compiler, run ID, and run attempt. The
+post-test upstream inventory and final hygiene checks also run through
+`always()`. No later validation or upload masks the original nonzero step.
+These remain `EMPIRICAL_OBSERVATION` engineering artifacts and do not establish
+search coverage, reproduction, a certificate, or a mathematical result.
 
 ## Search-run discipline
 

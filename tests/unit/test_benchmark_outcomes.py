@@ -336,3 +336,127 @@ def test_unaccepted_execution_preserves_valid_artifacts(
             "path": repository_relative(path),
             "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
         }
+
+
+def test_streams_are_frozen_before_outcome_matching(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    repository_root = Path(__file__).resolve().parents[2]
+    case_path = tmp_path / "benchmarks" / "cases" / "synthetic.json"
+    result_path = tmp_path / "benchmarks" / "results" / "matcher-error.json"
+    stdout_path = result_path.with_suffix(".stdout.txt")
+    stderr_path = result_path.with_suffix(".stderr.txt")
+    executable = tmp_path / "build" / "synthetic-child.exe"
+    schema_path = tmp_path / "schemas" / "benchmark-result.schema.json"
+    for directory in (
+        case_path.parent,
+        result_path.parent,
+        executable.parent,
+        schema_path.parent,
+    ):
+        directory.mkdir(parents=True, exist_ok=True)
+    executable.write_bytes(b"synthetic executable identity\n")
+    schema_path.write_bytes(
+        (repository_root / "schemas" / "benchmark-result.schema.json").read_bytes()
+    )
+    case_path.write_text(
+        json.dumps(
+            {
+                "accepted_outcomes": [_outcome("exited", 0)],
+                "arguments": ["3"],
+                "case_id": "synthetic-matcher-error",
+                "description": "Prove streams precede outcome matching.",
+                "environment": {},
+                "executable": "build/synthetic-child.exe",
+                "k": 3,
+                "limitations": ["Synthetic unit-test process outcome."],
+                "schema_version": "1.0",
+                "thread_count": 1,
+                "timeout_seconds": 1,
+                "working_directory": ".",
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+    def repository_relative(path: Path) -> str:
+        return path.resolve().relative_to(tmp_path.resolve()).as_posix()
+
+    expected_stdout = b"unaccepted candidate output\xff"
+    expected_stderr = b"upstream diagnostic\xfe"
+    real_sha256_file = benchmark.sha256_file
+    hashed_paths: list[Path] = []
+
+    def tracked_sha256_file(path: Path) -> str:
+        hashed_paths.append(path.resolve())
+        return real_sha256_file(path)
+
+    def fail_after_asserting_frozen(
+        reason: object,
+        code: object,
+        accepted: object,
+    ) -> bool:
+        assert reason == "exited"
+        assert code == 100
+        assert stdout_path.read_bytes() == expected_stdout
+        assert stderr_path.read_bytes() == expected_stderr
+        assert stdout_path.resolve() in hashed_paths
+        assert stderr_path.resolve() in hashed_paths
+        raise ValueError("synthetic outcome matcher failure")
+
+    monkeypatch.setattr(benchmark, "REPOSITORY_ROOT", tmp_path)
+    monkeypatch.setattr(benchmark, "repository_relative", repository_relative)
+    monkeypatch.setattr(benchmark, "sha256_file", tracked_sha256_file)
+    monkeypatch.setattr(
+        benchmark,
+        "load_upstream_provenance",
+        lambda: {"resolved_commit": "0" * 40},
+    )
+    monkeypatch.setattr(
+        benchmark,
+        "repository_state",
+        lambda: ("1" * 40, "clean", "1" * 40),
+    )
+    monkeypatch.setattr(
+        benchmark,
+        "cmake_compiler",
+        lambda case: ("synthetic-compiler", ["-O2"], []),
+    )
+    monkeypatch.setattr(
+        benchmark,
+        "execute",
+        lambda command, cwd, environment, timeout: (
+            expected_stdout,
+            expected_stderr,
+            100,
+            "exited",
+            0.25,
+            0.1,
+            4096,
+            [],
+        ),
+    )
+    monkeypatch.setattr(benchmark, "outcome_is_accepted", fail_after_asserting_frozen)
+
+    return_code = benchmark.main(
+        [
+            "benchmarks/cases/synthetic.json",
+            "--output",
+            "benchmarks/results/matcher-error.json",
+        ]
+    )
+
+    assert return_code == 1
+    assert stdout_path.read_bytes() == expected_stdout
+    assert stderr_path.read_bytes() == expected_stderr
+    assert not result_path.exists()
+    assert json.loads(capsys.readouterr().out) == {
+        "error": "synthetic outcome matcher failure",
+        "ok": False,
+    }

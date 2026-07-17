@@ -28,20 +28,23 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### Current process-outcome engineering task
+### Current process-outcome correction
 
-`TASK-20260717__enforce_process_outcome_semantics` is the active candidate at
-`READY_FOR_REVIEW`. The preceding task
+`TASK-20260717__harden_surprising_outcome_preservation` is the active
+corrective candidate at `READY_FOR_REVIEW`. The governance task
 `TASK-20260717__repair_postcommit_review_state` was accepted at
 `f8271e74509a017d1631dea72aaa652f44d8c3df` with verdict
 `ACCEPT WITH FOLLOW-UP`; that commit is the current accepted review baseline.
 The candidate SHA is intentionally resolved from Git by the reviewer.
 
-This candidate addresses `RFU-CI-001` and `RFU-CI-002` by requiring exit `0`
-for the known tiny cases, treating exit `100` as an independently inspected
-surprise that still fails, and enforcing exact accepted process-outcome pairs
-in benchmark execution and CI. Both follow-ups remain `OPEN` pending review and
-acceptance.
+The intervening process-outcome candidate at
+`be179265919566b44d40cb1e472cd3db50811502` received `REJECT`. The accepted
+baseline therefore remains unchanged. This correction freezes raw surprising
+streams before inspection, bounds exit-100 inspection in a separate process,
+records incomplete inspection explicitly, uploads complete failure artifacts,
+and keeps post-failure checks active. It does not change the exact outcome
+semantics introduced by the rejected candidate. `RFU-CI-001` and `RFU-CI-002`
+remain `OPEN` pending cumulative review and acceptance.
 
 The four medium follow-ups remain untouched and `OPEN`:
 
@@ -51,15 +54,15 @@ The four medium follow-ups remain untouched and `OPEN`:
 - `RFU-ENV-001`: complete environment locking.
 
 `RS-001` remains `NOT STARTED`; no upstream reproduction or mathematical
-research is part of this candidate.
+research result is part of this corrective candidate.
 
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
-Status: NOT STARTED. Do not execute before the process-outcome candidate is
-reviewed and accepted and applicable CI evidence gaps are explicitly
-accounted for.
+Status: NOT STARTED. Do not execute before the corrective process-outcome
+candidate is reviewed and accepted and applicable CI evidence gaps are
+explicitly accounted for.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.

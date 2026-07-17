@@ -454,14 +454,19 @@ def main(argv: list[str] | None = None) -> int:
             environment,
             float(case["timeout_seconds"]),
         )
+        # Freeze the child streams immediately after process completion.  In
+        # particular, no outcome matching or result construction may prevent
+        # preservation of an unaccepted tiny benchmark outcome.
+        stdout_path.write_bytes(stdout)
+        stderr_path.write_bytes(stderr)
+        stdout_sha256 = sha256_file(stdout_path)
+        stderr_sha256 = sha256_file(stderr_path)
         finished_at = timestamp()
         outcome_accepted = outcome_is_accepted(
             termination_reason,
             exit_code,
             case["accepted_outcomes"],
         )
-        stdout_path.write_bytes(stdout)
-        stderr_path.write_bytes(stderr)
 
         result = {
             "schema_version": "1.0",
@@ -495,8 +500,8 @@ def main(argv: list[str] | None = None) -> int:
             "outcome_accepted": outcome_accepted,
             "stdout_path": repository_relative(stdout_path),
             "stderr_path": repository_relative(stderr_path),
-            "stdout_sha256": sha256_file(stdout_path),
-            "stderr_sha256": sha256_file(stderr_path),
+            "stdout_sha256": stdout_sha256,
+            "stderr_sha256": stderr_sha256,
             "limitations": [
                 *case.get("limitations", []),
                 *compiler_limitations,
@@ -527,11 +532,11 @@ def main(argv: list[str] | None = None) -> int:
                 },
                 "stdout": {
                     "path": repository_relative(stdout_path),
-                    "sha256": sha256_file(stdout_path),
+                    "sha256": stdout_sha256,
                 },
                 "stderr": {
                     "path": repository_relative(stderr_path),
-                    "sha256": sha256_file(stderr_path),
+                    "sha256": stderr_sha256,
                 },
             },
             "case_id": case["case_id"],

@@ -4,29 +4,32 @@ Last updated: 2026-07-17 UTC
 
 ## Current state
 
-- Current phase: bounded process-outcome contract enforcement before research.
-- Active task: `TASK-20260717__enforce_process_outcome_semantics`.
+- Current phase: hardening surprising process-outcome preservation before
+  research.
+- Active task: `TASK-20260717__harden_surprising_outcome_preservation`.
 - Task status: `READY_FOR_REVIEW`.
 - Repository: Git worktree for `falker47/erdos-gyarfas-p14`.
 - Working branch: `main`.
 - Accepted review baseline:
   `f8271e74509a017d1631dea72aaa652f44d8c3df`.
-- Task-start HEAD: `f8271e74509a017d1631dea72aaa652f44d8c3df`.
+- Task-start HEAD: `be179265919566b44d40cb1e472cd3db50811502`.
 - Last reviewed candidate HEAD:
-  `f8271e74509a017d1631dea72aaa652f44d8c3df`.
-- Last review verdict: `ACCEPT WITH FOLLOW-UP`.
+  `be179265919566b44d40cb1e472cd3db50811502`.
+- Last review verdict: `REJECT`.
 - Accepted task: `TASK-20260717__repair_postcommit_review_state`.
 - Next review: cumulative from the accepted review baseline through this
-  process-outcome candidate; the candidate SHA is intentionally resolved from
-  Git by the reviewer.
+  corrective preservation candidate; the candidate SHA is intentionally
+  resolved from Git by the reviewer.
 
-The preceding governance task was accepted at
-`f8271e74509a017d1631dea72aaa652f44d8c3df` with verdict
-`ACCEPT WITH FOLLOW-UP`, advancing both accepted-baseline fields to that
-commit. This candidate enforces the missing process-outcome contract for the
-two high-severity CI follow-ups. Its current-state wording remains valid before
-and after the user's manual commit because the reviewer resolves the candidate
-SHA from Git.
+The governance task `TASK-20260717__repair_postcommit_review_state` was
+accepted at `f8271e74509a017d1631dea72aaa652f44d8c3df`; both accepted-baseline
+fields remain fixed there. The subsequent process-outcome candidate at
+`be179265919566b44d40cb1e472cd3db50811502` was rejected because surprising
+streams were not durably uploaded and exit-100 inspection could block before a
+durable freeze. This corrective candidate hardens those paths without changing
+mathematical semantics. Its SHA is intentionally resolved from Git by the
+reviewer, so this wording remains true before and after the user's manual
+commit.
 `REVIEW_STATE.yaml` is the machine-readable review truth.
 
 ## Accepted bootstrap scope
@@ -49,19 +52,23 @@ These are bounded engineering and predicate checks only. The accepted verdict
 does not convert them into an upstream reproduction, exhaustive computation,
 certificate, or mathematical proof.
 
-## Process-outcome candidate and open follow-ups
+## Corrective outcome-preservation candidate and open follow-ups
 
-This candidate addresses `RFU-CI-001` and `RFU-CI-002`; both remain `OPEN`
-pending review and acceptance:
+The rejected candidate attempted to address `RFU-CI-001` and `RFU-CI-002`;
+both remain `OPEN`. This corrective candidate preserves the exact outcome
+contract while repairing the review blockers:
 
 - known `k=3` and `k=4` cases require `(exited, 0)` as the only ordinary
   successful outcome;
-- exit `100` is independently parsed and checked by project-authored verifier
-  code, reported canonically, and always fails the ordinary integration test;
+- every nonordinary tiny outcome writes byte-exact stdout/stderr, file hashes,
+  and a deterministic `EMPIRICAL_OBSERVATION` record before inspection;
+- exit `100` is independently inspected in a direct child with a separate
+  cross-platform timeout, and `completed`, `timeout`, and `error` are recorded
+  without accepting any mathematical claim;
 - benchmark cases declare exact accepted outcome pairs, and the runner returns
-  success only for an exact match after preserving validated artifacts;
-- CI retains the runner failure while always validating the result and
-  surfacing bounded failure diagnostics.
+  success only for an exact match after immediately preserving stdout/stderr;
+- CI retains producer failures, still runs result/inventory/hygiene checks, and
+  uploads complete tiny and benchmark artifact directories on failure.
 
 The four medium follow-ups remain untouched and `OPEN`:
 
@@ -71,7 +78,7 @@ The four medium follow-ups remain untouched and `OPEN`:
 - `RFU-SUPPLY-001`: pin GitHub Action references immutably;
 - `RFU-ENV-001`: complete environment and system-package locking.
 
-No follow-up is removed or closed by an unreviewed candidate.
+No follow-up is removed or closed by this unreviewed corrective candidate.
 
 ## Current mathematical claim boundary
 
