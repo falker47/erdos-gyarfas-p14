@@ -4,22 +4,28 @@ Last updated: 2026-07-17 UTC
 
 ## Current state
 
-- Current phase: accepted bootstrap baseline; review-state synchronization.
-- Active task: `TASK-20260717__establish_review_state`.
+- Current phase: corrective governance after a rejected review candidate.
+- Active task: `TASK-20260717__repair_review_governance`.
 - Task status: `READY_FOR_REVIEW`.
 - Repository: Git worktree for `falker47/erdos-gyarfas-p14`.
 - Working branch: `main`.
-- Current HEAD: `164d6756fd2f6725f2de0bedbe13f1e8c444ba0c`.
-- Bootstrap review verdict: `ACCEPT WITH FOLLOW-UP`.
-- Accepted baseline commit:
+- Accepted review baseline:
   `164d6756fd2f6725f2de0bedbe13f1e8c444ba0c`.
-- Review truth: `REVIEW_STATE.yaml` records the machine-readable baseline and
-  open follow-ups for the next cumulative review.
+- Task-start HEAD: `d7b28390482ca026aa6180728992fa2c0c816a60`.
+- Last reviewed candidate HEAD:
+  `d7b28390482ca026aa6180728992fa2c0c816a60`.
+- Last review verdict: `REJECT`.
+- Next review: cumulative from the accepted review baseline through the
+  candidate HEAD resolved by the reviewer from Git; the future corrective
+  commit SHA is intentionally not stored before it exists.
 
-The bootstrap task `TASK-20260715__bootstrap_reproducible_baseline` is accepted
-at the exact commit above. The earlier dossier correctly records that its
-supplied pre-commit directory lacked usable Git metadata; that historical
-startup condition no longer describes the current repository.
+The bootstrap task `TASK-20260715__bootstrap_reproducible_baseline` remains
+accepted at `164d6756fd2f6725f2de0bedbe13f1e8c444ba0c` with verdict
+`ACCEPT WITH FOLLOW-UP`. Candidate
+`d7b28390482ca026aa6180728992fa2c0c816a60` was rejected, so neither it nor the
+uncommitted correction advances the accepted review baseline. The next review
+therefore includes the rejected candidate and this correction cumulatively.
+`REVIEW_STATE.yaml` is the machine-readable review truth.
 
 ## Accepted bootstrap scope
 
@@ -44,7 +50,7 @@ certificate, or mathematical proof.
 ## Open review follow-ups
 
 The following accepted-bootstrap follow-ups remain `OPEN` in
-`REVIEW_STATE.yaml` and are not resolved by the current governance task:
+`REVIEW_STATE.yaml` and are not resolved by this corrective governance task:
 
 - `RFU-CI-001`: distinguish known exit `0` completion from exit `100` candidate
   behavior in tiny CI cases;
@@ -75,4 +81,4 @@ unchanged.
   not search-completeness certification.
 - Docker and hosted GitHub Actions execution remain outside the local bootstrap
   evidence, and environment immutability is incomplete.
-- `RS-001` is not started.
+- `RS-001` is `NOT STARTED`.

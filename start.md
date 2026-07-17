@@ -46,9 +46,12 @@ machine-readable manifests.
 8. `research/KNOWN_RESULTS.md`
 9. `research/VERIFICATION_PROTOCOL.md`
 10. `research/CLAIMS_REGISTRY.yaml`
-11. `research/PRUNING_REGISTRY.md` when search/pruning is relevant
-12. the active task dossier under `ops/`
-13. relevant decisions, prior dossiers, manifests, source, and tests
+11. `research/PRUNING_REGISTRY.md`
+12. `research/NEXT_RESEARCH_STEPS.md`
+13. the current task dossier under `ops/`
+14. the latest relevant earlier dossiers
+15. affected workflows, tests, manifests, certificates, benchmarks, artifacts,
+    implementation files, and Git history
 
 ## Initial phases
 

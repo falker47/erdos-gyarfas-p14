@@ -25,9 +25,12 @@ Before reviewing, read in this order:
 8. `research/KNOWN_RESULTS.md`;
 9. `research/VERIFICATION_PROTOCOL.md`;
 10. `research/CLAIMS_REGISTRY.yaml`;
-11. `research/PRUNING_REGISTRY.md` when search or pruning is relevant;
-12. the candidate task dossier and relevant earlier dossiers and decisions;
-13. the actual changed source, tests, workflows, manifests, and artifacts.
+11. `research/PRUNING_REGISTRY.md`;
+12. `research/NEXT_RESEARCH_STEPS.md`;
+13. the candidate task dossier;
+14. the latest relevant earlier dossiers;
+15. affected workflows, tests, manifests, certificates, benchmarks, artifacts,
+    implementation files, and Git history.
 
 `ROOT` means the top-level directory of the reviewed checkout, exactly as
 resolved by `git rev-parse --show-toplevel`. Repository paths in review output
@@ -221,23 +224,43 @@ base. `Solo audit` never advances the baseline.
 
 ## 11. Mandatory review output
 
-Every normal review report must contain:
+Every normal review report must contain the following ten categories, exactly
+in this order:
 
-1. repository, `ROOT`, branch, full baseline SHA, full HEAD SHA, and ancestry;
-2. reviewed cumulative range and exact changed-file list;
-3. verdict;
-4. findings ordered by severity with file/line references and evidence;
-5. commands/checks run, results, skips, and environment limitations;
-6. assessment of tests, benchmarks, reproductions, certificates, and proofs as
-   separate categories;
-7. manifest, hash, environment, verifier-independence, and pruning assessment
-   when applicable;
-8. claim IDs and classification impact;
-9. surprising results and their disposition;
-10. open follow-ups with stable IDs, or an explicit statement that none remain;
-11. the exact baseline transition or the reason it remains unchanged;
-12. a complete prompt for the next single atomic Codex task, or an explicit
-    statement that no task is authorized.
+1. **Examined revisions** — the examined baseline, candidate HEAD resolved from
+   Git, cumulative range, and included commits, together with repository,
+   `ROOT`, branch, full SHAs, and ancestry.
+2. **Effective diff and real scope** — the complete effective diff and exact
+   changed-file semantics, including renames, deletions, modes, binaries,
+   authorized versus actual scope, and relevant dirty or generated state.
+3. **Verification status** —
+   checks performed by the reviewer, checks declared by the task, observed CI,
+   and unavailable checks must be reported separately with their recorded
+   results; skipped or unavailable checks require reasons, consequences, and
+   environment limitations, and every surprising result requires a
+   disposition.
+4. **Findings** — findings under severity headings in exactly this order:
+   `CRITICAL`, `HIGH`, `MEDIUM`, `LOW`. State explicitly when a heading has no
+   findings. Every finding must give affected paths and lines where applicable,
+   evidence, and impact.
+5. **Mathematical assessment** — distinguish tests, benchmarks, reproductions,
+   certificates, and proofs; identify affected claim IDs, classifications, and
+   boundaries; assess pruning, coverage, certificate obligations, and any
+   mathematical surprises without exceeding the evidence.
+6. **Engineering assessment** — assess correctness and tests together with
+   provenance, manifests, artifact paths and SHA-256 hashes, environment,
+   verifier independence and trust boundary, determinism, engineering
+   surprises, and residual risks.
+7. **Verdict** — exactly one verdict from `ACCEPT`,
+   `ACCEPT WITH FOLLOW-UP`, `REJECT`, with its rationale.
+8. **Required persistent-file updates** — the exact baseline transition or the
+   reason it remains unchanged; reviewed task, HEAD, verdict, timestamp, claim,
+   and dossier state as applicable; and open follow-ups with stable IDs or an
+   explicit statement that none remain.
+9. **Next atomic task** — exactly one next atomic task, bounded to one coherent
+   change.
+10. **Complete Codex prompt** — one complete self-contained Codex prompt for
+    item 9 that satisfies section 12.
 
 ## 12. Requirements for the next Codex prompt
 

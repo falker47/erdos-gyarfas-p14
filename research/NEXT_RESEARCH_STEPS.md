@@ -28,14 +28,17 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### Current synchronization task
+### Current corrective governance task
 
-`TASK-20260717__establish_review_state` is the active governance task. It
-persists the accepted baseline, cumulative-review protocol, and unresolved
-follow-ups. It does not begin `RS-001` or any mathematical research.
+`TASK-20260717__repair_review_governance` is the active task. It repairs the
+governance candidate at task-start HEAD
+`d7b28390482ca026aa6180728992fa2c0c816a60`, which received verdict `REJECT`.
+The accepted review baseline remains
+`164d6756fd2f6725f2de0bedbe13f1e8c444ba0c`, and the next review remains
+cumulative from that baseline. This task does not begin `RS-001`, mathematical
+research, or CI implementation or design.
 
-Before relying on CI as evidentiary support, retain and resolve the explicit
-`REVIEW_STATE.yaml` follow-ups for:
+All six `REVIEW_STATE.yaml` follow-ups remain `OPEN`:
 
 - exit `0` versus exit `100` semantics in tiny cases;
 - benchmark child-process outcome validation;
@@ -44,13 +47,16 @@ Before relying on CI as evidentiary support, retain and resolve the explicit
 - immutable action references;
 - complete environment locking.
 
+The two high-severity outcome follow-ups, `RFU-CI-001` and `RFU-CI-002`, may be
+addressed only in a later atomic task after this corrective governance task is
+accepted. No CI correction is started or designed here.
+
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
-Status: PROPOSED; NOT STARTED. Do not execute before review-state
-synchronization is accepted and applicable CI evidence gaps are explicitly
-accounted for.
+Status: NOT STARTED. Do not execute before this corrective governance task is
+accepted and applicable CI evidence gaps are explicitly accounted for.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.

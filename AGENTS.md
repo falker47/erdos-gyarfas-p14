@@ -110,16 +110,20 @@ At the start of every task:
 6. read `CURRENT_STATUS.md`;
 7. read `PROJECT_KNOWLEDGE.md`;
 8. read `research/PROBLEM_STATEMENT.md`;
-9. read `research/VERIFICATION_PROTOCOL.md`;
-10. read `research/CLAIMS_REGISTRY.yaml`;
-11. read `research/PRUNING_REGISTRY.md` when search or pruning is relevant;
-12. read the active task dossier;
-13. inspect relevant prior dossiers and decisions;
-14. inspect the actual Git status and current HEAD;
-15. require a clean working tree unless the prompt explicitly concerns existing
+9. read `research/KNOWN_RESULTS.md`;
+10. read `research/VERIFICATION_PROTOCOL.md`;
+11. read `research/CLAIMS_REGISTRY.yaml`;
+12. read `research/PRUNING_REGISTRY.md`;
+13. read `research/NEXT_RESEARCH_STEPS.md`;
+14. read the current task dossier;
+15. inspect the latest relevant earlier dossiers;
+16. inspect affected workflows, tests, manifests, certificates, benchmarks,
+    artifacts, implementation files, and Git history;
+17. inspect the actual Git status and task-start HEAD;
+18. require a clean working tree unless the prompt explicitly concerns existing
     uncommitted work;
-16. inspect actual source, tests, manifests, and artifacts before reasoning from
-    documentation.
+19. reason from the inspected repository evidence rather than documentation
+    alone.
 
 If required files are missing during the initial bootstrap task, create them as
 part of that task.
@@ -399,7 +403,7 @@ Before handing work to the user:
 The final report must include:
 
 - task objective;
-- baseline HEAD;
+- accepted review baseline and task-start HEAD;
 - files changed;
 - commands run;
 - test results;
