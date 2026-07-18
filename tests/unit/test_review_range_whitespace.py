@@ -16,6 +16,45 @@ from tools import check_review_range_whitespace as checker
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / ".github" / "workflows" / "ci.yml"
+INFO_ATTRIBUTES_ERROR = (
+    b"check_review_range_whitespace: error: non-versioned Git attributes "
+    b"are not permitted: $GIT_DIR/info/attributes\n"
+)
+LOCAL_DIFF_CONFIG_ERROR = (
+    b"check_review_range_whitespace: error: repository-local diff "
+    b"configuration is not permitted\n"
+)
+
+
+def clean_git_environment() -> dict[str, str]:
+    environment = os.environ.copy()
+    exact = {
+        "GIT_ATTR_NOSYSTEM",
+        "GIT_ATTR_SOURCE",
+        "GIT_CONFIG",
+        "GIT_CONFIG_COUNT",
+        "GIT_CONFIG_GLOBAL",
+        "GIT_CONFIG_NOSYSTEM",
+        "GIT_CONFIG_PARAMETERS",
+        "GIT_CONFIG_SYSTEM",
+    }
+    for name in tuple(environment):
+        normalized = name.upper()
+        if (
+            normalized in exact
+            or normalized.startswith("GIT_CONFIG_KEY_")
+            or normalized.startswith("GIT_CONFIG_VALUE_")
+        ):
+            environment.pop(name, None)
+    environment["GIT_ATTR_NOSYSTEM"] = "1"
+    environment["GIT_CONFIG_COUNT"] = "0"
+    environment["GIT_CONFIG_NOSYSTEM"] = "1"
+    environment["GIT_CONFIG_GLOBAL"] = os.devnull
+    environment["GIT_CONFIG_SYSTEM"] = os.devnull
+    environment["GIT_OPTIONAL_LOCKS"] = "0"
+    environment["LANG"] = "C"
+    environment["LC_ALL"] = "C"
+    return environment
 
 
 def run_git(
@@ -24,11 +63,7 @@ def run_git(
     *,
     input_bytes: bytes | None = None,
 ) -> subprocess.CompletedProcess[bytes]:
-    environment = os.environ.copy()
-    environment["GIT_CONFIG_NOSYSTEM"] = "1"
-    environment["GIT_CONFIG_GLOBAL"] = os.devnull
-    environment["LANG"] = "C"
-    environment["LC_ALL"] = "C"
+    environment = clean_git_environment()
     result = subprocess.run(
         [
             "git",
@@ -51,6 +86,31 @@ def run_git(
         f"stdout={result.stdout!r}\nstderr={result.stderr!r}"
     )
     return result
+
+
+def raw_git(
+    root: Path,
+    arguments: Sequence[str],
+    *,
+    environment_overrides: dict[str, str] | None = None,
+) -> subprocess.CompletedProcess[bytes]:
+    environment = clean_git_environment()
+    if environment_overrides is not None:
+        environment.update(environment_overrides)
+    return subprocess.run(
+        [
+            "git",
+            "-c",
+            f"safe.directory={root.as_posix()}",
+            *arguments,
+        ],
+        cwd=root,
+        check=False,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        env=environment,
+    )
 
 
 def commit_file(root: Path, content: bytes, message: str) -> str:
@@ -158,6 +218,17 @@ def test_committed_space_before_tab_fails(tmp_path: Path) -> None:
     assert stderr == b""
 
 
+def test_committed_blank_line_at_eof_fails(tmp_path: Path) -> None:
+    root, _ = make_repository(tmp_path)
+    commit_file(root, b"content\n\n", "blank line at EOF")
+
+    code, stdout, stderr = invoke(root)
+
+    assert code != 0
+    assert b"new blank line at EOF" in stdout
+    assert stderr == b""
+
+
 def test_dirty_worktree_does_not_replace_committed_range(tmp_path: Path) -> None:
     root, _ = make_repository(tmp_path)
     commit_file(root, b"committed clean\n", "clean commit")
@@ -184,6 +255,373 @@ def test_baseline_equal_to_head_succeeds_for_empty_range(tmp_path: Path) -> None
     code, stdout, stderr = invoke(root)
 
     assert (code, stdout, stderr) == (0, success_record(base, base), b"")
+
+
+HOSTILE_WHITESPACE_CONFIG = "-trailing-space,-space-before-tab"
+
+
+def install_hostile_source(
+    root: Path,
+    tmp_path: Path,
+    source: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> dict[str, str]:
+    if source == "local_config":
+        run_git(
+            root,
+            ["config", "--local", "core.whitespace", HOSTILE_WHITESPACE_CONFIG],
+        )
+        return {}
+    if source in {"global_config", "system_config"}:
+        config = tmp_path / f"{source}.config"
+        config.write_text(
+            "[core]\n"
+            f"\twhitespace = {HOSTILE_WHITESPACE_CONFIG}\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        if source == "global_config":
+            monkeypatch.setenv("GIT_CONFIG_GLOBAL", os.fspath(config))
+            return {"GIT_CONFIG_GLOBAL": os.fspath(config)}
+        monkeypatch.setenv("GIT_CONFIG_NOSYSTEM", "0")
+        monkeypatch.setenv("GIT_CONFIG_SYSTEM", os.fspath(config))
+        return {
+            "GIT_CONFIG_NOSYSTEM": "0",
+            "GIT_CONFIG_SYSTEM": os.fspath(config),
+        }
+    if source == "process_config":
+        overrides = {
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "core.whitespace",
+            "GIT_CONFIG_VALUE_0": HOSTILE_WHITESPACE_CONFIG,
+        }
+        for name, value in overrides.items():
+            monkeypatch.setenv(name, value)
+        return overrides
+    if source == "global_attributes":
+        attributes = tmp_path / "global-attributes"
+        attributes.write_bytes(b"* -whitespace\n")
+        run_git(
+            root,
+            ["config", "--local", "core.attributesFile", os.fspath(attributes)],
+        )
+        return {}
+    raise AssertionError(f"unknown hostile source: {source}")
+
+
+def repository_observation(root: Path, temporary_root: Path) -> dict[str, Any]:
+    status = run_git(
+        root,
+        ["status", "--porcelain=v1", "--untracked-files=all"],
+    ).stdout
+    refs = run_git(
+        root,
+        ["for-each-ref", "--format=%(refname) %(objectname)"],
+    ).stdout
+    return {
+        "files": byte_inventory(temporary_root),
+        "objects": byte_inventory(root / ".git" / "objects"),
+        "refs": refs,
+        "status": status,
+    }
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        "local_config",
+        "global_config",
+        "system_config",
+        "process_config",
+        "global_attributes",
+    ],
+)
+@pytest.mark.parametrize(
+    ("content", "has_error"),
+    [
+        (b"committed trailing whitespace  \n", True),
+        (b"committed clean content\n", False),
+    ],
+    ids=["bad_range", "clean_range"],
+)
+def test_neutralizes_hostile_config_and_global_attribute_sources(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    source: str,
+    content: bytes,
+    has_error: bool,
+) -> None:
+    root, base = make_repository(tmp_path)
+    head = commit_file(root, content, f"{source} range")
+    raw_overrides = install_hostile_source(root, tmp_path, source, monkeypatch)
+
+    unisolated = raw_git(
+        root,
+        [
+            "--no-pager",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--check",
+            f"{base}..{head}",
+            "--",
+        ],
+        environment_overrides=raw_overrides,
+    )
+    assert unisolated.returncode == 0
+    assert unisolated.stdout == b""
+
+    before_environment = os.environ.copy()
+    before_repository = repository_observation(root, tmp_path)
+    first = invoke(root)
+    second = invoke(root)
+
+    assert first == second
+    if has_error:
+        assert first[0] != 0
+        assert b"trailing whitespace" in first[1]
+        assert first[2] == b""
+    else:
+        assert first == (0, success_record(base, head), b"")
+    assert repository_observation(root, tmp_path) == before_repository
+    assert os.environ == before_environment
+
+
+@pytest.mark.parametrize(
+    ("content", "case_id"),
+    [
+        (b"committed trailing whitespace  \n", "bad"),
+        (b"committed clean content\n", "clean"),
+    ],
+)
+def test_repository_info_attributes_fail_closed_deterministically(
+    tmp_path: Path,
+    content: bytes,
+    case_id: str,
+) -> None:
+    root, base = make_repository(tmp_path)
+    head = commit_file(root, content, f"info attributes {case_id}")
+    info_attributes = root / ".git" / "info" / "attributes"
+    info_attributes.write_bytes(b"* -whitespace\n")
+
+    unisolated = raw_git(
+        root,
+        [
+            "--attr-source=HEAD",
+            "--no-pager",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--check",
+            f"{base}..{head}",
+            "--",
+        ],
+    )
+    assert unisolated.returncode == 0
+    assert unisolated.stdout == b""
+
+    before_environment = os.environ.copy()
+    before_repository = repository_observation(root, tmp_path)
+    first = invoke(root)
+    second = invoke(root)
+
+    assert first == second == (1, b"", INFO_ATTRIBUTES_ERROR)
+    assert repository_observation(root, tmp_path) == before_repository
+    assert os.environ == before_environment
+
+
+@pytest.mark.parametrize(
+    ("content", "case_id"),
+    [
+        (b"committed trailing whitespace  \n", "bad"),
+        (b"committed clean content\n", "clean"),
+    ],
+)
+@pytest.mark.parametrize(
+    "config_scope",
+    ["local", "local_include", "worktree", "worktree_include"],
+)
+def test_repository_local_diff_driver_config_fails_closed(
+    tmp_path: Path,
+    content: bytes,
+    case_id: str,
+    config_scope: str,
+) -> None:
+    root, base = make_repository(tmp_path)
+    (root / "tracked.txt").write_bytes(content)
+    (root / ".gitattributes").write_bytes(b"tracked.txt diff=hostile\n")
+    run_git(root, ["add", "--", ".gitattributes", "tracked.txt"])
+    run_git(
+        root,
+        ["commit", "--quiet", "--no-gpg-sign", "-m", f"driver {case_id}"],
+    )
+    head = run_git(root, ["rev-parse", "HEAD"]).stdout.decode("ascii").strip()
+    scope = "--worktree" if config_scope.startswith("worktree") else "--local"
+    if scope == "--worktree":
+        run_git(
+            root,
+            ["config", "--local", "extensions.worktreeConfig", "true"],
+        )
+    if config_scope.endswith("include"):
+        included = tmp_path / f"{config_scope}.config"
+        included.write_text(
+            '[diff "hostile"]\n\tbinary = true\n',
+            encoding="utf-8",
+            newline="\n",
+        )
+        run_git(
+            root,
+            ["config", scope, "include.path", os.fspath(included)],
+        )
+    else:
+        run_git(root, ["config", scope, "diff.hostile.binary", "true"])
+
+    unisolated = raw_git(
+        root,
+        [
+            "-c",
+            f"core.whitespace={checker.WHITESPACE_POLICY}",
+            "-c",
+            f"core.attributesFile={os.devnull}",
+            "--attr-source=HEAD",
+            "--no-pager",
+            "diff",
+            "--no-ext-diff",
+            "--no-textconv",
+            "--no-color",
+            "--check",
+            f"{base}..{head}",
+            "--",
+        ],
+    )
+    assert unisolated.returncode == 0
+    assert unisolated.stdout == b""
+
+    before_environment = os.environ.copy()
+    before_repository = repository_observation(root, tmp_path)
+    first = invoke(root)
+    second = invoke(root)
+
+    assert first == second == (1, b"", LOCAL_DIFF_CONFIG_ERROR)
+    assert repository_observation(root, tmp_path) == before_repository
+    assert os.environ == before_environment
+
+
+def test_empty_repository_info_attributes_is_harmless(tmp_path: Path) -> None:
+    root, base = make_repository(tmp_path)
+    head = commit_file(root, b"clean range\n", "clean with empty attributes")
+    (root / ".git" / "info" / "attributes").write_bytes(b"")
+
+    first = invoke(root)
+    second = invoke(root)
+
+    assert first == second == (0, success_record(base, head), b"")
+
+
+def test_nonregular_repository_info_attributes_fails_closed(
+    tmp_path: Path,
+) -> None:
+    root, _ = make_repository(tmp_path)
+    (root / ".git" / "info" / "attributes").mkdir()
+
+    first = invoke(root)
+    second = invoke(root)
+
+    assert first == second == (1, b"", INFO_ATTRIBUTES_ERROR)
+
+
+def test_symlink_repository_info_attributes_fails_closed_where_supported(
+    tmp_path: Path,
+) -> None:
+    root, _ = make_repository(tmp_path)
+    target = root / "empty-attributes"
+    target.write_bytes(b"")
+    info_attributes = root / ".git" / "info" / "attributes"
+    try:
+        info_attributes.symlink_to(target)
+    except (NotImplementedError, OSError) as exc:
+        pytest.skip(f"file symlinks are unavailable: {exc}")
+    assert info_attributes.is_symlink()
+
+    first = invoke(root)
+    second = invoke(root)
+
+    assert first == second == (1, b"", INFO_ATTRIBUTES_ERROR)
+
+
+def test_dirty_worktree_attributes_cannot_hide_committed_whitespace(
+    tmp_path: Path,
+) -> None:
+    root, base = make_repository(tmp_path)
+    commit_file(root, b"committed trailing whitespace  \n", "bad commit")
+    (root / ".gitattributes").write_bytes(b"* -whitespace\n")
+
+    unisolated = raw_git(
+        root,
+        [
+            "--no-pager",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--check",
+            f"{base}..HEAD",
+            "--",
+        ],
+    )
+    assert unisolated.returncode == 0
+
+    before_repository = repository_observation(root, tmp_path)
+    first = invoke(root)
+    second = invoke(root)
+
+    assert first == second
+    assert first[0] != 0
+    assert b"trailing whitespace" in first[1]
+    assert first[2] == b""
+    assert repository_observation(root, tmp_path) == before_repository
+
+
+def test_checked_in_attributes_remain_effective(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root, base = make_repository(tmp_path)
+    (root / "tracked.txt").write_bytes(b"versioned override  \n")
+    (root / ".gitattributes").write_bytes(b"tracked.txt -whitespace\n")
+    run_git(root, ["add", "--", ".gitattributes", "tracked.txt"])
+    run_git(root, ["commit", "--quiet", "--no-gpg-sign", "-m", "attributes"])
+    head = run_git(root, ["rev-parse", "HEAD"]).stdout.decode("ascii").strip()
+    monkeypatch.setenv("GIT_ATTR_SOURCE", base)
+    monkeypatch.setenv("GIT_ATTR_NOSYSTEM", "0")
+    before_environment = os.environ.copy()
+
+    code, stdout, stderr = invoke(root)
+
+    assert (code, stdout, stderr) == (0, success_record(base, head), b"")
+    assert os.environ == before_environment
+    assert (ROOT / ".gitattributes").read_bytes() == (
+        b"# Preserve the vendored upstream bytes while keeping project "
+        b"whitespace checks\n"
+        b"# actionable. Snapshot identity is enforced by the recorded "
+        b"SHA-256 inventory.\n"
+        b"third_party/erdos-gyarfas/** -diff\n"
+    )
+
+
+def test_malformed_process_config_injection_is_removed(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root, base = make_repository(tmp_path)
+    head = commit_file(root, b"clean range\n", "clean")
+    monkeypatch.setenv("GIT_CONFIG_COUNT", "1")
+    monkeypatch.setenv("GIT_CONFIG_KEY_0", "core.whitespace")
+    monkeypatch.delenv("GIT_CONFIG_VALUE_0", raising=False)
+
+    first = invoke(root)
+    second = invoke(root)
+
+    assert first == second == (0, success_record(base, head), b"")
 
 
 def test_nonancestor_baseline_is_rejected(tmp_path: Path) -> None:

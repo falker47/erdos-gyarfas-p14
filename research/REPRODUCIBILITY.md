@@ -160,13 +160,37 @@ python tools/check_review_range_whitespace.py --state REVIEW_STATE.yaml --head H
 
 It requires complete history containing the strict-JSON
 `review_base_commit`, resolves both endpoints to commits, proves ancestry, and
-executes `git diff --check` on the explicit `<base>..<head>` object range.
+executes `git diff --check` on the explicit `<base>..<head>` object range under
+the fixed policy
+`blank-at-eol,space-before-tab,blank-at-eof,tabwidth=8`. Command-line Git
+configuration overrides repository-local whitespace policy, while the child
+environment neutralizes system/global configuration, process configuration
+injection, global attributes, and system attributes. The resolved head commit
+is the explicit attribute source, so checked-in `.gitattributes` remains
+effective and an uncommitted worktree copy cannot change the verdict.
+
+Repository-local `core.whitespace` and `core.attributesFile` are explicitly
+overridden. Any effective local or per-worktree `diff.*` key, including one
+loaded through an include, fails closed before and after the diff because Git
+cannot disable those config scopes as sources and a diff-driver `binary`
+setting can otherwise suppress whitespace diagnostics. Both bad and clean
+ranges are rejected under that unreviewed diff configuration.
+
+Git exposes no supported read-only switch that ignores only its highest
+precedence non-versioned source, `$GIT_DIR/info/attributes`, while retaining
+checked-in attributes. The checker therefore permits only absence or a
+zero-byte regular file and otherwise fails closed before the diff; it repeats
+the check after the diff. This deliberate failure also applies to a clean
+range. Concurrent hostile replacement during the subprocess window cannot be
+made atomic without modifying or mirroring Git metadata, so it remains outside
+the read-only trust boundary; the before/after checks catch persistent changes.
+
 Success records both full SHAs and the range deterministically. The later
 endpoint-free `git diff --check` steps are intentionally narrower: they check
 only changes created in each test worktree. Neither form changes Git state.
-When local task-start `HEAD` equals the accepted baseline, the canonical real
-range is empty; temporary Git repositories in the focused unit suite provide
-the substantive clean and failing committed-range cases.
+Temporary real Git repositories in the focused unit suite provide substantive
+clean, failing, hostile-configuration, hostile-attribute, deterministic, and
+read-only cases without invoking a search or retaining artifacts.
 
 The complete local test suite passed 63 tests. The differential test enumerates
 exactly 1,100 labelled simple graphs of orders 0 through 5. This is

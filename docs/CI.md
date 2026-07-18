@@ -40,16 +40,61 @@ The helper derives the repository root from its own checked-in path, parses the
 state as strict UTF-8 JSON, and accepts only schema version `1.0` with a
 lowercase 40-character `review_base_commit`. The sentinel `ROOT` is explicitly
 unsupported. It resolves both endpoints to commits, requires the baseline to
-be an ancestor of the requested head, and then runs the equivalent of:
+be an ancestor of the requested head, and then runs an isolated equivalent of:
 
 ```text
-git --no-pager diff --no-ext-diff --no-color --check <base>..<head> --
+git \
+  -c core.whitespace=blank-at-eol,space-before-tab,blank-at-eof,tabwidth=8 \
+  -c core.attributesFile=<platform-null-device> \
+  --attr-source=<head> --no-pager diff \
+  --no-ext-diff --no-textconv --no-color --check <base>..<head> --
 ```
 
-Missing objects, malformed state, invalid ancestry, Git errors, and committed
-whitespace errors are fatal. A successful deterministic JSON line reports the
-two full commit IDs and exact range. The helper uses no shell interpolation
-and does not write the worktree, index, configuration, refs, or objects.
+The explicit policy checks blank-at-EOL/trailing whitespace,
+space-before-tab in initial indentation, and blank lines added at EOF, with
+the default tab width fixed at eight. Repository-local `core.whitespace` cannot
+weaken it. The child environment ignores system and global Git configuration,
+removes process-level configuration injection including `GIT_CONFIG_COUNT`,
+its key/value family, and `GIT_CONFIG_PARAMETERS`, and selects null global and
+system configuration files. These changes affect only each child process; the
+parent environment and Git configuration are not modified.
+
+Git has no switch that skips only repository-local config. The checker safely
+overrides the local `core.whitespace` and `core.attributesFile` values it
+needs, but fails closed if the effective local or per-worktree config
+(including their includes) contains any `diff.*` key. Such keys can otherwise
+combine with a checked-in diff driver to mark a text file binary and suppress
+whitespace diagnostics. This condition has empty stdout and the deterministic
+error:
+
+```text
+check_review_range_whitespace: error: repository-local diff configuration is not permitted
+```
+
+Global attributes selected by `core.attributesFile` are redirected to the
+platform null device, and system attributes are disabled in the child. The
+attribute source is the resolved head commit, so a dirty worktree
+`.gitattributes` cannot alter the verdict. Checked-in `.gitattributes` remains
+effective reviewable policy, including
+`third_party/erdos-gyarfas/** -diff`.
+
+Git gives non-versioned `$GIT_DIR/info/attributes` higher precedence than
+checked-in attributes and offers no supported switch that ignores only that
+source. The helper therefore checks the path before and after the diff. An
+absent or zero-byte regular file is harmless; a nonempty, unreadable,
+nonregular, or symlink source fails closed with this deterministic diagnostic:
+
+```text
+check_review_range_whitespace: error: non-versioned Git attributes are not permitted: $GIT_DIR/info/attributes
+```
+
+Both fail-closed rules apply even to a clean range because the range is not
+evaluated under unreviewed diff configuration or repository attributes.
+Missing objects, malformed state, invalid ancestry, Git errors, committed
+whitespace errors, and either fail-closed condition are fatal. A successful
+deterministic JSON line reports the two full commit IDs and exact range. The
+helper uses no shell interpolation and does not write the worktree, index,
+configuration, refs, objects, or repository attributes.
 
 The identically named `Check test-created worktree whitespace` steps in the
 Python and C++ matrix jobs intentionally retain endpoint-free

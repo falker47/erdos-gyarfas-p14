@@ -30,36 +30,43 @@ Completion does not imply mathematical reproduction.
 
 ### Current committed-range-whitespace correction
 
-`TASK-20260717__enforce_committed_range_whitespace` is the active candidate.
-The workflow-provenance task
-`TASK-20260717__bind_heavy_workflow_task_identity` was accepted at
-`e33c3bf121d5bb81b4c63adf704ca9b4ecfea970` with verdict
-`ACCEPT WITH FOLLOW-UP`; that commit is the current accepted review baseline.
-The candidate SHA is intentionally resolved from Git by the reviewer.
+`TASK-20260718__isolate_whitespace_git_semantics` is the active corrective
+candidate. The preceding candidate at
+`ac9c4c4d18e8b0d01038215e25ba37cdbf1449e4` was rejected because mutable Git
+configuration and non-versioned attribute sources could weaken its committed
+whitespace verdict. It remains in history and is not reset, reverted, or
+rewritten.
 
-`RFU-WORKFLOW-001` is no longer pending after that acceptance. This candidate
-addresses only `RFU-CI-003`: fast CI must validate whitespace in the canonical
-committed range `REVIEW_STATE.yaml:review_base_commit..HEAD`, independently of
-post-test worktree checks. It does not enable a search or change mathematical
-semantics.
+The workflow-provenance task
+`TASK-20260717__bind_heavy_workflow_task_identity` remains the accepted task,
+and `e33c3bf121d5bb81b4c63adf704ca9b4ecfea970` remains the accepted review
+baseline. The next review is cumulative from that baseline through the
+corrective candidate, whose SHA is intentionally resolved from Git by the
+reviewer.
+
+This candidate preserves the dedicated committed-range CI structure while
+making its whitespace policy explicit and isolating mutable configuration and
+non-versioned attributes. Checked-in `.gitattributes` remains authoritative
+for reviewable per-path policy. The task does not enable a search or change
+mathematical semantics.
 
 The three remaining follow-ups are `OPEN`:
 
 - `RFU-CI-003`: committed-range whitespace checking, pending review of this
-  candidate;
+  corrective candidate;
 - `RFU-SUPPLY-001`: immutable action references;
 - `RFU-ENV-001`: complete environment locking.
 
 `RS-001` remains `NOT STARTED`; no upstream reproduction or mathematical
-research result is part of this CI-governance candidate.
+research result is part of this CI-governance correction.
 
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
 Status: NOT STARTED. Do not execute before the current CI-governance
-candidate is reviewed and accepted and applicable follow-ups are explicitly
-accounted for.
+corrective candidate is reviewed and accepted and applicable follow-ups are
+explicitly accounted for.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.

@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import re
+import stat
 import subprocess
 import sys
 from typing import Any, Sequence
@@ -15,6 +16,31 @@ from typing import Any, Sequence
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 FULL_SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$")
+WHITESPACE_POLICY = "blank-at-eol,space-before-tab,blank-at-eof,tabwidth=8"
+
+_GIT_REPOSITORY_REDIRECTS = (
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_CEILING_DIRECTORIES",
+    "GIT_COMMON_DIR",
+    "GIT_DIR",
+    "GIT_INDEX_FILE",
+    "GIT_NAMESPACE",
+    "GIT_OBJECT_DIRECTORY",
+    "GIT_REPLACE_REF_BASE",
+    "GIT_WORK_TREE",
+)
+_GIT_CONFIG_INJECTIONS = (
+    "GIT_CONFIG",
+    "GIT_CONFIG_COUNT",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG_PARAMETERS",
+    "GIT_CONFIG_SYSTEM",
+)
+_GIT_ATTRIBUTE_INJECTIONS = (
+    "GIT_ATTR_NOSYSTEM",
+    "GIT_ATTR_SOURCE",
+)
 
 
 class CheckError(ValueError):
@@ -101,18 +127,25 @@ def _load_state(state_path: Path, root: Path) -> dict[str, Any]:
 
 def _git_environment() -> dict[str, str]:
     environment = os.environ.copy()
-    for name in (
-        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
-        "GIT_CEILING_DIRECTORIES",
-        "GIT_COMMON_DIR",
-        "GIT_DIR",
-        "GIT_INDEX_FILE",
-        "GIT_NAMESPACE",
-        "GIT_OBJECT_DIRECTORY",
-        "GIT_REPLACE_REF_BASE",
-        "GIT_WORK_TREE",
-    ):
-        environment.pop(name, None)
+    exact_names = set(
+        _GIT_REPOSITORY_REDIRECTS
+        + _GIT_CONFIG_INJECTIONS
+        + _GIT_ATTRIBUTE_INJECTIONS
+    )
+    for name in tuple(environment):
+        normalized = name.upper()
+        if (
+            normalized in exact_names
+            or normalized.startswith("GIT_CONFIG_KEY_")
+            or normalized.startswith("GIT_CONFIG_VALUE_")
+        ):
+            environment.pop(name, None)
+
+    environment["GIT_CONFIG_COUNT"] = "0"
+    environment["GIT_CONFIG_GLOBAL"] = os.devnull
+    environment["GIT_CONFIG_NOSYSTEM"] = "1"
+    environment["GIT_CONFIG_SYSTEM"] = os.devnull
+    environment["GIT_ATTR_NOSYSTEM"] = "1"
     environment["GIT_NO_REPLACE_OBJECTS"] = "1"
     environment["GIT_OPTIONAL_LOCKS"] = "0"
     environment["LANG"] = "C"
@@ -128,6 +161,10 @@ def _run_git(root: Path, arguments: Sequence[str]) -> subprocess.CompletedProces
             f"safe.directory={root.as_posix()}",
             "-c",
             "core.quotePath=true",
+            "-c",
+            f"core.whitespace={WHITESPACE_POLICY}",
+            "-c",
+            f"core.attributesFile={os.devnull}",
             *arguments,
         ],
         cwd=root,
@@ -193,6 +230,75 @@ def _validate_ancestry(root: Path, base: str, head: str) -> None:
         raise CheckError("Git failed while validating review-range ancestry")
 
 
+def _git_info_attributes_path(root: Path) -> Path:
+    result = _run_git(
+        root,
+        ["rev-parse", "--git-path", "info/attributes"],
+    )
+    if result.returncode != 0:
+        raise CheckError("Git failed while locating repository-local attributes")
+    try:
+        rendered = result.stdout.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise CheckError(
+            "Git returned an invalid repository-local attributes path"
+        ) from exc
+    path_text = rendered.removesuffix("\n").removesuffix("\r")
+    if not path_text or "\n" in path_text or "\r" in path_text:
+        raise CheckError("Git returned an invalid repository-local attributes path")
+    path = Path(path_text)
+    return path if path.is_absolute() else root / path
+
+
+def _validate_repository_local_attributes(root: Path) -> None:
+    """Reject effective non-versioned attributes that Git cannot bypass safely."""
+
+    path = _git_info_attributes_path(root)
+    diagnostic = (
+        "non-versioned Git attributes are not permitted: "
+        "$GIT_DIR/info/attributes"
+    )
+    try:
+        metadata = path.lstat()
+    except FileNotFoundError:
+        return
+    except OSError as exc:
+        raise CheckError(diagnostic) from exc
+    if not stat.S_ISREG(metadata.st_mode):
+        raise CheckError(diagnostic)
+    try:
+        with path.open("rb") as stream:
+            first_byte = stream.read(1)
+    except OSError as exc:
+        raise CheckError(diagnostic) from exc
+    if first_byte:
+        raise CheckError(diagnostic)
+
+
+def _validate_repository_local_diff_config(root: Path) -> None:
+    """Fail closed on local diff settings Git cannot bypass as one source."""
+
+    for scope in ("--local", "--worktree"):
+        result = _run_git(
+            root,
+            [
+                "config",
+                scope,
+                "--includes",
+                "--name-only",
+                "--get-regexp",
+                "^[dD][iI][fF][fF]\\.",
+            ],
+        )
+        if result.returncode == 1 and not result.stdout:
+            continue
+        if result.returncode != 0:
+            raise CheckError(
+                "Git failed while validating repository-local diff configuration"
+            )
+        raise CheckError("repository-local diff configuration is not permitted")
+
+
 def _write_bytes(stream: Any, payload: bytes) -> None:
     binary_stream = getattr(stream, "buffer", None)
     if binary_stream is not None:
@@ -232,19 +338,25 @@ def check_review_range(
     base = _review_base(state, root)
     head = _resolve_commit(root, head_argument, "head")
     _validate_ancestry(root, base, head)
+    _validate_repository_local_diff_config(root)
+    _validate_repository_local_attributes(root)
 
     result = _run_git(
         root,
         [
+            f"--attr-source={head}",
             "--no-pager",
             "diff",
             "--no-ext-diff",
+            "--no-textconv",
             "--no-color",
             "--check",
             f"{base}..{head}",
             "--",
         ],
     )
+    _validate_repository_local_attributes(root)
+    _validate_repository_local_diff_config(root)
     return result, base, head
 
 
