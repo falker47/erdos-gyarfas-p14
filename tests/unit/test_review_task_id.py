@@ -17,6 +17,7 @@ from tools import resolve_review_task_id as resolver
 
 ROOT = Path(__file__).parents[2]
 WORKFLOW = ROOT / ".github" / "workflows" / "heavy-search.yml"
+# Synthetic fixture identity only; canonical repository expectations come from state.
 TASK_ID = "TASK-20260717__bind_heavy_workflow_task_identity"
 OBSOLETE_TASK_ID = "TASK-20260715__bootstrap_reproducible_baseline"
 
@@ -78,6 +79,35 @@ def test_output_is_byte_deterministic(tmp_path: Path) -> None:
     second = invoke(root)
 
     assert first == second == (0, f"{TASK_ID}\n".encode("ascii"), b"")
+
+
+def test_active_task_id_wins_when_accepted_task_id_differs(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repository"
+    root.mkdir()
+    accepted_task_id = "TASK-20260717__accepted_task"
+    active_task_id = "TASK-20260718__active_task"
+    assert accepted_task_id != active_task_id
+    write_state(
+        root,
+        {
+            "schema_version": "1.0",
+            "accepted_task_id": accepted_task_id,
+            "active_task_id": active_task_id,
+        },
+    )
+    active_status = root / "ops" / active_task_id / "TASK_STATUS.md"
+    active_status.parent.mkdir(parents=True)
+    active_status.write_bytes(b"# Synthetic active task status\n")
+
+    assert not (root / "ops" / accepted_task_id).exists()
+
+    code, stdout, stderr = invoke(root)
+
+    assert code == 0
+    assert stdout == active_task_id.encode("ascii") + b"\n"
+    assert stderr == b""
 
 
 def test_malformed_json_is_rejected(tmp_path: Path) -> None:
@@ -298,6 +328,14 @@ def test_resolver_does_not_write_files_or_environment(tmp_path: Path) -> None:
 
 
 def test_current_canonical_state_resolves_exact_active_task() -> None:
+    state_text = (ROOT / "REVIEW_STATE.yaml").read_bytes().decode("utf-8")
+    state = json.loads(state_text)
+    assert isinstance(state, dict)
+    active_task_id = state["active_task_id"]
+    assert isinstance(active_task_id, str)
+    assert re.fullmatch(r"^TASK-[0-9]{8}__[a-z0-9_]+$", active_task_id) is not None
+    assert (ROOT / "ops" / active_task_id / "TASK_STATUS.md").is_file()
+
     process = subprocess.run(
         [
             sys.executable,
@@ -315,7 +353,7 @@ def test_current_canonical_state_resolves_exact_active_task() -> None:
     )
 
     assert process.returncode == 0
-    assert process.stdout == f"{TASK_ID}\n".encode("ascii")
+    assert process.stdout == active_task_id.encode("ascii") + b"\n"
     assert process.stderr == b""
 
 

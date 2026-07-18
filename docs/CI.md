@@ -18,12 +18,46 @@ It is intentionally bounded:
 - the per-file upstream inventory is checked before and after tests;
 - complete tiny-surprise and benchmark artifacts are uploaded from each
   compiler job when any job step fails;
-- `git diff --check` and a clean post-test working tree detect accidental
-  source modifications.
+- one dedicated full-history job checks whitespace in the canonical committed
+  review range;
+- post-test `git diff --check` and clean-worktree checks detect only accidental
+  changes created in each matrix worktree.
 
 CI does not run `k=13`, `k=14`, the P13 C4/C8 search, a retained or substantive
 performance benchmark, or a certifying search. Passing CI establishes
 engineering confidence and bounded test agreement, not a theorem.
+
+## Committed range versus test-created worktree
+
+The `committed-range-whitespace` job checks out complete Git history with
+`fetch-depth: 0` and invokes:
+
+```text
+python tools/check_review_range_whitespace.py --state REVIEW_STATE.yaml --head HEAD
+```
+
+The helper derives the repository root from its own checked-in path, parses the
+state as strict UTF-8 JSON, and accepts only schema version `1.0` with a
+lowercase 40-character `review_base_commit`. The sentinel `ROOT` is explicitly
+unsupported. It resolves both endpoints to commits, requires the baseline to
+be an ancestor of the requested head, and then runs the equivalent of:
+
+```text
+git --no-pager diff --no-ext-diff --no-color --check <base>..<head> --
+```
+
+Missing objects, malformed state, invalid ancestry, Git errors, and committed
+whitespace errors are fatal. A successful deterministic JSON line reports the
+two full commit IDs and exact range. The helper uses no shell interpolation
+and does not write the worktree, index, configuration, refs, or objects.
+
+The identically named `Check test-created worktree whitespace` steps in the
+Python and C++ matrix jobs intentionally retain endpoint-free
+`git diff --check`. They run after tests and inspect only changes those tests
+may have created in that checkout. A clean checkout makes those worktree checks
+empty; it does not make them evidence about already committed changes. The
+dedicated full-history job and the post-test worktree checks therefore enforce
+separate boundaries and are not substitutes for one another.
 
 ## Tiny process-outcome contract
 

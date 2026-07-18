@@ -151,6 +151,23 @@ python tools/verify_upstream_snapshot.py
 python tools/verify_manifest.py tests/fixtures/manifest-valid-hash.json
 ```
 
+Fast CI additionally separates committed-range whitespace from post-test
+worktree hygiene. The canonical committed check is:
+
+```text
+python tools/check_review_range_whitespace.py --state REVIEW_STATE.yaml --head HEAD
+```
+
+It requires complete history containing the strict-JSON
+`review_base_commit`, resolves both endpoints to commits, proves ancestry, and
+executes `git diff --check` on the explicit `<base>..<head>` object range.
+Success records both full SHAs and the range deterministically. The later
+endpoint-free `git diff --check` steps are intentionally narrower: they check
+only changes created in each test worktree. Neither form changes Git state.
+When local task-start `HEAD` equals the accepted baseline, the canonical real
+range is empty; temporary Git repositories in the focused unit suite provide
+the substantive clean and failing committed-range cases.
+
 The complete local test suite passed 63 tests. The differential test enumerates
 exactly 1,100 labelled simple graphs of orders 0 through 5. This is
 `VERIFIED_BOUNDED_COMPUTATION`, not a proof outside that domain. The deliberately

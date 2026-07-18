@@ -28,37 +28,36 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### Current workflow-provenance correction
+### Current committed-range-whitespace correction
 
-`TASK-20260717__bind_heavy_workflow_task_identity` is the active candidate at
-`READY_FOR_REVIEW`. The process-outcome hardening task
-`TASK-20260717__harden_surprising_outcome_preservation` was accepted at
-`0d08a58d87e7aaa5749ed2d3428cc0906a6bade6` with verdict
+`TASK-20260717__enforce_committed_range_whitespace` is the active candidate.
+The workflow-provenance task
+`TASK-20260717__bind_heavy_workflow_task_identity` was accepted at
+`e33c3bf121d5bb81b4c63adf704ca9b4ecfea970` with verdict
 `ACCEPT WITH FOLLOW-UP`; that commit is the current accepted review baseline.
 The candidate SHA is intentionally resolved from Git by the reviewer.
 
-`RFU-CI-001` and `RFU-CI-002` are no longer pending after that acceptance.
-This candidate addresses only the provenance defect identified by
-`RFU-WORKFLOW-001`: the manual non-certifying scaffold must derive manifest
-task identity from versioned canonical review state and require the matching
-dossier. It does not enable a search or change mathematical semantics.
+`RFU-WORKFLOW-001` is no longer pending after that acceptance. This candidate
+addresses only `RFU-CI-003`: fast CI must validate whitespace in the canonical
+committed range `REVIEW_STATE.yaml:review_base_commit..HEAD`, independently of
+post-test worktree checks. It does not enable a search or change mathematical
+semantics.
 
-The four remaining follow-ups are `OPEN`:
+The three remaining follow-ups are `OPEN`:
 
-- `RFU-WORKFLOW-001`: the heavy-workflow task ID, pending review of this
+- `RFU-CI-003`: committed-range whitespace checking, pending review of this
   candidate;
-- `RFU-CI-003`: committed-range whitespace checking;
 - `RFU-SUPPLY-001`: immutable action references;
 - `RFU-ENV-001`: complete environment locking.
 
 `RS-001` remains `NOT STARTED`; no upstream reproduction or mathematical
-research result is part of this workflow-provenance candidate.
+research result is part of this CI-governance candidate.
 
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
-Status: NOT STARTED. Do not execute before the current workflow-provenance
+Status: NOT STARTED. Do not execute before the current CI-governance
 candidate is reviewed and accepted and applicable follow-ups are explicitly
 accounted for.
 

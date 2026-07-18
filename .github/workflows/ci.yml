@@ -13,6 +13,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  committed-range-whitespace:
+    name: Check committed review range whitespace
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out full review history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check committed review range whitespace
+        run: >-
+          python tools/check_review_range_whitespace.py
+          --state REVIEW_STATE.yaml
+          --head HEAD
+
   python-verifier:
     name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-24.04
@@ -52,7 +73,7 @@ jobs:
           tests/differential
           tests/integration/test_verifier_cli.py
 
-      - name: Check diff whitespace
+      - name: Check test-created worktree whitespace
         run: git diff --check
 
       - name: Ensure tests did not modify tracked files
@@ -181,7 +202,7 @@ jobs:
             exit 1
           fi
 
-      - name: Check diff whitespace
+      - name: Check test-created worktree whitespace
         if: ${{ always() }}
         run: git diff --check
 

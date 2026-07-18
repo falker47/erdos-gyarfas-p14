@@ -2,23 +2,14 @@
   "schema_version": "1.0",
   "repository": "falker47/erdos-gyarfas-p14",
   "branch": "main",
-  "review_base_commit": "0d08a58d87e7aaa5749ed2d3428cc0906a6bade6",
-  "last_reviewed_head": "0d08a58d87e7aaa5749ed2d3428cc0906a6bade6",
+  "review_base_commit": "e33c3bf121d5bb81b4c63adf704ca9b4ecfea970",
+  "last_reviewed_head": "e33c3bf121d5bb81b4c63adf704ca9b4ecfea970",
   "last_verdict": "ACCEPT WITH FOLLOW-UP",
-  "accepted_baseline_commit": "0d08a58d87e7aaa5749ed2d3428cc0906a6bade6",
-  "accepted_task_id": "TASK-20260717__harden_surprising_outcome_preservation",
-  "active_task_id": "TASK-20260717__bind_heavy_workflow_task_identity",
-  "updated_at_utc": "2026-07-17T17:04:29Z",
+  "accepted_baseline_commit": "e33c3bf121d5bb81b4c63adf704ca9b4ecfea970",
+  "accepted_task_id": "TASK-20260717__bind_heavy_workflow_task_identity",
+  "active_task_id": "TASK-20260717__enforce_committed_range_whitespace",
+  "updated_at_utc": "2026-07-17T18:06:03Z",
   "pending_follow_ups": [
-    {
-      "id": "RFU-WORKFLOW-001",
-      "severity": "MEDIUM",
-      "affected_paths": [
-        ".github/workflows/heavy-search.yml"
-      ],
-      "status": "OPEN",
-      "description": "Remove the bootstrap task ID hardcoded into manifests emitted by the manual heavy-workflow scaffold."
-    },
     {
       "id": "RFU-CI-003",
       "severity": "MEDIUM",
