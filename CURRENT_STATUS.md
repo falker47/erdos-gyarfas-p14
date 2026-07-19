@@ -4,28 +4,28 @@ Last updated: 2026-07-19 UTC
 
 ## Current state
 
-- Current phase: pinning GitHub Action supply-chain identities before
+- Current phase: aligning accepted GitHub Action pin documentation before
   research.
-- Active task: `TASK-20260719__pin_github_actions_immutable_shas`.
+- Active task: `TASK-20260719__align_action_pin_documentation`.
 - Task status: `READY_FOR_REVIEW`.
 - Repository: Git worktree for `falker47/erdos-gyarfas-p14`.
 - Working branch: `main`.
 - Accepted review baseline:
-  `dde4e6cbd06be8ebc8192097930f40b06cf2f9f6`.
-- Task-start HEAD: `dde4e6cbd06be8ebc8192097930f40b06cf2f9f6`.
+  `265c1474da9e2b91b6779281289eb23129edac33`.
+- Task-start HEAD: `265c1474da9e2b91b6779281289eb23129edac33`.
 - Last reviewed candidate HEAD:
-  `dde4e6cbd06be8ebc8192097930f40b06cf2f9f6`.
+  `265c1474da9e2b91b6779281289eb23129edac33`.
 - Last review verdict: `ACCEPT WITH FOLLOW-UP`.
-- Accepted task: `TASK-20260718__support_multi_worktree_whitespace_check`.
+- Accepted task: `TASK-20260719__pin_github_actions_immutable_shas`.
 - Next review: the cumulative range from the accepted baseline through the
-  current immutable-pin candidate; the candidate SHA is intentionally
-  resolved from Git by the reviewer.
+  current documentation-alignment candidate; the candidate SHA is
+  intentionally resolved from Git by the reviewer.
 
-The multi-worktree whitespace candidate at the current accepted baseline was
-accepted with follow-up, so `RFU-CI-004` is resolved. This task addresses only
-`RFU-SUPPLY-001`: mutable external Action tags are replaced by verified commit
-identities and a repository-local regression validator. It does not broaden
-the mathematical or search scope.
+The immutable Action pin candidate at the current baseline was accepted with
+follow-up. `RFU-SUPPLY-001` is therefore resolved. This task addresses only
+`RFU-DOC-001`: it aligns one stale descriptive sentence in `docs/CI.md` with
+the accepted upload-artifact commit pin. It changes no workflow behavior and
+does not broaden the mathematical or search scope.
 
 ## Accepted bootstrap scope
 
@@ -47,7 +47,7 @@ These are bounded engineering and predicate checks only. The accepted verdict
 does not convert them into an upstream reproduction, exhaustive computation,
 certificate, or mathematical proof.
 
-## Immutable Action pin candidate and open follow-ups
+## Accepted immutable Action pins and open follow-ups
 
 All eleven external Action occurrences in the two workflow files now use one
 of three verified identities, with no major upgrade:
@@ -72,24 +72,31 @@ empty stdout; success is one deterministic JSON line. Block-scalar content is
 distinguished from sibling mapping keys by actual or explicit YAML content
 indentation.
 
-Local terminal verification passes 44 focused tests, the 287-test bounded
-suite, and the 291-test complete suite with no failure, skip, or xfail. Strict
-JSON, canonical task resolution, the real pin validator, all schemas, upstream
-snapshot verification, and committed-range whitespace validation also pass.
-Independent read-only adversarial review found and then confirmed closure of
-encoded-key and block-scalar bypasses before the final suites.
+The accepted pin task passed 44 focused tests, the 287-test bounded suite, and
+the 291-test complete suite with no failure, skip, or xfail. Its strict JSON,
+canonical task resolution, real pin validator, schemas, upstream snapshot,
+and range-whitespace checks also passed. This task rechecks the accepted pin
+behavior without modifying workflows, validator code, or tests.
 
-The two pending follow-ups remain ordered and `OPEN`:
+Terminal verification for the documentation candidate passes strict JSON,
+canonical dossier resolution, the exact documentation assertion, the real
+pin validator, 44 focused tests, all 291 collected tests with the documented
+MSYS2 toolchain, six-schema validation, upstream snapshot verification, and
+worktree whitespace checks. Protected workflow, validator, test, upstream,
+project-knowledge, claim, and pruning bytes remain unchanged.
 
-- `RFU-SUPPLY-001`: immutable Action references, pending review of this
-  candidate;
-- `RFU-ENV-001`: complete environment and system-package locking, unchanged.
+Follow-up state is now:
 
-`RFU-SUPPLY-001` is not closed before review. Hosted GitHub Actions execution
-was not observed locally. A commit pin fixes the Action source identity but
-does not freeze the `ubuntu-24.04` hosted image, runner service, operating
-system packages, or installed package archives; those are the distinct
-`RFU-ENV-001` boundary.
+- `RFU-SUPPLY-001`: resolved by accepted commit
+  `265c1474da9e2b91b6779281289eb23129edac33` and no longer pending;
+- `RFU-DOC-001`: `OPEN` until review of this documentation correction;
+- `RFU-ENV-001`: `OPEN` and unchanged; complete environment and
+  system-package locking remains separate.
+
+Hosted GitHub Actions execution is not observed locally by this task. A commit
+pin fixes the Action source identity but does not freeze the `ubuntu-24.04`
+hosted image, runner service, operating system packages, or installed package
+archives; those remain the distinct `RFU-ENV-001` boundary.
 
 ## Current mathematical claim boundary
 

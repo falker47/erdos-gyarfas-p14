@@ -28,39 +28,31 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### Current immutable Action pinning candidate
+### Current Action-pin documentation alignment candidate
 
-`TASK-20260719__pin_github_actions_immutable_shas` is the active supply-chain
-candidate. `TASK-20260718__support_multi_worktree_whitespace_check` is
-accepted, and `dde4e6cbd06be8ebc8192097930f40b06cf2f9f6` is the accepted
-review baseline. The next review is cumulative from that baseline through the
-current candidate, whose SHA is intentionally resolved from Git by the
-reviewer.
+`TASK-20260719__align_action_pin_documentation` is the active documentation
+candidate. `TASK-20260719__pin_github_actions_immutable_shas` is accepted at
+baseline `265c1474da9e2b91b6779281289eb23129edac33`. The current priority is
+limited to aligning one stale `docs/CI.md` description with the accepted
+immutable upload-artifact pin; the candidate SHA is intentionally resolved
+from Git by the reviewer.
 
-`RFU-CI-004` is resolved. This candidate addresses `RFU-SUPPLY-001` by pinning
-the already-used checkout v4, setup-python v5, and upload-artifact v4 releases
-to verified full commit SHAs without a major upgrade. A deterministic
-repository-local validator scans every workflow and rejects mutable, dynamic,
-short, uppercase, Docker-tagged, or ambiguous external `uses:` forms. The
-control does not freeze hosted runner images or package installations and does
-not enable a search or change mathematical semantics.
+`RFU-SUPPLY-001` is resolved by the accepted baseline and is no longer
+pending. `RFU-DOC-001` remains `OPEN` until this correction is reviewed.
+`RFU-ENV-001` remains separately `OPEN` with unchanged scope; neither
+environment locking nor workflow changes are part of this task.
 
-The two remaining follow-ups are `OPEN`:
-
-- `RFU-SUPPLY-001`: immutable action references, pending review of this
-  candidate;
-- `RFU-ENV-001`: complete environment and system-package locking.
-
-`RS-001` remains `NOT STARTED`; no upstream reproduction or mathematical
-research result is part of this supply-chain correction.
+`RS-001` remains `NOT STARTED`. This documentation correction does not start
+an upstream reproduction or mathematical research task and does not change
+mathematical semantics.
 
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
-Status: NOT STARTED. Do not execute before the current supply-chain candidate
-is reviewed and accepted and applicable follow-ups are explicitly accounted
-for.
+Status: NOT STARTED. Do not execute as part of the current
+documentation-alignment task; starting `RS-001` requires a separate reviewed
+task.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.

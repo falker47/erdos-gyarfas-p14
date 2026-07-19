@@ -2,23 +2,22 @@
   "schema_version": "1.0",
   "repository": "falker47/erdos-gyarfas-p14",
   "branch": "main",
-  "review_base_commit": "dde4e6cbd06be8ebc8192097930f40b06cf2f9f6",
-  "last_reviewed_head": "dde4e6cbd06be8ebc8192097930f40b06cf2f9f6",
+  "review_base_commit": "265c1474da9e2b91b6779281289eb23129edac33",
+  "last_reviewed_head": "265c1474da9e2b91b6779281289eb23129edac33",
   "last_verdict": "ACCEPT WITH FOLLOW-UP",
-  "accepted_baseline_commit": "dde4e6cbd06be8ebc8192097930f40b06cf2f9f6",
-  "accepted_task_id": "TASK-20260718__support_multi_worktree_whitespace_check",
-  "active_task_id": "TASK-20260719__pin_github_actions_immutable_shas",
-  "updated_at_utc": "2026-07-19T01:20:55Z",
+  "accepted_baseline_commit": "265c1474da9e2b91b6779281289eb23129edac33",
+  "accepted_task_id": "TASK-20260719__pin_github_actions_immutable_shas",
+  "active_task_id": "TASK-20260719__align_action_pin_documentation",
+  "updated_at_utc": "2026-07-19T07:48:42Z",
   "pending_follow_ups": [
     {
-      "id": "RFU-SUPPLY-001",
-      "severity": "MEDIUM",
+      "id": "RFU-DOC-001",
+      "severity": "LOW",
       "affected_paths": [
-        ".github/workflows/ci.yml",
-        ".github/workflows/heavy-search.yml"
+        "docs/CI.md"
       ],
       "status": "OPEN",
-      "description": "Replace mutable major-tag GitHub Action references with reviewed immutable commit SHAs."
+      "description": "Correct the mutable descriptive reference to actions/upload-artifact@v4 so it matches the accepted immutable commit pin."
     },
     {
       "id": "RFU-ENV-001",

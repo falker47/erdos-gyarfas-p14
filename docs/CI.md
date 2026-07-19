@@ -205,10 +205,14 @@ and schema-validates it even after runner failure. The upstream inventory and
 final hygiene checks also use `always()`. Failure-only diagnostics print
 bounded, JSON-escaped prefixes with byte counts and SHA-256 hashes.
 
-The last two job steps use `actions/upload-artifact@v4` to upload the complete
-contents of `artifacts/counterexamples/` and `benchmarks/results/`. Artifact
-names include compiler, GitHub run ID, and run attempt, preventing GCC/Clang or
-rerun collisions. A missing directory payload after an unrelated failure is an
+The last two compiler-job steps use the official `actions/upload-artifact`
+release `v4.6.2`, pinned to commit
+`ea165f8d65b6e75b540449e92b4886f43607fa02`, to upload the complete contents
+of `artifacts/counterexamples/` and `benchmarks/results/`. The adjacent
+`# v4.6.2` release comment is explanatory and non-operative; GitHub selects
+the Action from the repository and commit before that comment. Artifact names
+include compiler, GitHub run ID, and run attempt, preventing GCC/Clang or rerun
+collisions. A missing directory payload after an unrelated failure is an
 explicit warning; hidden `.gitkeep` files do not count as produced evidence.
 There is no `continue-on-error` or status suppression, so post-failure checks
 and successful uploads cannot turn the original failed step green.
