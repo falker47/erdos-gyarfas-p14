@@ -222,21 +222,34 @@ def test_synthetic_all_predicates_passed_is_only_a_frozen_surprise(
     assert record["classification"] == "EMPIRICAL_OBSERVATION"
 
 
-def test_timeout_proves_freeze_precedes_inspector_and_child_is_reaped(
+def test_freeze_precedes_inspector_in_controlled_completion(
     tmp_path: Path,
 ) -> None:
     directory = tmp_path / "surprises"
     paths = _paths(directory)
-    verified_marker = tmp_path / "verified-before-sleep.txt"
-    heartbeat = tmp_path / "heartbeat.txt"
-    late_marker = tmp_path / "late-marker.txt"
+    verified_marker = tmp_path / "verified-before-completion.txt"
+    protocol = {
+        "status": "completed",
+        "result": {
+            "parse_succeeded": False,
+            "parse_error": {
+                "code": "synthetic_freeze_verified",
+                "message": "synthetic inspector verified the frozen inputs",
+            },
+            "canonical_graph_serialization": None,
+            "canonical_graph_sha256": None,
+            "checks": None,
+            "all_candidate_predicates_passed": None,
+        },
+        "error": None,
+        "inspector_process": None,
+        "limitations": ["Synthetic freeze-order test only."],
+    }
     script = """
-import hashlib, json, sys, time
+import hashlib, json, sys
 from pathlib import Path
 record_path = Path(sys.argv[1])
 verified = Path(sys.argv[2])
-heartbeat = Path(sys.argv[3])
-late = Path(sys.argv[4])
 record = json.loads(record_path.read_text(encoding='utf-8'))
 assert record['inspection_initial_status'] == 'not_started'
 assert not (record_path.parent / record['inspection_artifact_path']).exists()
@@ -246,10 +259,7 @@ for stream_name in ('stdout', 'stderr'):
     assert len(data) == metadata['byte_length']
     assert hashlib.sha256(data).hexdigest() == metadata['sha256']
 verified.write_text('raw-and-hashes-existed', encoding='utf-8')
-for index in range(200):
-    heartbeat.write_text(str(index), encoding='utf-8')
-    time.sleep(0.02)
-late.write_text('child-survived-timeout', encoding='utf-8')
+sys.stdout.write(sys.argv[3])
 """
     command = [
         sys.executable,
@@ -257,39 +267,245 @@ late.write_text('child-survived-timeout', encoding='utf-8')
         script,
         str(paths["outcome"]),
         str(verified_marker),
-        str(heartbeat),
-        str(late_marker),
+        json.dumps(protocol, sort_keys=True),
     ]
-    started = time.perf_counter()
+    original = _outcome(stderr=b"original stderr\xff")
+    failure = ordinary_completion_failure(
+        outcome=original,
+        k=4,
+        identity=_identity(),
+        artifact_directory=directory,
+        upstream_timeout_seconds=10,
+        inspection_timeout_seconds=10,
+        inspector_command=command,
+    )
+
+    assert failure is not None
+    assert verified_marker.read_text(encoding="utf-8") == "raw-and-hashes-existed"
+    assert paths["stdout"].read_bytes() == original.stdout
+    assert paths["stderr"].read_bytes() == original.stderr
+    outcome_record = _validate(paths["outcome"])
+    inspection_record = _validate(paths["inspection"])
+    assert outcome_record["inspection_initial_status"] == "not_started"
+    assert inspection_record["status"] == "completed"
+    assert inspection_record["error"] is None
+    assert inspection_record["result"]["parse_error"]["code"] == (
+        "synthetic_freeze_verified"
+    )
+    assert inspection_record["source_streams_preserved"] is True
+    assert inspection_record["source_outcome_preserved"] is True
+    assert inspection_record["source_outcome_sha256"] == hashlib.sha256(
+        paths["outcome"].read_bytes()
+    ).hexdigest()
+    for name in ("stdout", "stderr"):
+        assert outcome_record[name]["sha256"] == hashlib.sha256(
+            paths[name].read_bytes()
+        ).hexdigest()
+
+
+def test_timeout_kills_drains_and_reaps_direct_child_deterministically(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    directory = tmp_path / "surprises"
+    paths = _paths(directory)
+    events: list[tuple[str, object]] = []
+    original = _outcome(stderr=b"original stderr\xff")
+    frozen = freeze_surprising_process_outcome(
+        artifact_directory=directory,
+        k=4,
+        outcome=original,
+        identity=_identity(),
+        upstream_timeout_seconds=10,
+        inspection_timeout_seconds=0.75,
+    )
+    source_bytes_before_timeout = {
+        name: paths[name].read_bytes() for name in ("outcome", "stdout", "stderr")
+    }
+    source_hashes_before_timeout = {
+        name: hashlib.sha256(value).hexdigest()
+        for name, value in source_bytes_before_timeout.items()
+    }
+
+    class TimedOutProcess:
+        def __init__(self) -> None:
+            self._returncode: int | None = None
+            self.killed = False
+            self.drained = False
+            self.reaped = False
+            self.waited = False
+
+        @property
+        def returncode(self) -> int | None:
+            assert self.reaped is True
+            events.append(("returncode", self._returncode))
+            return self._returncode
+
+        def __enter__(self) -> TimedOutProcess:
+            events.append(("enter", None))
+            return self
+
+        def __exit__(self, exc_type, exc, traceback) -> bool:
+            assert exc_type is None
+            assert self.reaped is True
+            assert self._returncode == 137
+            events.append(("exit", self._returncode))
+            self.wait()
+            return False
+
+        def communicate(
+            self,
+            input: bytes | None = None,
+            timeout: float | None = None,
+        ) -> tuple[bytes, bytes]:
+            assert input is None
+            events.append(("communicate", timeout))
+            if timeout is not None:
+                assert self.killed is False
+                raise subprocess.TimeoutExpired(
+                    "synthetic-inspector",
+                    timeout,
+                    output=b"partial stdout",
+                    stderr=b"partial stderr",
+                )
+            assert self.killed is True
+            self.drained = True
+            self.reaped = True
+            self._returncode = 137
+            return b"drained stdout", b"drained stderr"
+
+        def kill(self) -> None:
+            assert self.killed is False
+            assert self.reaped is False
+            self.killed = True
+            events.append(("kill", None))
+
+        def wait(self, timeout: float | None = None) -> int:
+            assert self.reaped is True
+            assert self._returncode is not None
+            self.waited = True
+            events.append(("wait", timeout))
+            return self._returncode
+
+        def attempt_late_effect(self, marker: Path) -> None:
+            if not self.reaped:
+                marker.write_text("unreaped child effect", encoding="utf-8")
+
+    process = TimedOutProcess()
+
+    def fake_popen(command: list[str], **kwargs: object) -> TimedOutProcess:
+        assert command == ["synthetic-inspector"]
+        assert kwargs["cwd"] == inspection.REPOSITORY_ROOT
+        assert kwargs["stdin"] is subprocess.DEVNULL
+        assert kwargs["stdout"] is subprocess.PIPE
+        assert kwargs["stderr"] is subprocess.PIPE
+        assert isinstance(kwargs["env"], dict)
+        assert not paths["inspection"].exists()
+        events.append(("popen", tuple(command)))
+        return process
+
+    monkeypatch.setattr(inspection.subprocess, "Popen", fake_popen)
+    inspection_record = inspection.run_bounded_candidate_inspection(
+        frozen,
+        timeout_seconds=0.75,
+        inspector_command=["synthetic-inspector"],
+    )
+
+    assert events == [
+        ("popen", ("synthetic-inspector",)),
+        ("enter", None),
+        ("communicate", 0.75),
+        ("kill", None),
+        ("communicate", None),
+        ("returncode", 137),
+        ("exit", 137),
+        ("wait", None),
+    ]
+    assert process.killed is True
+    assert process.drained is True
+    assert process.reaped is True
+    assert process.waited is True
+    assert process._returncode == 137
+    assert paths["stdout"].read_bytes() == original.stdout
+    assert paths["stderr"].read_bytes() == original.stderr
+    assert {
+        name: paths[name].read_bytes() for name in ("outcome", "stdout", "stderr")
+    } == source_bytes_before_timeout
+    assert {
+        name: hashlib.sha256(paths[name].read_bytes()).hexdigest()
+        for name in ("outcome", "stdout", "stderr")
+    } == source_hashes_before_timeout
+    assert _validate(paths["inspection"]) == inspection_record
+    assert inspection_record["status"] == "timeout"
+    assert inspection_record["error"]["code"] == "inspection_timeout"
+    assert inspection_record["result"] is None
+    assert inspection_record["source_streams_preserved"] is True
+    assert inspection_record["source_outcome_preserved"] is True
+    assert inspection_record["source_outcome_sha256"] == hashlib.sha256(
+        source_bytes_before_timeout["outcome"]
+    ).hexdigest()
+    for name in ("stdout", "stderr"):
+        assert inspection_record["source_streams"][name]["sha256"] == (
+            source_hashes_before_timeout[name]
+        )
+    inspector_process = inspection_record["inspector_process"]
+    assert inspector_process["exit_code"] == 137
+    assert base64.b64decode(inspector_process["stdout"]["base64"]) == (
+        b"drained stdout"
+    )
+    assert base64.b64decode(inspector_process["stderr"]["base64"]) == (
+        b"drained stderr"
+    )
+    assert inspection_record["classification"] == "EMPIRICAL_OBSERVATION"
+    assert any(
+        "No counterexample, reproduction, certification, or mathematical result"
+        in limitation
+        for limitation in inspection_record["limitations"]
+    )
+    late_marker = tmp_path / "fake-late-effect.txt"
+    process.attempt_late_effect(late_marker)
+    assert not late_marker.exists()
+
+
+def test_real_timeout_smoke_has_no_late_side_effect(tmp_path: Path) -> None:
+    directory = tmp_path / "surprises"
+    paths = _paths(directory)
+    heartbeat = tmp_path / "heartbeat.txt"
+    late_marker = tmp_path / "late-marker.txt"
+    script = """
+import sys, time
+from pathlib import Path
+heartbeat = Path(sys.argv[1])
+late = Path(sys.argv[2])
+for index in range(200):
+    heartbeat.write_text(str(index), encoding='utf-8')
+    time.sleep(0.02)
+late.write_text('child-survived-timeout', encoding='utf-8')
+"""
+    command = [sys.executable, "-c", script, str(heartbeat), str(late_marker)]
     failure = ordinary_completion_failure(
         outcome=_outcome(stderr=b"original stderr\xff"),
         k=4,
         identity=_identity(),
         artifact_directory=directory,
         upstream_timeout_seconds=10,
-        inspection_timeout_seconds=0.75,
+        inspection_timeout_seconds=0.1,
         inspector_command=command,
     )
-    elapsed = time.perf_counter() - started
 
     assert failure is not None
-    assert elapsed < 2
-    assert verified_marker.read_text(encoding="utf-8") == "raw-and-hashes-existed"
     assert not late_marker.exists()
-    heartbeat_after_timeout = heartbeat.read_bytes()
+    heartbeat_after_return = heartbeat.read_bytes() if heartbeat.exists() else None
     time.sleep(0.15)
-    assert heartbeat.read_bytes() == heartbeat_after_timeout
-    outcome_hash = hashlib.sha256(paths["outcome"].read_bytes()).hexdigest()
-    stdout_hash = hashlib.sha256(paths["stdout"].read_bytes()).hexdigest()
-    stderr_hash = hashlib.sha256(paths["stderr"].read_bytes()).hexdigest()
+    assert (heartbeat.read_bytes() if heartbeat.exists() else None) == (
+        heartbeat_after_return
+    )
+    assert not late_marker.exists()
     inspection_record = _validate(paths["inspection"])
     assert inspection_record["status"] == "timeout"
     assert inspection_record["error"]["code"] == "inspection_timeout"
     assert inspection_record["source_streams_preserved"] is True
     assert inspection_record["source_outcome_preserved"] is True
-    assert hashlib.sha256(paths["outcome"].read_bytes()).hexdigest() == outcome_hash
-    assert hashlib.sha256(paths["stdout"].read_bytes()).hexdigest() == stdout_hash
-    assert hashlib.sha256(paths["stderr"].read_bytes()).hexdigest() == stderr_hash
 
 
 def test_inspector_error_is_machine_readable_and_raw_streams_survive(

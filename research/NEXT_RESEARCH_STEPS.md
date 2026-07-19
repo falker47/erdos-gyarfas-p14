@@ -28,37 +28,47 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### Current environment trust-boundary candidate
+### RFU-TEST-001 - Stabilize inspector timeout coverage
 
-`TASK-20260719__align_action_pin_documentation` is accepted with
-`ACCEPT WITH FOLLOW-UP` at exact baseline
-`41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d`. `RFU-DOC-001` is resolved by
-that accepted commit and is no longer pending.
+Status: `OPEN` pending review.
 
-`TASK-20260719__define_environment_trust_boundary` is the current acquisition
-and specification task. Its bounded objective is to make
-`research/ENVIRONMENT_LOCK_INVENTORY.json` and
-`research/ENVIRONMENT_TRUST_BOUNDARY.md` canonical for the current CI, Docker,
-Python, native-toolchain, local verification, capture-only, and external
-service boundaries. The candidate SHA is intentionally resolved from Git by
-the reviewer.
+`TASK-20260719__define_environment_trust_boundary` is accepted with
+`ACCEPT WITH FOLLOW-UP` at exact commit
+`a7066e70b92d80be2d1772127f329c24222c1b41`; the review occurred at
+`2026-07-19T10:24:26Z`.
 
-No implementation-level environment lock is accepted. `RFU-ENV-001` remains
-`OPEN`; inventorying a mutable, capture-only, or externally trusted component
-does not resolve it. This task changes no workflow, Docker, dependency, build,
-search, claim, or pruning behavior.
+`TASK-20260719__stabilize_inspector_timeout_test` is the current bounded
+test-only task. The previous combined test required Python startup, JSON
+decoding, two stream reads, two SHA-256 calculations, and marker creation
+within 0.75 seconds before it could prove freeze ordering. The candidate
+separates that controlled non-timeout proof from deterministic mocked
+timeout/kill/drain/reap coverage. The candidate SHA is intentionally resolved
+from Git by the reviewer.
 
-`RS-001` remains `NOT STARTED`. This environment specification does not start
-an upstream reproduction or mathematical research task and has no
-mathematical implication.
+This task changes no production inspector, workflow, environment boundary,
+dependency, build, verifier, generator, search, claim, or pruning behavior.
+Its repeated test results are bounded engineering evidence only and do not
+resolve `RFU-TEST-001` before review.
+
+### Subsequent RFU-ENV-001 work
+
+`RFU-ENV-001` remains `OPEN` and unchanged. A later atomic task may implement
+or attest the locking, capture, and external-service controls catalogued in
+`research/ENVIRONMENT_LOCK_INVENTORY.json` and interpreted by
+`research/ENVIRONMENT_TRUST_BOUNDARY.md`. The current timeout-test task does
+not begin that work.
+
+`RS-001` remains `NOT STARTED`. Neither test stabilization nor environment
+specification starts an upstream reproduction or mathematical research task,
+and neither has a mathematical implication.
 
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
-Status: NOT STARTED. Do not execute as part of the current
-environment-trust-boundary task; starting `RS-001` requires a separate
-reviewed task after its environment prerequisites are explicitly addressed.
+Status: NOT STARTED. Do not execute as part of the current inspector
+timeout-test task; starting `RS-001` requires a separate reviewed task after
+its environment prerequisites are explicitly addressed.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.
