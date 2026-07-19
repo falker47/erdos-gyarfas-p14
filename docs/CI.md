@@ -61,15 +61,34 @@ parent environment and Git configuration are not modified.
 
 Git has no switch that skips only repository-local config. The checker safely
 overrides the local `core.whitespace` and `core.attributesFile` values it
-needs, but fails closed if the effective local or per-worktree config
-(including their includes) contains any `diff.*` key. Such keys can otherwise
-combine with a checked-in diff driver to mark a text file binary and suppress
-whitespace diagnostics. This condition has empty stdout and the deterministic
-error:
+needs, then queries the remaining effective stack once with:
+
+```text
+git config --includes --name-only --get-regexp '^[dD][iI][fF][fF]\.'
+```
+
+The query has no explicit scope option. After system, global, and inherited
+process configuration have been neutralized, Git always loads the shared
+repository-local config and automatically loads the current worktree's
+`config.worktree` only when `extensions.worktreeConfig` is enabled. Direct,
+conditional, and nested includes remain part of those effective sources.
+Only exit `1` with empty stdout and stderr means that no key matched; a parse,
+include, or query error is fatal. Any remaining `diff.*` key fails closed.
+Such keys can otherwise combine with a checked-in diff driver to mark a text
+file binary and suppress whitespace diagnostics. This condition has empty
+stdout and the deterministic error:
 
 ```text
 check_review_range_whitespace: error: repository-local diff configuration is not permitted
 ```
+
+The checker deliberately does not invoke `git config --worktree`
+unconditionally. The installed Git 2.45.1 documentation describes that option
+as equivalent to `--local` when the extension is disabled, but the installed
+binary rejects it with exit `128` once a repository has multiple worktrees and
+the extension is absent or false. Reading the effective stack avoids that
+layout-dependent failure while still observing a real per-worktree scope when
+Git enables it.
 
 Global attributes selected by `core.attributesFile` are redirected to the
 platform null device, and system attributes are disabled in the child. The
@@ -95,6 +114,16 @@ whitespace errors, and either fail-closed condition are fatal. A successful
 deterministic JSON line reports the two full commit IDs and exact range. The
 helper uses no shell interpolation and does not write the worktree, index,
 configuration, refs, objects, or repository attributes.
+
+Focused tests use real temporary repositories rather than mocked Git
+subprocesses. They cover a single clean worktree with the extension absent;
+multiple worktrees with the extension absent or false, clean and bad ranges,
+and invocation from both the main and a linked worktree; enabled worktree
+configuration with and without direct or included `diff.*`; direct and
+included local `diff.*`; and hostile `diff.*` injected through neutralized
+system, global, and process sources. Each new multi-worktree case repeats the
+checker byte-for-byte and compares both worktrees, indexes, refs, objects,
+configuration, environment, and attributes before and after invocation.
 
 The identically named `Check test-created worktree whitespace` steps in the
 Python and C++ matrix jobs intentionally retain endpoint-free

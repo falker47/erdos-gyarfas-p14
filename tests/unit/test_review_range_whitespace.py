@@ -31,12 +31,21 @@ def clean_git_environment() -> dict[str, str]:
     exact = {
         "GIT_ATTR_NOSYSTEM",
         "GIT_ATTR_SOURCE",
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_CEILING_DIRECTORIES",
+        "GIT_COMMON_DIR",
         "GIT_CONFIG",
         "GIT_CONFIG_COUNT",
         "GIT_CONFIG_GLOBAL",
         "GIT_CONFIG_NOSYSTEM",
         "GIT_CONFIG_PARAMETERS",
         "GIT_CONFIG_SYSTEM",
+        "GIT_DIR",
+        "GIT_INDEX_FILE",
+        "GIT_NAMESPACE",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_REPLACE_REF_BASE",
+        "GIT_WORK_TREE",
     }
     for name in tuple(environment):
         normalized = name.upper()
@@ -135,6 +144,41 @@ def make_repository(tmp_path: Path) -> tuple[Path, str]:
     return root, base
 
 
+def make_multi_worktree_repository(
+    tmp_path: Path,
+    content: bytes,
+    *,
+    worktree_config: str | None,
+) -> tuple[Path, Path, str, str]:
+    root, base = make_repository(tmp_path)
+    head = commit_file(root, content, "multi-worktree range")
+    if worktree_config is not None:
+        run_git(
+            root,
+            [
+                "config",
+                "--local",
+                "extensions.worktreeConfig",
+                worktree_config,
+            ],
+        )
+    linked = tmp_path / "linked-worktree"
+    run_git(
+        root,
+        [
+            "worktree",
+            "add",
+            "--quiet",
+            "-b",
+            "linked-check",
+            os.fspath(linked),
+            "HEAD",
+        ],
+    )
+    write_state(linked, base)
+    return root, linked, base, head
+
+
 def write_state(root: Path, base: str, **extra: Any) -> Path:
     value = {
         "review_base_commit": base,
@@ -187,12 +231,37 @@ def success_record(base: str, head: str) -> bytes:
     ).encode("ascii")
 
 
+def invoke_twice_without_mutation(
+    root: Path,
+    temporary_root: Path,
+) -> tuple[int, bytes, bytes]:
+    before_environment = os.environ.copy()
+    before_repository = repository_observation(root, temporary_root)
+
+    first = invoke(root)
+    second = invoke(root)
+
+    assert first == second
+    assert repository_observation(root, temporary_root) == before_repository
+    assert os.environ == before_environment
+    return first
+
+
 def test_clean_committed_range_succeeds(tmp_path: Path) -> None:
     root, base = make_repository(tmp_path)
     head = commit_file(root, b"clean content\n", "clean range")
+    configured = raw_git(
+        root,
+        ["config", "--local", "--get", "extensions.worktreeConfig"],
+    )
 
     code, stdout, stderr = invoke(root)
 
+    assert (configured.returncode, configured.stdout, configured.stderr) == (
+        1,
+        b"",
+        b"",
+    )
     assert (code, stdout, stderr) == (0, success_record(base, head), b"")
 
 
@@ -257,6 +326,198 @@ def test_baseline_equal_to_head_succeeds_for_empty_range(tmp_path: Path) -> None
     assert (code, stdout, stderr) == (0, success_record(base, base), b"")
 
 
+@pytest.mark.parametrize(
+    ("content", "has_error"),
+    [
+        (b"clean multi-worktree range\n", False),
+        (b"bad multi-worktree range  \n", True),
+    ],
+    ids=["clean_range", "bad_range"],
+)
+@pytest.mark.parametrize(
+    "worktree_config",
+    [None, "false"],
+    ids=["extension_absent", "extension_false"],
+)
+@pytest.mark.parametrize("invocation", ["main", "linked"])
+def test_disabled_worktree_config_with_multiple_worktrees(
+    tmp_path: Path,
+    content: bytes,
+    has_error: bool,
+    worktree_config: str | None,
+    invocation: str,
+) -> None:
+    root, linked, base, head = make_multi_worktree_repository(
+        tmp_path,
+        content,
+        worktree_config=worktree_config,
+    )
+    configured = raw_git(
+        root,
+        ["config", "--local", "--get", "extensions.worktreeConfig"],
+    )
+    if worktree_config is None:
+        assert (configured.returncode, configured.stdout, configured.stderr) == (
+            1,
+            b"",
+            b"",
+        )
+    else:
+        assert configured.returncode == 0
+        assert configured.stdout == b"false\n"
+        assert configured.stderr == b""
+    assert (
+        run_git(root, ["worktree", "list", "--porcelain"]).stdout.count(
+            b"worktree "
+        )
+        == 2
+    )
+
+    selected = root if invocation == "main" else linked
+    result = invoke_twice_without_mutation(selected, tmp_path)
+
+    if has_error:
+        assert result[0] != 0
+        assert b"trailing whitespace" in result[1]
+        assert result[2] == b""
+    else:
+        assert result == (0, success_record(base, head), b"")
+
+
+@pytest.mark.parametrize("invocation", ["main", "linked"])
+def test_enabled_worktree_config_without_diff_config_succeeds(
+    tmp_path: Path,
+    invocation: str,
+) -> None:
+    root, linked, base, head = make_multi_worktree_repository(
+        tmp_path,
+        b"clean enabled worktree range\n",
+        worktree_config="true",
+    )
+    selected = root if invocation == "main" else linked
+
+    result = invoke_twice_without_mutation(selected, tmp_path)
+
+    assert result == (0, success_record(base, head), b"")
+
+
+@pytest.mark.parametrize("invocation", ["main", "linked"])
+@pytest.mark.parametrize("source", ["direct", "include"])
+def test_multiple_worktrees_reject_local_diff_config(
+    tmp_path: Path,
+    invocation: str,
+    source: str,
+) -> None:
+    root, linked, _, _ = make_multi_worktree_repository(
+        tmp_path,
+        b"clean local-config range\n",
+        worktree_config="false",
+    )
+    if source == "direct":
+        run_git(root, ["config", "--local", "diff.hostile.binary", "true"])
+    else:
+        included = tmp_path / "local-include.config"
+        included.write_text(
+            '[diff "hostile"]\n\tbinary = true\n',
+            encoding="utf-8",
+            newline="\n",
+        )
+        run_git(
+            root,
+            ["config", "--local", "include.path", os.fspath(included)],
+        )
+    selected = root if invocation == "main" else linked
+
+    result = invoke_twice_without_mutation(selected, tmp_path)
+
+    assert result == (1, b"", LOCAL_DIFF_CONFIG_ERROR)
+
+
+@pytest.mark.parametrize("invocation", ["main", "linked"])
+@pytest.mark.parametrize("source", ["direct", "include"])
+def test_multiple_worktrees_reject_effective_worktree_diff_config(
+    tmp_path: Path,
+    invocation: str,
+    source: str,
+) -> None:
+    root, linked, _, _ = make_multi_worktree_repository(
+        tmp_path,
+        b"clean worktree-config range\n",
+        worktree_config="true",
+    )
+    selected = root if invocation == "main" else linked
+    if source == "direct":
+        run_git(
+            selected,
+            ["config", "--worktree", "diff.hostile.binary", "true"],
+        )
+    else:
+        included = tmp_path / f"{invocation}-worktree-include.config"
+        included.write_text(
+            '[diff "hostile"]\n\tbinary = true\n',
+            encoding="utf-8",
+            newline="\n",
+        )
+        run_git(
+            selected,
+            ["config", "--worktree", "include.path", os.fspath(included)],
+        )
+
+    result = invoke_twice_without_mutation(selected, tmp_path)
+
+    assert result == (1, b"", LOCAL_DIFF_CONFIG_ERROR)
+
+
+@pytest.mark.parametrize("source", ["global", "system", "process"])
+def test_diff_config_from_neutralized_nonrepository_scopes_is_not_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    source: str,
+) -> None:
+    root, base = make_repository(tmp_path)
+    head = commit_file(root, b"clean nonrepository-config range\n", "clean")
+    if source in {"global", "system"}:
+        config = tmp_path / f"{source}.config"
+        config.write_text(
+            '[diff "hostile"]\n\tbinary = true\n',
+            encoding="utf-8",
+            newline="\n",
+        )
+        variable = f"GIT_CONFIG_{source.upper()}"
+        monkeypatch.setenv(variable, os.fspath(config))
+        overrides = {variable: os.fspath(config)}
+        if source == "system":
+            monkeypatch.setenv("GIT_CONFIG_NOSYSTEM", "0")
+            overrides["GIT_CONFIG_NOSYSTEM"] = "0"
+    else:
+        overrides = {
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "diff.hostile.binary",
+            "GIT_CONFIG_VALUE_0": "true",
+        }
+        for name, value in overrides.items():
+            monkeypatch.setenv(name, value)
+
+    unisolated = raw_git(
+        root,
+        [
+            "config",
+            "--includes",
+            "--name-only",
+            "--get-regexp",
+            "^[dD][iI][fF][fF]\\.",
+        ],
+        environment_overrides=overrides,
+    )
+    assert unisolated.returncode == 0
+    assert unisolated.stdout == b"diff.hostile.binary\n"
+    assert unisolated.stderr == b""
+
+    result = invoke_twice_without_mutation(root, tmp_path)
+
+    assert result == (0, success_record(base, head), b"")
+
+
 HOSTILE_WHITESPACE_CONFIG = "-trailing-space,-space-before-tab"
 
 
@@ -310,19 +571,37 @@ def install_hostile_source(
 
 
 def repository_observation(root: Path, temporary_root: Path) -> dict[str, Any]:
-    status = run_git(
-        root,
-        ["status", "--porcelain=v1", "--untracked-files=all"],
-    ).stdout
+    common_dir = Path(
+        run_git(
+            root,
+            ["rev-parse", "--path-format=absolute", "--git-common-dir"],
+        )
+        .stdout.decode("utf-8")
+        .strip()
+    )
     refs = run_git(
         root,
         ["for-each-ref", "--format=%(refname) %(objectname)"],
     ).stdout
+    worktrees = run_git(root, ["worktree", "list", "--porcelain"]).stdout
+    worktree_paths = [
+        Path(line.removeprefix(b"worktree ").decode("utf-8"))
+        for line in worktrees.splitlines()
+        if line.startswith(b"worktree ")
+    ]
+    statuses = {
+        path.as_posix(): run_git(
+            path,
+            ["status", "--porcelain=v1", "--untracked-files=all"],
+        ).stdout
+        for path in worktree_paths
+    }
     return {
         "files": byte_inventory(temporary_root),
-        "objects": byte_inventory(root / ".git" / "objects"),
+        "objects": byte_inventory(common_dir / "objects"),
         "refs": refs,
-        "status": status,
+        "statuses": statuses,
+        "worktrees": worktrees,
     }
 
 

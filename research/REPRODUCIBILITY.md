@@ -170,11 +170,24 @@ is the explicit attribute source, so checked-in `.gitattributes` remains
 effective and an uncommitted worktree copy cannot change the verdict.
 
 Repository-local `core.whitespace` and `core.attributesFile` are explicitly
-overridden. Any effective local or per-worktree `diff.*` key, including one
-loaded through an include, fails closed before and after the diff because Git
-cannot disable those config scopes as sources and a diff-driver `binary`
-setting can otherwise suppress whitespace diagnostics. Both bad and clean
-ranges are rejected under that unreviewed diff configuration.
+overridden. The checker then runs one unscoped
+`git config --includes --name-only --get-regexp` query for `diff.*` over the
+effective configuration stack. System, global, and inherited process sources
+have already been neutralized. Git therefore reads the shared local config and
+loads the current worktree's `config.worktree` automatically only when
+`extensions.worktreeConfig` is enabled; `include.path` remains effective.
+Only a no-match exit with empty stdout and stderr is accepted. Any matched
+`diff.*` or config parsing/query failure is fatal before and after the diff,
+because a diff-driver `binary` setting can otherwise suppress whitespace
+diagnostics. Both bad and clean ranges are rejected under such unreviewed
+effective diff configuration.
+
+The checker does not probe `--worktree` as a separate scope. Although the
+installed Git 2.45.1 `git-config` documentation describes that option as
+equivalent to `--local` when the extension is disabled, the installed binary
+returns exit `128` in a real multi-worktree repository when the extension is
+absent or false. The unscoped effective-stack query accepts that legitimate
+layout and still includes per-worktree config whenever Git activates it.
 
 Git exposes no supported read-only switch that ignores only its highest
 precedence non-versioned source, `$GIT_DIR/info/attributes`, while retaining
@@ -189,13 +202,18 @@ Success records both full SHAs and the range deterministically. The later
 endpoint-free `git diff --check` steps are intentionally narrower: they check
 only changes created in each test worktree. Neither form changes Git state.
 Temporary real Git repositories in the focused unit suite provide substantive
-clean, failing, hostile-configuration, hostile-attribute, deterministic, and
-read-only cases without invoking a search or retaining artifacts.
+single- and multi-worktree clean/failing cases, main- and linked-worktree
+invocations, direct and included local/per-worktree hostile configuration,
+neutralized system/global/process configuration, hostile attributes,
+deterministic repetition, and read-only preservation checks. They do not
+invoke a search or retain research artifacts.
 
-The complete local test suite passed 63 tests. The differential test enumerates
-exactly 1,100 labelled simple graphs of orders 0 through 5. This is
-`VERIFIED_BOUNDED_COMPUTATION`, not a proof outside that domain. The deliberately
-invalid manifest-hash fixture is also required to fail verification.
+The focused whitespace suite passed 84 tests, and the complete local suite
+passed 247 tests. Neither reported a failure, skip, or xfail. The differential
+test enumerates exactly 1,100 labelled simple graphs of orders 0 through 5.
+This is `VERIFIED_BOUNDED_COMPUTATION`, not a proof outside that domain. The
+deliberately invalid manifest-hash fixture is also required to fail
+verification.
 
 With `verifier/` on `PYTHONPATH`, the exercised CLI forms are:
 

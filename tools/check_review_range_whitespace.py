@@ -276,27 +276,25 @@ def _validate_repository_local_attributes(root: Path) -> None:
 
 
 def _validate_repository_local_diff_config(root: Path) -> None:
-    """Fail closed on local diff settings Git cannot bypass as one source."""
+    """Fail closed on effective local/worktree diff configuration."""
 
-    for scope in ("--local", "--worktree"):
-        result = _run_git(
-            root,
-            [
-                "config",
-                scope,
-                "--includes",
-                "--name-only",
-                "--get-regexp",
-                "^[dD][iI][fF][fF]\\.",
-            ],
-        )
-        if result.returncode == 1 and not result.stdout:
-            continue
-        if result.returncode != 0:
-            raise CheckError(
-                "Git failed while validating repository-local diff configuration"
-            )
+    result = _run_git(
+        root,
+        [
+            "config",
+            "--includes",
+            "--name-only",
+            "--get-regexp",
+            "^[dD][iI][fF][fF]\\.",
+        ],
+    )
+    if result.returncode == 0 and result.stdout:
         raise CheckError("repository-local diff configuration is not permitted")
+    if result.returncode == 1 and not result.stdout and not result.stderr:
+        return
+    raise CheckError(
+        "Git failed while validating repository-local diff configuration"
+    )
 
 
 def _write_bytes(stream: Any, payload: bytes) -> None:

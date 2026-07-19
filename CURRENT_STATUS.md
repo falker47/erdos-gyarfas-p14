@@ -4,30 +4,31 @@ Last updated: 2026-07-18 UTC
 
 ## Current state
 
-- Current phase: isolating committed-range whitespace semantics before
-  research.
-- Active task: `TASK-20260718__isolate_whitespace_git_semantics`.
+- Current phase: supporting multi-worktree committed-range whitespace
+  validation before research.
+- Active task: `TASK-20260718__support_multi_worktree_whitespace_check`.
 - Task status: `READY_FOR_REVIEW`.
 - Repository: Git worktree for `falker47/erdos-gyarfas-p14`.
 - Working branch: `main`.
 - Accepted review baseline:
-  `e33c3bf121d5bb81b4c63adf704ca9b4ecfea970`.
-- Task-start HEAD: `ac9c4c4d18e8b0d01038215e25ba37cdbf1449e4`.
+  `0dd6e5dc1362e866dd806e205750d82695d3c555`.
+- Task-start HEAD: `0dd6e5dc1362e866dd806e205750d82695d3c555`.
 - Last reviewed candidate HEAD:
-  `ac9c4c4d18e8b0d01038215e25ba37cdbf1449e4`.
-- Last review verdict: `REJECT`.
-- Accepted task: `TASK-20260717__bind_heavy_workflow_task_identity`.
-- Next review: the cumulative range from the accepted baseline through this
-  corrective candidate; the candidate SHA is intentionally resolved from Git
-  by the reviewer.
+  `0dd6e5dc1362e866dd806e205750d82695d3c555`.
+- Last review verdict: `ACCEPT WITH FOLLOW-UP`.
+- Accepted task: `TASK-20260718__isolate_whitespace_git_semantics`.
+- Next review: the cumulative range from the accepted baseline through the
+  current multi-worktree corrective candidate; the candidate SHA is
+  intentionally resolved from Git by the reviewer.
 
-The candidate at `ac9c4c4d18e8b0d01038215e25ba37cdbf1449e4` was rejected
-because mutable repository, system, global, and process Git configuration and
-non-versioned attribute sources could weaken its `git diff --check` verdict.
-The accepted baseline therefore remains
-`e33c3bf121d5bb81b4c63adf704ca9b4ecfea970`, and the next review remains
-cumulative from that commit. The rejected candidate is retained in history;
-this task corrects it without reset, revert, or rewrite.
+The cumulative range from
+`e33c3bf121d5bb81b4c63adf704ca9b4ecfea970` through the current accepted
+baseline was accepted with follow-up. `RFU-CI-003` is resolved. The accepted
+checker isolates mutable Git configuration and non-versioned attributes, but
+its unconditional per-worktree scope query fails on a legitimate repository
+with multiple worktrees when `extensions.worktreeConfig` is absent or false.
+That fail-closed portability defect is tracked as `RFU-CI-004` and is the sole
+scope of this task.
 
 ## Accepted bootstrap scope
 
@@ -49,33 +50,33 @@ These are bounded engineering and predicate checks only. The accepted verdict
 does not convert them into an upstream reproduction, exhaustive computation,
 certificate, or mathematical proof.
 
-## Corrective whitespace candidate and open follow-ups
+## Multi-worktree whitespace candidate and open follow-ups
 
-The corrective candidate preserves the strict review-state, repository-root,
-commit-resolution, ancestry, and explicit `<base>..<head>` checks introduced
-by the rejected candidate. It defines the intended whitespace policy
-explicitly, isolates neutralizable Git configuration and non-versioned
-attribute sources, preserves checked-in `.gitattributes`, and fails closed on
-a non-versioned repository attribute source that cannot be safely ignored.
-The dedicated full-history CI invocation and the separate post-test worktree
-checks are unchanged.
+The candidate replaces separate local and unconditional `--worktree` config
+queries with one read of Git's effective configuration stack after system,
+global, and inherited process sources have been neutralized. Local config and
+its includes remain visible. Git automatically adds the current worktree's
+config only when `extensions.worktreeConfig` is enabled. Any effective
+`diff.*` still fails closed before and after the committed range check.
+
+All other state, revision, ancestry, whitespace-policy, checked-in attribute,
+non-versioned attribute, external-diff, text-conversion, and read-only checks
+remain in place. The workflow is unchanged.
 
 The three pending follow-ups remain ordered and `OPEN`:
 
-- `RFU-CI-003`: committed-range whitespace checking, pending review of this
-  corrective candidate;
+- `RFU-CI-004`: multi-worktree whitespace config validation, pending review of
+  this candidate;
 - `RFU-SUPPLY-001`: immutable GitHub Action references;
 - `RFU-ENV-001`: complete environment and system-package locking.
 
 No follow-up is closed before review. Hosted GitHub Actions behavior remains
-outside local evidence.
-
-Final local verification passes 63 focused whitespace tests, the 222-test
-bounded suite, and the 226-test complete suite with no failures, skips, or
-xfails. Strict JSON, canonical task resolution, all schemas, the upstream
-snapshot, and the real cumulative checker invocation also pass. All
-task-created basetemps and synthetic repositories were removed after exact
-path checks.
+outside local evidence. Local verification passes 84 focused tests, the
+243-test bounded suite, and the 247-test complete suite with no failure, skip,
+or xfail. Strict JSON, canonical task resolution, schemas, the upstream
+snapshot, and the real checker invocation also pass. Final scope,
+whitespace, Git-state preservation, registry preservation, and cleanup audits
+pass; the candidate stops at `READY_FOR_REVIEW`.
 
 ## Current mathematical claim boundary
 
