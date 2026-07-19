@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:erdos-gyarfas-p14:schema:environment-lock-inventory:1.0",
+  "title": "Environment lock inventory",
+  "description": "Repository environment selectors, lock state, capture obligations, and external trust dependencies. Schema validity establishes structure only; it does not lock an environment or establish reproduction or certification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repository",
+    "inspected_project_commit",
+    "task_id",
+    "generated_at_utc",
+    "scope_statement",
+    "entries",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "repository": {
+      "const": "falker47/erdos-gyarfas-p14"
+    },
+    "inspected_project_commit": {
+      "$ref": "#/$defs/git_commit"
+    },
+    "task_id": {
+      "const": "TASK-20260719__define_environment_trust_boundary"
+    },
+    "generated_at_utc": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "scope_statement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "git_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "repository_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_.@+:/-]+$"
+    },
+    "source_location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "line_start",
+        "line_end",
+        "selector_kind",
+        "expression"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/repository_path"
+        },
+        "line_start": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "line_end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "selector_kind": {
+          "enum": [
+            "ACTION_METADATA",
+            "CMAKE_SELECTOR",
+            "DOCKER_APT_INDEX",
+            "DOCKER_APT_PACKAGE",
+            "DOCKER_BUILD_CONTEXT",
+            "DOCKER_ENVIRONMENT",
+            "DOCKER_FROM",
+            "DOCKER_PYTHON_INSTALL",
+            "DOCUMENTED_OBSERVATION",
+            "EXTERNAL_SERVICE",
+            "LOCAL_TOOL_OVERRIDE",
+            "MAKE_SELECTOR",
+            "PYPROJECT_BUILD_BACKEND",
+            "PYPROJECT_DEPENDENCY",
+            "WORKFLOW_ACTION",
+            "WORKFLOW_ENVIRONMENT",
+            "WORKFLOW_PYTHON_VERSION",
+            "WORKFLOW_RUNNER",
+            "WORKFLOW_TOOL"
+          ]
+        },
+        "expression": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "evidence_blocks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "V1",
+        "V3",
+        "V4"
+      ],
+      "properties": {
+        "V1": {
+          "type": "boolean"
+        },
+        "V3": {
+          "type": "boolean"
+        },
+        "V4": {
+          "type": "boolean"
+        }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "layer",
+        "category",
+        "source_locations",
+        "current_selector",
+        "observed_state",
+        "outcome_relevance",
+        "classification",
+        "repository_lockability",
+        "external_trust_dependencies",
+        "evidence",
+        "required_next_action",
+        "blocks_evidence"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^ENV-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+        },
+        "layer": {
+          "enum": [
+            "CONTAINER",
+            "GITHUB_ACTIONS",
+            "LOCAL_VERIFICATION",
+            "NATIVE_TOOLCHAIN",
+            "PYTHON"
+          ]
+        },
+        "category": {
+          "enum": [
+            "ACTION_RUNTIME",
+            "APT_INDEX",
+            "APT_PACKAGE",
+            "BUILD_CONTEXT",
+            "BUILD_SYSTEM_SELECTOR",
+            "CONTAINER_BASE_IMAGE",
+            "CONTAINER_PLATFORM",
+            "CONTAINER_TOOLCHAIN",
+            "ENVIRONMENT_VARIABLE",
+            "EXTERNAL_ACTION",
+            "EXTERNAL_SERVICE",
+            "HOST_TOOL",
+            "INTERPRETER_ARTIFACT",
+            "LANGUAGE_MODE",
+            "LOCAL_TOOL_PATH",
+            "PACKAGE_SERVICE",
+            "PLATFORM_SELECTOR",
+            "PYTHON_BUILD_BACKEND",
+            "PYTHON_DIRECT_DEPENDENCY",
+            "PYTHON_INSTALLER",
+            "PYTHON_INSTALL_ROUTE",
+            "PYTHON_TRANSITIVE_DEPENDENCY",
+            "PYTHON_VERSION_SELECTOR",
+            "RUNNER_SELECTOR"
+          ]
+        },
+        "source_locations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/source_location"
+          }
+        },
+        "current_selector": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome_relevance": {
+          "type": "string",
+          "minLength": 1
+        },
+        "classification": {
+          "enum": [
+            "CAPTURE_REQUIRED",
+            "EXTERNAL_SERVICE_TRUST",
+            "IMMUTABLE_PIN",
+            "MUTABLE_RESOLUTION",
+            "VERSION_PIN_ONLY"
+          ]
+        },
+        "repository_lockability": {
+          "enum": [
+            "CAPTURE_ONLY",
+            "NOT_REPOSITORY_CONTROLLED",
+            "REPOSITORY_PINNABLE"
+          ]
+        },
+        "external_trust_dependencies": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required_next_action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "blocks_evidence": {
+          "$ref": "#/$defs/evidence_blocks"
+        }
+      }
+    }
+  }
+}

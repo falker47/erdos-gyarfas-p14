@@ -2,33 +2,32 @@
   "schema_version": "1.0",
   "repository": "falker47/erdos-gyarfas-p14",
   "branch": "main",
-  "review_base_commit": "265c1474da9e2b91b6779281289eb23129edac33",
-  "last_reviewed_head": "265c1474da9e2b91b6779281289eb23129edac33",
+  "review_base_commit": "41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d",
+  "last_reviewed_head": "41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d",
   "last_verdict": "ACCEPT WITH FOLLOW-UP",
-  "accepted_baseline_commit": "265c1474da9e2b91b6779281289eb23129edac33",
-  "accepted_task_id": "TASK-20260719__pin_github_actions_immutable_shas",
-  "active_task_id": "TASK-20260719__align_action_pin_documentation",
-  "updated_at_utc": "2026-07-19T07:48:42Z",
+  "accepted_baseline_commit": "41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d",
+  "accepted_task_id": "TASK-20260719__align_action_pin_documentation",
+  "active_task_id": "TASK-20260719__define_environment_trust_boundary",
+  "updated_at_utc": "2026-07-19T09:15:11Z",
   "pending_follow_ups": [
-    {
-      "id": "RFU-DOC-001",
-      "severity": "LOW",
-      "affected_paths": [
-        "docs/CI.md"
-      ],
-      "status": "OPEN",
-      "description": "Correct the mutable descriptive reference to actions/upload-artifact@v4 so it matches the accepted immutable commit pin."
-    },
     {
       "id": "RFU-ENV-001",
       "severity": "MEDIUM",
       "affected_paths": [
         ".github/workflows/ci.yml",
         ".github/workflows/heavy-search.yml",
-        "Dockerfile"
+        "CMakeLists.txt",
+        "CMakePresets.json",
+        "Dockerfile",
+        "pyproject.toml",
+        "research/ENVIRONMENT_LOCK_INVENTORY.json",
+        "research/ENVIRONMENT_TRUST_BOUNDARY.md",
+        "research/REPRODUCIBILITY.md",
+        "tests/integration/test_upstream_build.py",
+        "third_party/erdos-gyarfas/Makefile"
       ],
       "status": "OPEN",
-      "description": "Complete environment locking for hosted runners and archive-installed system packages, recording resolved versions and immutable provenance."
+      "description": "Implement or explicitly capture and attest the unresolved controls catalogued in the canonical environment lock inventory and trust-boundary document across hosted runners and control plane, JavaScript Action runtimes, Python interpreter and tool-cache artifacts, native tools, transitive Python distributions and installer artifacts, container platform and APT resolution, architecture selectors, local MSYS2 provenance, and execution-affecting environment variables; retain capture-only and external-service dependencies where repository pinning is impossible."
     }
   ]
 }

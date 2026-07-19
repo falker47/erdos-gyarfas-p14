@@ -28,31 +28,37 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### Current Action-pin documentation alignment candidate
+### Current environment trust-boundary candidate
 
-`TASK-20260719__align_action_pin_documentation` is the active documentation
-candidate. `TASK-20260719__pin_github_actions_immutable_shas` is accepted at
-baseline `265c1474da9e2b91b6779281289eb23129edac33`. The current priority is
-limited to aligning one stale `docs/CI.md` description with the accepted
-immutable upload-artifact pin; the candidate SHA is intentionally resolved
-from Git by the reviewer.
+`TASK-20260719__align_action_pin_documentation` is accepted with
+`ACCEPT WITH FOLLOW-UP` at exact baseline
+`41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d`. `RFU-DOC-001` is resolved by
+that accepted commit and is no longer pending.
 
-`RFU-SUPPLY-001` is resolved by the accepted baseline and is no longer
-pending. `RFU-DOC-001` remains `OPEN` until this correction is reviewed.
-`RFU-ENV-001` remains separately `OPEN` with unchanged scope; neither
-environment locking nor workflow changes are part of this task.
+`TASK-20260719__define_environment_trust_boundary` is the current acquisition
+and specification task. Its bounded objective is to make
+`research/ENVIRONMENT_LOCK_INVENTORY.json` and
+`research/ENVIRONMENT_TRUST_BOUNDARY.md` canonical for the current CI, Docker,
+Python, native-toolchain, local verification, capture-only, and external
+service boundaries. The candidate SHA is intentionally resolved from Git by
+the reviewer.
 
-`RS-001` remains `NOT STARTED`. This documentation correction does not start
-an upstream reproduction or mathematical research task and does not change
-mathematical semantics.
+No implementation-level environment lock is accepted. `RFU-ENV-001` remains
+`OPEN`; inventorying a mutable, capture-only, or externally trusted component
+does not resolve it. This task changes no workflow, Docker, dependency, build,
+search, claim, or pruning behavior.
+
+`RS-001` remains `NOT STARTED`. This environment specification does not start
+an upstream reproduction or mathematical research task and has no
+mathematical implication.
 
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
 Status: NOT STARTED. Do not execute as part of the current
-documentation-alignment task; starting `RS-001` requires a separate reviewed
-task.
+environment-trust-boundary task; starting `RS-001` requires a separate
+reviewed task after its environment prerequisites are explicitly addressed.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.

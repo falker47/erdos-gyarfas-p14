@@ -7,6 +7,38 @@ checks. It does not reproduce a published P13/P12 result and does not certify
 the upstream algorithm. Exact run details and failures are in
 `ops/TASK-20260715__bootstrap_reproducible_baseline/`.
 
+## Canonical environment boundary
+
+The canonical machine-readable inventory of current environment selectors is
+`research/ENVIRONMENT_LOCK_INVENTORY.json`. Its human interpretation is
+`research/ENVIRONMENT_TRUST_BOUNDARY.md`. The inventory is tied to inspected
+project commit `41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d` and distinguishes:
+
+- content-pinned selectors;
+- version-only selectors;
+- mutable resolution;
+- values that require capture;
+- external-service trust.
+
+These artifacts are an acquisition and specification boundary. They do not
+install, resolve, upgrade, pin, hash-lock, or attest an environment. The open
+`RFU-ENV-001` obligation therefore remains. In particular, hosted runner and
+control-plane inputs, GitHub-supplied JavaScript runtimes, interpreter
+distributions, Python transitive/artifact resolution, container platform and
+APT resolution, native toolchains and standard libraries, local MSYS2
+provenance, platform resources, and execution-affecting environment variables
+remain unresolved as recorded by stable inventory IDs.
+
+For V1, an exact revision, command, bounded check domain, exit state, relevant
+output/anomalies, and enough observed environment detail support only the
+stated engineering check. Before V3, exact environment and artifact identities
+must also be recorded for the upstream execution. V4 requires the stronger
+accepted trust boundary described by `research/VERIFICATION_PROTOCOL.md`,
+including independently checkable generator/verifier inputs and every
+capture-only or external-service assumption. A tiny pre-lock execution may be
+recorded only as `EMPIRICAL_OBSERVATION` with exact limitations; it cannot be
+promoted to V3 or V4 evidence by this inventory.
+
 ## Preserved upstream
 
 The immutable snapshot is identified by:
@@ -111,7 +143,12 @@ orchestration only and adds no algorithm patch.
 
 `Dockerfile` pins the Ubuntu 24.04 multi-platform image index by digest,
 installs build/Python tools, builds as an unprivileged user, and defaults to
-the bounded test suite. `.dockerignore` excludes local state.
+the bounded test suite. `.dockerignore` excludes selected local state. The
+index digest does not select or record the platform child, Docker/BuildKit
+identity, canonical build-context digest, later APT index, resolved package
+versions/archives, or resulting image digest. Those are canonical in entries
+`ENV-033-DOCKER-BASE-INDEX` through
+`ENV-050-DOCKER-EXECUTION-ENVIRONMENT`.
 
 The image was not built locally because Docker is unavailable. Ubuntu archive
 package versions are resolved at image-build time and must be captured from
@@ -124,7 +161,11 @@ exactly pinned in `pyproject.toml`. The bootstrap local suite used Python
 3.14.3; CI is configured for Python 3.11 and 3.12. Transitive Python packages,
 the interpreter distribution, and installer artifacts are not hash-locked in
 this baseline, so package metadata alone is not a complete immutable
-environment.
+environment. Exact distinctions among compatibility, setup-python selectors,
+backend/direct versions, pip, transitive distributions, artifacts, caches, and
+package-service trust are recorded in `ENV-010-GHA-PYTHON-311-SELECTOR`
+through `ENV-012-GHA-PYTHON-DISTRIBUTIONS` and
+`ENV-022-PYTHON-COMPATIBILITY` through `ENV-030-PYPI-SERVICE`.
 
 Install in an isolated environment:
 
@@ -178,8 +219,13 @@ it does not independently authenticate those already-executing Actions.
 These pins make the selected Action source ref immutable. They do not freeze
 the hosted `ubuntu-24.04` image, runner service, preinstalled operating-system
 packages, transitive Python distributions, or package archives resolved during
-installation. Complete environment locking remains the separate open
-`RFU-ENV-001` obligation. Action identity and validator results are
+installation. Each accepted Action metadata file requests `node20`, but the
+actual JavaScript runtime remains GitHub-supplied and is not fixed by the
+Action commit. The runner, service, source, runtime, interpreter, native-tool,
+platform, and environment-variable boundaries are canonical in
+`ENV-001-GHA-RUNNER-WHITESPACE` through
+`ENV-021-GHA-EXECUTION-ENVIRONMENT`. Complete environment locking remains the
+separate open `RFU-ENV-001` obligation. Action identity and validator results are
 supply-chain engineering evidence only, not an upstream reproduction,
 exhaustive search, certificate, or mathematical result.
 
@@ -340,6 +386,14 @@ Make 4.4.1 from MSYS2. The original Make route depends on Unix utilities.
 MinGW-built executables require the matching runtime DLL directory on the
 child process path; the benchmark runner records and supplies that directory
 from CMake metadata on Windows.
+
+The accepted verification commands name the CMake, GCC, Ninja, and Make paths
+under `C:\msys64`, but a path and displayed version are not accepted artifact
+provenance. Interpreter/build identities, executable hashes, MSYS2 package and
+installer state, dependency DLLs, bash/coreutils, inherited PATH, Git, Windows
+build, CPU/architecture/resources, locale, timezone, and acquisition sources
+remain capture-only under `ENV-051-LOCAL-PYTHON-RUNTIME` through
+`ENV-058-LOCAL-PLATFORM-RESOURCES`.
 
 An initial Windows Git archive inherited `core.autocrlf=true` and was rejected.
 The accepted snapshot was reacquired with conversion disabled and checked

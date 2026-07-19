@@ -4,116 +4,110 @@ Last updated: 2026-07-19 UTC
 
 ## Current state
 
-- Current phase: aligning accepted GitHub Action pin documentation before
-  research.
-- Active task: `TASK-20260719__align_action_pin_documentation`.
+- Current phase: environment trust-boundary candidate ready for cumulative
+  review before any upstream research execution.
+- Active task: `TASK-20260719__define_environment_trust_boundary`.
 - Task status: `READY_FOR_REVIEW`.
 - Repository: Git worktree for `falker47/erdos-gyarfas-p14`.
 - Working branch: `main`.
 - Accepted review baseline:
-  `265c1474da9e2b91b6779281289eb23129edac33`.
-- Task-start HEAD: `265c1474da9e2b91b6779281289eb23129edac33`.
+  `41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d`.
+- Task-start HEAD:
+  `41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d`.
 - Last reviewed candidate HEAD:
-  `265c1474da9e2b91b6779281289eb23129edac33`.
+  `41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d`.
 - Last review verdict: `ACCEPT WITH FOLLOW-UP`.
-- Accepted task: `TASK-20260719__pin_github_actions_immutable_shas`.
-- Next review: the cumulative range from the accepted baseline through the
-  current documentation-alignment candidate; the candidate SHA is
-  intentionally resolved from Git by the reviewer.
+- Accepted task: `TASK-20260719__align_action_pin_documentation`.
+- Accepted review occurrence: `2026-07-19T08:52:08Z`.
+- Next review: the cumulative range from the accepted baseline through this
+  environment-boundary candidate; the candidate SHA is intentionally resolved
+  from Git by the reviewer.
 
-The immutable Action pin candidate at the current baseline was accepted with
-follow-up. `RFU-SUPPLY-001` is therefore resolved. This task addresses only
-`RFU-DOC-001`: it aligns one stale descriptive sentence in `docs/CI.md` with
-the accepted upload-artifact commit pin. It changes no workflow behavior and
-does not broaden the mathematical or search scope.
+The documentation-alignment task is accepted at the exact baseline above.
+`RFU-DOC-001` is resolved and no longer pending. The current task only
+inventories and interprets existing environment selectors and trust
+dependencies. It changes no workflow, Docker, dependency, build, verifier,
+generator, or search behavior.
 
-## Accepted bootstrap scope
+## Canonical environment boundary candidate
 
-- All six requested upstream refs resolved; none is absent or unresolved.
-- The ten-file raw `main` snapshot and upstream MIT license are preserved and
-  match the selected Git tree and recorded SHA-256 inventory.
-- Original Make and project CMake Debug/Release builds completed in the tested
-  MSYS2 environment without changing the snapshot.
-- Tiny upstream `k=3` and `k=4` processes terminated within ten-second test
-  timeouts.
-- The independent Python graph verifier, machine-JSON CLI, fixtures, unit
-  tests, bounded differential oracles, and CLI integration tests are present.
-- The accepted bootstrap suite covered the exact 1,100-graph bounded
-  differential domain on orders zero through five.
-- Five JSON Schemas, manifest/hash validation, a benchmark harness, fast CI,
-  and a manual non-certifying heavy-workflow scaffold are present.
+`research/ENVIRONMENT_LOCK_INVENTORY.json` is the canonical machine-readable
+inventory tied to the task-start commit. Its 58 stable IDs distinguish:
 
-These are bounded engineering and predicate checks only. The accepted verdict
-does not convert them into an upstream reproduction, exhaustive computation,
-certificate, or mathematical proof.
+- four mutable `ubuntu-24.04` runner occurrences and the external GitHub
+  control-plane/runtime boundary;
+- three immutable Action source commit identities, separately from the
+  GitHub-supplied node20 runtime;
+- Python 3.11/3.12 selectors, interpreter distributions, pip, direct versions,
+  transitive distributions, wheel/sdist artifacts, caches, and package
+  services;
+- the Docker image-index digest, implicit platform child, builder and context,
+  APT index/service, all eight unversioned packages, native toolchain, Python,
+  pip route, and execution environment;
+- hosted and container compilers, standard libraries, CMake, Ninja, Make, Git,
+  shells and utilities;
+- accepted local MSYS2 paths, plus their missing package, installer,
+  dependency-DLL, runtime, artifact-hash, PATH, platform, and resource
+  provenance.
 
-## Accepted immutable Action pins and open follow-ups
+`schemas/environment-lock-inventory.schema.json` constrains the inventory
+shape and closed vocabularies. The deliberately simple regression test at
+`tests/unit/test_environment_lock_inventory.py` compares the inventory against
+the actual workflows, Action-pin validator subprocess output, Dockerfile, and
+`pyproject.toml`, and checks deterministic JSON and Markdown agreement.
 
-All eleven external Action occurrences in the two workflow files now use one
-of three verified identities, with no major upgrade:
+`research/ENVIRONMENT_TRUST_BOUNDARY.md` defines locked, captured, and
+externally trusted state; explains the Action/runner, Docker/APT, and
+Python-version/artifact separations; and states the distinct V1, V3, V4, and
+exploratory-observation boundaries.
 
-- `actions/checkout` release `v4.3.1` at
-  `34e114876b0b11c390a56381ad16ebd13914f8d5`;
-- `actions/setup-python` release `v5.6.0` at
-  `a26af69be951a213d495a4c3e4e4022e16d87065`;
-- `actions/upload-artifact` release `v4.6.2` at
-  `ea165f8d65b6e75b540449e92b4886f43607fa02`.
+No implementation-level environment lock is accepted. Inventorying a gap does
+not resolve it. Hosted services and runners, interpreter and package artifacts,
+container platform/APT/toolchain state, local MSYS2 provenance, platform
+resources, and execution-affecting environment variables remain open under
+`RFU-ENV-001`.
 
-The exact release and floating major refs pointed to the same official commit
-object in each `actions/<name>` repository, and `action.yml` exists at every
-selected commit. Release comments beside the full SHA are non-operative.
+## Accepted engineering baseline
 
-`tools/check_github_action_pins.py` scans all workflow `.yml` and `.yaml` files
-in deterministic path order using only the Python standard library. It accepts
-local `./` references, full lowercase GitHub commit SHAs, and full lowercase
-Docker `sha256` digests without tags. Mutable, short, uppercase, dynamic,
-multiline, encoded, tagged, alias-based, or ambiguous forms fail closed with
-empty stdout; success is one deterministic JSON line. Block-scalar content is
-distinguished from sibling mapping keys by actual or explicit YAML content
-indentation.
+- The exact upstream `main` snapshot and license remain byte-preserved under
+  recorded commit, tree, and SHA-256 provenance.
+- The independent Python verifier, strict schemas, bounded fixtures, unit and
+  differential tests, native build wrappers, fast CI, and non-executing heavy
+  scaffold remain the accepted bootstrap engineering interface.
+- All eleven external Action occurrences remain pinned to the accepted
+  checkout `v4.3.1`, setup-python `v5.6.0`, and upload-artifact `v4.6.2`
+  commits.
 
-The accepted pin task passed 44 focused tests, the 287-test bounded suite, and
-the 291-test complete suite with no failure, skip, or xfail. Its strict JSON,
-canonical task resolution, real pin validator, schemas, upstream snapshot,
-and range-whitespace checks also passed. This task rechecks the accepted pin
-behavior without modifying workflows, validator code, or tests.
+These are bounded engineering facts only. They do not establish an upstream
+reproduction, exhaustive computation, certificate, theorem, or proof.
 
-Terminal verification for the documentation candidate passes strict JSON,
-canonical dossier resolution, the exact documentation assertion, the real
-pin validator, 44 focused tests, all 291 collected tests with the documented
-MSYS2 toolchain, six-schema validation, upstream snapshot verification, and
-worktree whitespace checks. Protected workflow, validator, test, upstream,
-project-knowledge, claim, and pruning bytes remain unchanged.
+## Follow-up state
 
-Follow-up state is now:
-
-- `RFU-SUPPLY-001`: resolved by accepted commit
-  `265c1474da9e2b91b6779281289eb23129edac33` and no longer pending;
-- `RFU-DOC-001`: `OPEN` until review of this documentation correction;
-- `RFU-ENV-001`: `OPEN` and unchanged; complete environment and
-  system-package locking remains separate.
-
-Hosted GitHub Actions execution is not observed locally by this task. A commit
-pin fixes the Action source identity but does not freeze the `ubuntu-24.04`
-hosted image, runner service, operating system packages, or installed package
-archives; those remain the distinct `RFU-ENV-001` boundary.
+- `RFU-DOC-001`: resolved by accepted commit
+  `41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d` and no longer pending.
+- `RFU-ENV-001`: `OPEN`; its canonical scope is the unresolved locking,
+  capture, and external-service trust obligations catalogued in
+  `research/ENVIRONMENT_LOCK_INVENTORY.json` and interpreted by
+  `research/ENVIRONMENT_TRUST_BOUNDARY.md`.
 
 ## Current mathematical claim boundary
 
-No P13 or P14 research run has started. This task introduces no mathematical
-result and no new theorem, counterexample, exhaustive search,
-computer-certified result, reproduced upstream result, certifying pruning
-rule, or accepted search certificate. All mathematical target statuses remain
-unchanged. Action identities, validator behavior, and tests are bounded
-supply-chain engineering evidence only.
+No P13 or P14 research run has started. This task creates no mathematical
+result, theorem, counterexample, exhaustive search, computer-certified result,
+reproduced upstream result, certifying pruning rule, or accepted search
+certificate. `research/CLAIMS_REGISTRY.yaml` and
+`research/PRUNING_REGISTRY.md` remain byte-identical. All mathematical target
+statuses remain unchanged.
 
 ## Remaining scientific and engineering obligations
 
-- The upstream generation invariant and every pruning proof remain unaudited.
-- Search partition coverage, replay, certificate semantics, and independent
-  search verification remain provisional or unimplemented.
-- The verifier is intentionally exponential and intended for small candidates,
-  not search-completeness certification.
-- Hosted runner and package-environment immutability remains open under
-  `RFU-ENV-001`.
-- `RS-001` is `NOT STARTED`.
+- Review the current environment-boundary candidate against the accepted
+  baseline; the candidate SHA is intentionally resolved from Git by the
+  reviewer.
+- Resolve or explicitly accept every relevant environment lock, capture, and
+  external-service dependency before using that interface for V3 or V4
+  evidence.
+- Audit the upstream generation invariant and every pruning proof separately.
+- Define and prove search partition coverage, certificate semantics, replay,
+  and verifier independence before any certifying execution.
+- `RS-001` remains `NOT STARTED`.
