@@ -28,40 +28,39 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### Current multi-worktree whitespace correction
+### Current immutable Action pinning candidate
 
-`TASK-20260718__support_multi_worktree_whitespace_check` is the active
-corrective candidate. The committed-range isolation task
-`TASK-20260718__isolate_whitespace_git_semantics` is accepted, and
-`0dd6e5dc1362e866dd806e205750d82695d3c555` is the accepted review baseline.
-The next review is cumulative from that baseline through the current
-candidate, whose SHA is intentionally resolved from Git by the reviewer.
+`TASK-20260719__pin_github_actions_immutable_shas` is the active supply-chain
+candidate. `TASK-20260718__support_multi_worktree_whitespace_check` is
+accepted, and `dde4e6cbd06be8ebc8192097930f40b06cf2f9f6` is the accepted
+review baseline. The next review is cumulative from that baseline through the
+current candidate, whose SHA is intentionally resolved from Git by the
+reviewer.
 
-`RFU-CI-003` is resolved. This candidate addresses `RFU-CI-004`: a real
-repository with multiple worktrees and disabled worktree config must not fail
-merely because the checker asks Git for a separate `--worktree` scope. The
-checker instead reads the effective remaining stack once, while preserving
-local and enabled per-worktree `diff.*` rejection, includes, checked-in
-attributes, and every other committed-range control. The task does not enable
-a search or change mathematical semantics.
+`RFU-CI-004` is resolved. This candidate addresses `RFU-SUPPLY-001` by pinning
+the already-used checkout v4, setup-python v5, and upload-artifact v4 releases
+to verified full commit SHAs without a major upgrade. A deterministic
+repository-local validator scans every workflow and rejects mutable, dynamic,
+short, uppercase, Docker-tagged, or ambiguous external `uses:` forms. The
+control does not freeze hosted runner images or package installations and does
+not enable a search or change mathematical semantics.
 
-The three remaining follow-ups are `OPEN`:
+The two remaining follow-ups are `OPEN`:
 
-- `RFU-CI-004`: multi-worktree whitespace config validation, pending review of
-  this candidate;
-- `RFU-SUPPLY-001`: immutable action references;
-- `RFU-ENV-001`: complete environment locking.
+- `RFU-SUPPLY-001`: immutable action references, pending review of this
+  candidate;
+- `RFU-ENV-001`: complete environment and system-package locking.
 
 `RS-001` remains `NOT STARTED`; no upstream reproduction or mathematical
-research result is part of this CI-governance correction.
+research result is part of this supply-chain correction.
 
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
-Status: NOT STARTED. Do not execute before the current CI-governance
-corrective candidate is reviewed and accepted and applicable follow-ups are
-explicitly accounted for.
+Status: NOT STARTED. Do not execute before the current supply-chain candidate
+is reviewed and accepted and applicable follow-ups are explicitly accounted
+for.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.

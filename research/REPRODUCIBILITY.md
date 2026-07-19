@@ -139,6 +139,50 @@ The dependency/metadata route was checked without modifying the environment:
 python -m pip install --dry-run --no-build-isolation -e ".[test]"
 ```
 
+## GitHub Actions supply-chain identities
+
+The workflow Action entrypoints are content-pinned as follows:
+
+| Official repository | Stable release retained within the existing major | Commit SHA |
+| --- | --- | --- |
+| `https://github.com/actions/checkout` | `v4.3.1` | `34e114876b0b11c390a56381ad16ebd13914f8d5` |
+| `https://github.com/actions/setup-python` | `v5.6.0` | `a26af69be951a213d495a4c3e4e4022e16d87065` |
+| `https://github.com/actions/upload-artifact` | `v4.6.2` | `ea165f8d65b6e75b540449e92b4886f43607fa02` |
+
+Resolution on 2026-07-19 UTC enumerated official GitHub releases, selected the
+newest exact non-draft and non-prerelease release in the already-used major,
+and compared its exact tag with the floating major tag. Official Git ref data
+reported lightweight tags whose object type was `commit`; each exact release
+and corresponding major tag resolved to the same full SHA. Official commit and
+contents endpoints then confirmed a real commit object and `action.yml` at
+that exact commit. Repository metadata confirmed the canonical repository and
+the `actions` organization owner. The precise URLs, commands, timestamps, and
+returned identities are recorded in
+`ops/TASK-20260719__pin_github_actions_immutable_shas/EVIDENCE.md`.
+
+Every occurrence of a given Action uses the same SHA. Its exact release tag is
+an adjacent non-operative YAML comment. Repository-local verification is:
+
+```text
+python tools/check_github_action_pins.py
+```
+
+The dependency-free validator scans all workflow `.yml` and `.yaml` files in
+sorted order, accepts only local `./` references, full lowercase commit pins
+for GitHub Actions, and full lowercase `sha256` digests without tags for remote
+Docker Actions. It rejects dynamic and ambiguous `uses:` forms and emits
+byte-deterministic success or failure output. This control detects repository
+regressions; because it executes after Actions needed to start its own CI job,
+it does not independently authenticate those already-executing Actions.
+
+These pins make the selected Action source ref immutable. They do not freeze
+the hosted `ubuntu-24.04` image, runner service, preinstalled operating-system
+packages, transitive Python distributions, or package archives resolved during
+installation. Complete environment locking remains the separate open
+`RFU-ENV-001` obligation. Action identity and validator results are
+supply-chain engineering evidence only, not an upstream reproduction,
+exhaustive search, certificate, or mathematical result.
+
 ## Exercised fast verification
 
 These repository-relative commands completed successfully during bootstrap:

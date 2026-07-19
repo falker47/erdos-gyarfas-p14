@@ -18,6 +18,8 @@ It is intentionally bounded:
 - the per-file upstream inventory is checked before and after tests;
 - complete tiny-surprise and benchmark artifacts are uploaded from each
   compiler job when any job step fails;
+- a repository-local validator scans every workflow for immutable external
+  Action references;
 - one dedicated full-history job checks whitespace in the canonical committed
   review range;
 - post-test `git diff --check` and clean-worktree checks detect only accidental
@@ -220,9 +222,63 @@ temporary directory. CI sets the variable to a deterministic
 repository-relative directory so a failure-only upload can collect the frozen
 files.
 
-Official actions are major-version pinned (`actions/checkout@v4`,
-`actions/setup-python@v5`, and `actions/upload-artifact@v4`). A future release
-hardening task may pin immutable action commit SHAs.
+## Immutable external Action references
+
+Every external Action used by either workflow is pinned to a complete
+lowercase commit SHA. The selected identities are:
+
+| Repository | Exact stable release | Commit SHA |
+| --- | --- | --- |
+| `actions/checkout` | `v4.3.1` | `34e114876b0b11c390a56381ad16ebd13914f8d5` |
+| `actions/setup-python` | `v5.6.0` | `a26af69be951a213d495a4c3e4e4022e16d87065` |
+| `actions/upload-artifact` | `v4.6.2` | `ea165f8d65b6e75b540449e92b4886f43607fa02` |
+
+Each `uses:` line retains the exact release tag as an end-of-line comment,
+for example:
+
+```yaml
+uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+```
+
+The comment is explanatory only. GitHub executes the commit named before the
+comment; changing the comment cannot change the selected Action. Release and
+commit identities were resolved from the official `actions/<name>` repository,
+including the exact release ref, floating major ref, commit object, and
+`action.yml` at that commit. Detailed commands and observations are in
+`ops/TASK-20260719__pin_github_actions_immutable_shas/EVIDENCE.md`.
+
+The full-history fast-CI job also runs:
+
+```text
+python tools/check_github_action_pins.py
+```
+
+The standard-library-only validator reads every `.yml` and `.yaml` below
+`.github/workflows/` as strict UTF-8 in sorted path order. It accepts a local
+Action only when the reference begins `./`. A GitHub-hosted external Action
+must use canonical `owner/repository[/subpath]@ref` syntax with a lowercase
+40-character commit SHA. A remote Docker Action must use
+`docker://image@sha256:<64-lowercase-hex>` without a mutable image tag. Branches,
+major or release tags, short or uppercase SHAs, dynamic expressions, missing
+refs, and noncanonical, multiline, quoted-key, explicit-key, or flow-style
+`uses:` forms fail closed. Block scalar bodies such as `run: |` are treated as
+script text rather than workflow keys.
+
+Success is one deterministic JSON line containing the sorted workflow list and
+every normalized external occurrence. Failure writes no stdout and emits one
+deterministic diagnostic on stderr. This check is read-only and has no YAML or
+other new runtime dependency.
+
+The validator runs only after the checkout and Python setup Actions in the same
+job have already executed. It is therefore a repository-local regression
+check, not protection against a malicious Action ref already present in that
+workflow revision. Review, protected branches, and any organization-level
+GitHub policy remain separate controls.
+
+A full commit pin removes mutability of the selected Git ref. It does not make
+the hosted `ubuntu-24.04` runner image, its operating system packages, the
+Actions service, or packages installed during a job immutable. Those distinct
+environment-locking obligations remain tracked by `RFU-ENV-001`.
 
 ## Manual heavy-search scaffold
 

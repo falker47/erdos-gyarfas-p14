@@ -2,26 +2,14 @@
   "schema_version": "1.0",
   "repository": "falker47/erdos-gyarfas-p14",
   "branch": "main",
-  "review_base_commit": "0dd6e5dc1362e866dd806e205750d82695d3c555",
-  "last_reviewed_head": "0dd6e5dc1362e866dd806e205750d82695d3c555",
+  "review_base_commit": "dde4e6cbd06be8ebc8192097930f40b06cf2f9f6",
+  "last_reviewed_head": "dde4e6cbd06be8ebc8192097930f40b06cf2f9f6",
   "last_verdict": "ACCEPT WITH FOLLOW-UP",
-  "accepted_baseline_commit": "0dd6e5dc1362e866dd806e205750d82695d3c555",
-  "accepted_task_id": "TASK-20260718__isolate_whitespace_git_semantics",
-  "active_task_id": "TASK-20260718__support_multi_worktree_whitespace_check",
-  "updated_at_utc": "2026-07-18T17:27:27Z",
+  "accepted_baseline_commit": "dde4e6cbd06be8ebc8192097930f40b06cf2f9f6",
+  "accepted_task_id": "TASK-20260718__support_multi_worktree_whitespace_check",
+  "active_task_id": "TASK-20260719__pin_github_actions_immutable_shas",
+  "updated_at_utc": "2026-07-19T01:20:55Z",
   "pending_follow_ups": [
-    {
-      "id": "RFU-CI-004",
-      "severity": "MEDIUM",
-      "affected_paths": [
-        "tools/check_review_range_whitespace.py",
-        "tests/unit/test_review_range_whitespace.py",
-        "docs/CI.md",
-        "research/REPRODUCIBILITY.md"
-      ],
-      "status": "OPEN",
-      "description": "Support repositories with multiple worktrees when extensions.worktreeConfig is absent or false without weakening rejection of effective local or per-worktree diff configuration."
-    },
     {
       "id": "RFU-SUPPLY-001",
       "severity": "MEDIUM",
