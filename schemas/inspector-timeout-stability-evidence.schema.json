@@ -1,0 +1,878 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:erdos-gyarfas-p14:schema:inspector-timeout-stability-evidence:1.0",
+  "title": "Inspector timeout stability evidence",
+  "description": "Machine-readable bounded V1 engineering-test evidence for repeated inspector timeout-test stability. Schema validity establishes structure only and is not reproduction, exhaustive-search, certificate, or mathematical evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_kind",
+    "classification",
+    "task_id",
+    "repository",
+    "review_base_commit",
+    "task_start_head",
+    "execution_project_revision",
+    "execution_started_at_utc",
+    "execution_finished_at_utc",
+    "completed",
+    "source_files",
+    "environment",
+    "expected_plan",
+    "runs",
+    "summary",
+    "cleanup",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "artifact_kind": {
+      "const": "inspector_timeout_stability_evidence"
+    },
+    "classification": {
+      "const": "EMPIRICAL_OBSERVATION"
+    },
+    "task_id": {
+      "const": "TASK-20260719__make_inspector_stability_evidence_auditable"
+    },
+    "repository": {
+      "const": "falker47/erdos-gyarfas-p14"
+    },
+    "review_base_commit": {
+      "const": "a7066e70b92d80be2d1772127f329c24222c1b41"
+    },
+    "task_start_head": {
+      "const": "c71d66995ae6a36620a2aa8f938faf6d84fe1af7"
+    },
+    "execution_project_revision": {
+      "$ref": "#/$defs/execution_project_revision"
+    },
+    "execution_started_at_utc": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "execution_finished_at_utc": {
+      "$ref": "#/$defs/nullable_timestamp"
+    },
+    "completed": {
+      "type": "boolean"
+    },
+    "source_files": {
+      "type": "array",
+      "minItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/source_file"
+      }
+    },
+    "environment": {
+      "$ref": "#/$defs/environment"
+    },
+    "expected_plan": {
+      "$ref": "#/$defs/expected_plan"
+    },
+    "runs": {
+      "type": "array",
+      "maxItems": 27,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/run"
+      }
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "cleanup": {
+      "$ref": "#/$defs/cleanup"
+    },
+    "limitations": {
+      "$ref": "#/$defs/root_limitations"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,9})?Z$"
+    },
+    "nullable_timestamp": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "repository_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_.@+:/-]+$"
+    },
+    "nullable_nonempty_string": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "execution_project_revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "fingerprint_kind",
+        "fingerprint_sha256",
+        "fingerprint_scope"
+      ],
+      "properties": {
+        "state": {
+          "const": "dirty"
+        },
+        "fingerprint_kind": {
+          "const": "canonical_source_inventory_v1"
+        },
+        "fingerprint_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "fingerprint_scope": {
+          "type": "array",
+          "minItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/repository_path"
+          }
+        }
+      }
+    },
+    "source_file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "byte_length",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/repository_path"
+        },
+        "byte_length": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "file_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effective_value",
+        "resolved_path",
+        "readable",
+        "byte_length",
+        "sha256",
+        "limitation"
+      ],
+      "properties": {
+        "effective_value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resolved_path": {
+          "$ref": "#/$defs/nullable_nonempty_string"
+        },
+        "readable": {
+          "type": "boolean"
+        },
+        "byte_length": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sha256": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "limitation": {
+          "$ref": "#/$defs/nullable_nonempty_string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "readable": {
+                "const": true
+              }
+            },
+            "required": [
+              "readable"
+            ]
+          },
+          "then": {
+            "properties": {
+              "resolved_path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "byte_length": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              },
+              "limitation": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "byte_length": {
+                "type": "null"
+              },
+              "sha256": {
+                "type": "null"
+              },
+              "limitation": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "python_version",
+        "python_implementation",
+        "python_executable",
+        "operating_system",
+        "architecture",
+        "machine_identifier",
+        "processor_identifier",
+        "cpu_count",
+        "working_directory",
+        "tool_overrides",
+        "limitations"
+      ],
+      "properties": {
+        "python_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "python_implementation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "python_executable": {
+          "$ref": "#/$defs/file_identity"
+        },
+        "operating_system": {
+          "type": "string",
+          "minLength": 1
+        },
+        "architecture": {
+          "type": "string",
+          "minLength": 1
+        },
+        "machine_identifier": {
+          "$ref": "#/$defs/nullable_nonempty_string"
+        },
+        "processor_identifier": {
+          "$ref": "#/$defs/nullable_nonempty_string"
+        },
+        "cpu_count": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "working_directory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tool_overrides": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "EG_CMAKE",
+            "EG_CXX",
+            "EG_NINJA",
+            "EG_MAKE"
+          ],
+          "properties": {
+            "EG_CMAKE": {
+              "$ref": "#/$defs/file_identity"
+            },
+            "EG_CXX": {
+              "$ref": "#/$defs/file_identity"
+            },
+            "EG_NINJA": {
+              "$ref": "#/$defs/file_identity"
+            },
+            "EG_MAKE": {
+              "$ref": "#/$defs/file_identity"
+            }
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "expected_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "focused_runs",
+        "full_suite_runs",
+        "serial",
+        "retries",
+        "stop_on_first_failure"
+      ],
+      "properties": {
+        "focused_runs": {
+          "const": 25
+        },
+        "full_suite_runs": {
+          "const": 2
+        },
+        "serial": {
+          "const": true
+        },
+        "retries": {
+          "const": 0
+        },
+        "stop_on_first_failure": {
+          "const": true
+        }
+      }
+    },
+    "environment_overrides": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "EG_CMAKE": {
+          "type": "string",
+          "minLength": 1
+        },
+        "EG_CXX": {
+          "type": "string",
+          "minLength": 1
+        },
+        "EG_NINJA": {
+          "type": "string",
+          "minLength": 1
+        },
+        "EG_MAKE": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "full_suite_environment_overrides": {
+      "$ref": "#/$defs/environment_overrides",
+      "required": [
+        "EG_CMAKE",
+        "EG_CXX",
+        "EG_NINJA",
+        "EG_MAKE"
+      ]
+    },
+    "focused_environment_overrides": {
+      "$ref": "#/$defs/environment_overrides",
+      "maxProperties": 0
+    },
+    "captured_stream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "base64",
+        "byte_length",
+        "sha256"
+      ],
+      "properties": {
+        "base64": {
+          "type": "string",
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        },
+        "byte_length": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "nullable_count": {
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "pytest_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parsed",
+        "passed",
+        "failed",
+        "errors",
+        "skipped",
+        "xfailed",
+        "xpassed",
+        "diagnostic"
+      ],
+      "properties": {
+        "parsed": {
+          "type": "boolean"
+        },
+        "passed": {
+          "$ref": "#/$defs/nullable_count"
+        },
+        "failed": {
+          "$ref": "#/$defs/nullable_count"
+        },
+        "errors": {
+          "$ref": "#/$defs/nullable_count"
+        },
+        "skipped": {
+          "$ref": "#/$defs/nullable_count"
+        },
+        "xfailed": {
+          "$ref": "#/$defs/nullable_count"
+        },
+        "xpassed": {
+          "$ref": "#/$defs/nullable_count"
+        },
+        "diagnostic": {
+          "$ref": "#/$defs/nullable_nonempty_string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "parsed": {
+                "const": true
+              }
+            },
+            "required": [
+              "parsed"
+            ]
+          },
+          "then": {
+            "properties": {
+              "passed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "failed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "errors": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "skipped": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "xfailed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "xpassed": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "passed": {
+                "type": "null"
+              },
+              "failed": {
+                "type": "null"
+              },
+              "errors": {
+                "type": "null"
+              },
+              "skipped": {
+                "type": "null"
+              },
+              "xfailed": {
+                "type": "null"
+              },
+              "xpassed": {
+                "type": "null"
+              },
+              "diagnostic": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "phase",
+        "phase_index",
+        "argv",
+        "basetemp_path",
+        "environment_overrides",
+        "started_at_utc",
+        "finished_at_utc",
+        "wall_time_seconds",
+        "exit_code",
+        "stdout",
+        "stderr",
+        "pytest_summary",
+        "source_fingerprint_before",
+        "source_fingerprint_after",
+        "status"
+      ],
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 27
+        },
+        "phase": {
+          "enum": [
+            "focused",
+            "full_suite"
+          ]
+        },
+        "phase_index": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 25
+        },
+        "argv": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "basetemp_path": {
+          "$ref": "#/$defs/repository_path"
+        },
+        "environment_overrides": {
+          "$ref": "#/$defs/environment_overrides"
+        },
+        "started_at_utc": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "finished_at_utc": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "wall_time_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "stdout": {
+          "$ref": "#/$defs/captured_stream"
+        },
+        "stderr": {
+          "$ref": "#/$defs/captured_stream"
+        },
+        "pytest_summary": {
+          "$ref": "#/$defs/pytest_summary"
+        },
+        "source_fingerprint_before": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source_fingerprint_after": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "interrupted"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "phase": {
+                "const": "focused"
+              }
+            },
+            "required": [
+              "phase"
+            ]
+          },
+          "then": {
+            "properties": {
+              "phase_index": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 25
+              },
+              "environment_overrides": {
+                "$ref": "#/$defs/focused_environment_overrides"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "phase_index": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 2
+              },
+              "environment_overrides": {
+                "$ref": "#/$defs/full_suite_environment_overrides"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "passed"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "exit_code": {
+                "const": 0
+              },
+              "pytest_summary": {
+                "properties": {
+                  "parsed": {
+                    "const": true
+                  }
+                }
+              },
+              "source_fingerprint_after": {
+                "$ref": "#/$defs/sha256"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recorded_run_count",
+        "focused_run_count",
+        "full_suite_run_count",
+        "successful_run_count",
+        "failed_run_count",
+        "retries",
+        "focused_pass_counts",
+        "full_suite_pass_counts",
+        "stop_reason",
+        "failure_detail"
+      ],
+      "properties": {
+        "recorded_run_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 27
+        },
+        "focused_run_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "full_suite_run_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "successful_run_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 27
+        },
+        "failed_run_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 27
+        },
+        "retries": {
+          "const": 0
+        },
+        "focused_pass_counts": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "full_suite_pass_counts": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "stop_reason": {
+          "enum": [
+            "in_progress",
+            "completed",
+            "failure",
+            "interrupted"
+          ]
+        },
+        "failure_detail": {
+          "$ref": "#/$defs/nullable_nonempty_string"
+        }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "expected",
+        "removed",
+        "remaining",
+        "completed"
+      ],
+      "properties": {
+        "root": {
+          "$ref": "#/$defs/repository_path"
+        },
+        "expected": {
+          "type": "array",
+          "maxItems": 27,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/repository_path"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "maxItems": 27,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/repository_path"
+          }
+        },
+        "remaining": {
+          "type": "array",
+          "maxItems": 27,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/repository_path"
+          }
+        },
+        "completed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "root_limitations": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "prefixItems": [
+        {
+          "const": "This is bounded V1 engineering-test evidence."
+        },
+        {
+          "const": "This is not an upstream reproduction."
+        },
+        {
+          "const": "This is not exhaustive-search evidence."
+        },
+        {
+          "const": "This is not a certificate."
+        },
+        {
+          "const": "This establishes no theorem, counterexample, or pruning result."
+        },
+        {
+          "const": "RFU-TEST-001 remains open until independent review."
+        }
+      ],
+      "items": false
+    }
+  }
+}

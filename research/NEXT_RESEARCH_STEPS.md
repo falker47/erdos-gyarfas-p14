@@ -28,47 +28,61 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### RFU-TEST-001 - Stabilize inspector timeout coverage
+### RFU-TEST-001 - Make inspector stability evidence auditable
 
-Status: `OPEN` pending review.
+Status: `OPEN`; the corrective task is `READY_FOR_REVIEW`.
 
-`TASK-20260719__define_environment_trust_boundary` is accepted with
+`TASK-20260719__define_environment_trust_boundary` remains accepted with
 `ACCEPT WITH FOLLOW-UP` at exact commit
-`a7066e70b92d80be2d1772127f329c24222c1b41`; the review occurred at
-`2026-07-19T10:24:26Z`.
+`a7066e70b92d80be2d1772127f329c24222c1b41`. The timeout-test stabilization
+candidate at `c71d66995ae6a36620a2aa8f938faf6d84fe1af7` received `REJECT` at
+`2026-07-19T11:58:09Z`, so the accepted baseline remains unchanged.
 
-`TASK-20260719__stabilize_inspector_timeout_test` is the current bounded
-test-only task. The previous combined test required Python startup, JSON
-decoding, two stream reads, two SHA-256 calculations, and marker creation
-within 0.75 seconds before it could prove freeze ordering. The candidate
-separates that controlled non-timeout proof from deterministic mocked
-timeout/kill/drain/reap coverage. The candidate SHA is intentionally resolved
-from Git by the reviewer.
+The rejected implementation separated controlled freeze-order verification
+from deterministic timeout/kill/drain/reap coverage. Its central repeated-run
+claim, however, was recorded only as Markdown transcription: the repository
+contained no raw output, JUnit result, machine-readable run bundle, CI
+artifact, or equivalent independently checkable record for the stated 25
+focused runs and two complete suites. The rejected dossier is immutable
+historical evidence.
 
-This task changes no production inspector, workflow, environment boundary,
-dependency, build, verifier, generator, search, claim, or pruning behavior.
-Its repeated test results are bounded engineering evidence only and do not
-resolve `RFU-TEST-001` before review.
+`TASK-20260719__make_inspector_stability_evidence_auditable` is the active
+correction. It has created a strict evidence schema, a serial no-retry runner,
+an independent verifier, focused tooling tests, and one canonical JSON report
+containing exactly 25 focused executions followed by two complete-suite
+executions. The single actual invocation completed all 27 attempts: every
+focused attempt reported 31 passes and both complete suites reported 333
+passes, with no failed attempt, non-passing outcome, or retry. The independent
+verifier passed with same-host source and tool rehashing. Markdown summarizes
+the report but does not duplicate its 27 run records. Final post-edit
+complete-diff, allowlist, protected-inventory, and whitespace inspections pass,
+so the corrective task is `READY_FOR_REVIEW`. The next review remains
+cumulative from `a7066e70b92d80be2d1772127f329c24222c1b41`; the candidate
+SHA is intentionally resolved from Git by the reviewer.
+
+`RFU-TEST-001` remains `OPEN` until the cumulative candidate and its
+machine-readable evidence receive independent review. This work changes no
+production inspector behavior and has no mathematical implication.
 
 ### Subsequent RFU-ENV-001 work
 
 `RFU-ENV-001` remains `OPEN` and unchanged. A later atomic task may implement
 or attest the locking, capture, and external-service controls catalogued in
 `research/ENVIRONMENT_LOCK_INVENTORY.json` and interpreted by
-`research/ENVIRONMENT_TRUST_BOUNDARY.md`. The current timeout-test task does
-not begin that work.
+`research/ENVIRONMENT_TRUST_BOUNDARY.md`. The current evidence-audit correction
+does not begin that work.
 
-`RS-001` remains `NOT STARTED`. Neither test stabilization nor environment
-specification starts an upstream reproduction or mathematical research task,
-and neither has a mathematical implication.
+`RS-001` remains `NOT STARTED`. Neither this evidence-audit correction nor
+environment specification starts an upstream reproduction or mathematical
+research task, and neither has a mathematical implication.
 
 ## Planned sequence
 
 ### RS-001 — Reproduce tiny upstream cases
 
 Status: NOT STARTED. Do not execute as part of the current inspector
-timeout-test task; starting `RS-001` requires a separate reviewed task after
-its environment prerequisites are explicitly addressed.
+stability-evidence correction; starting `RS-001` requires a separate reviewed
+task after its environment prerequisites are explicitly addressed.
 
 Run the preserved baseline for small `k`, beginning with values that complete
 quickly.

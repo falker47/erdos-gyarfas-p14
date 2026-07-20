@@ -1,0 +1,2387 @@
+{
+  "artifact_kind": "inspector_timeout_stability_evidence",
+  "classification": "EMPIRICAL_OBSERVATION",
+  "cleanup": {
+    "completed": true,
+    "expected": [
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-01",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-02",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-03",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-04",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-05",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-06",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-07",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-08",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-09",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-10",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-11",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-12",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-13",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-14",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-15",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-16",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-17",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-18",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-19",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-20",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-21",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-22",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-23",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-24",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-25",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/full-suite-01",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/full-suite-02"
+    ],
+    "remaining": [],
+    "removed": [
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-01",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-02",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-03",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-04",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-05",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-06",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-07",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-08",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-09",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-10",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-11",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-12",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-13",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-14",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-15",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-16",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-17",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-18",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-19",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-20",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-21",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-22",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-23",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-24",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-25",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/full-suite-01",
+      "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/full-suite-02"
+    ],
+    "root": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps"
+  },
+  "completed": true,
+  "environment": {
+    "architecture": "64bit",
+    "cpu_count": 16,
+    "limitations": [
+      "The complete process environment is intentionally neither captured nor forwarded; the child receives a minimal non-credential allowlist, and preflight rejected known pytest and inspector-test control variables.",
+      "On Windows, interruption terminates and drains the direct pytest process; descendant-process termination relies on pytest and operating-system teardown and is not independently attested."
+    ],
+    "machine_identifier": "AMD64",
+    "operating_system": "Windows-11-10.0.26200-SP0",
+    "processor_identifier": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "python_executable": {
+      "byte_length": 106328,
+      "effective_value": "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "limitation": null,
+      "readable": true,
+      "resolved_path": "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "sha256": "cce21c0e8710e304273e98ac4b2b0f5aceb639acbcd2343cbaa5c4e81619c45b"
+    },
+    "python_implementation": "CPython",
+    "python_version": "3.14.3",
+    "tool_overrides": {
+      "EG_CMAKE": {
+        "byte_length": 9777292,
+        "effective_value": "C:/msys64/ucrt64/bin/cmake.exe",
+        "limitation": null,
+        "readable": true,
+        "resolved_path": "C:/msys64/ucrt64/bin/cmake.exe",
+        "sha256": "ffca3626caf34f69bdcfb38d5040ff622080d5add3928ee678582d3d92e83bc0"
+      },
+      "EG_CXX": {
+        "byte_length": 2781056,
+        "effective_value": "C:/msys64/ucrt64/bin/g++.exe",
+        "limitation": null,
+        "readable": true,
+        "resolved_path": "C:/msys64/ucrt64/bin/g++.exe",
+        "sha256": "9e69b6c6d6593d143476ae93098ba8df897835949e5fd6be4f3df919371f4913"
+      },
+      "EG_MAKE": {
+        "byte_length": 228832,
+        "effective_value": "C:/msys64/usr/bin/make.exe",
+        "limitation": null,
+        "readable": true,
+        "resolved_path": "C:/msys64/usr/bin/make.exe",
+        "sha256": "6732605294c9f11ffc9e0ed112786bc63d65c8d8b6a22d14281bcb4e90148f20"
+      },
+      "EG_NINJA": {
+        "byte_length": 1318176,
+        "effective_value": "C:/msys64/ucrt64/bin/ninja.exe",
+        "limitation": null,
+        "readable": true,
+        "resolved_path": "C:/msys64/ucrt64/bin/ninja.exe",
+        "sha256": "de6836289099ec47cc4aa4671b1522eafc73b9b4dd73ac407b8bb7cdd46b60ce"
+      }
+    },
+    "working_directory": "C:/Users/Falker/Desktop/Code/circle/erdos-gyarfas-p14"
+  },
+  "execution_finished_at_utc": "2026-07-19T13:37:40.838505Z",
+  "execution_project_revision": {
+    "fingerprint_kind": "canonical_source_inventory_v1",
+    "fingerprint_scope": [
+      ".dockerignore",
+      ".gitattributes",
+      ".github/workflows/ci.yml",
+      ".github/workflows/heavy-search.yml",
+      ".gitignore",
+      "AGENTS.md",
+      "CHATGPT_REVIEW_PROTOCOL.md",
+      "CITATION.cff",
+      "CMakeLists.txt",
+      "CMakePresets.json",
+      "DECISION_LOG.md",
+      "Dockerfile",
+      "LICENSE",
+      "PROJECT_KNOWLEDGE.md",
+      "README.md",
+      "RESEARCH_LOG.md",
+      "REVIEW_STATE.yaml",
+      "_TEMPLATES/DECISION_TEMPLATE.md",
+      "_TEMPLATES/EVIDENCE_TEMPLATE.md",
+      "_TEMPLATES/EXPERIMENT_MANIFEST_TEMPLATE.json",
+      "_TEMPLATES/TASK_LOG_TEMPLATE.md",
+      "_TEMPLATES/TASK_STATUS_TEMPLATE.md",
+      "artifacts/README.md",
+      "artifacts/certificates/.gitkeep",
+      "artifacts/checkpoints/.gitkeep",
+      "artifacts/counterexamples/.gitkeep",
+      "artifacts/manifests/.gitkeep",
+      "benchmarks/README.md",
+      "benchmarks/cases/upstream-small-k.json",
+      "benchmarks/results/.gitkeep",
+      "docs/ARTIFACT_FORMATS.md",
+      "docs/CI.md",
+      "docs/DEVELOPMENT.md",
+      "docs/TRUST_BOUNDARY.md",
+      "ops/TASK-20260715__bootstrap_reproducible_baseline/EVIDENCE.md",
+      "ops/TASK-20260715__bootstrap_reproducible_baseline/TASK_LOG.md",
+      "ops/TASK-20260715__bootstrap_reproducible_baseline/TASK_STATUS.md",
+      "ops/TASK-20260717__bind_heavy_workflow_task_identity/EVIDENCE.md",
+      "ops/TASK-20260717__bind_heavy_workflow_task_identity/TASK_LOG.md",
+      "ops/TASK-20260717__bind_heavy_workflow_task_identity/TASK_STATUS.md",
+      "ops/TASK-20260717__enforce_committed_range_whitespace/EVIDENCE.md",
+      "ops/TASK-20260717__enforce_committed_range_whitespace/TASK_LOG.md",
+      "ops/TASK-20260717__enforce_committed_range_whitespace/TASK_STATUS.md",
+      "ops/TASK-20260717__enforce_process_outcome_semantics/EVIDENCE.md",
+      "ops/TASK-20260717__enforce_process_outcome_semantics/TASK_LOG.md",
+      "ops/TASK-20260717__enforce_process_outcome_semantics/TASK_STATUS.md",
+      "ops/TASK-20260717__establish_review_state/EVIDENCE.md",
+      "ops/TASK-20260717__establish_review_state/TASK_LOG.md",
+      "ops/TASK-20260717__establish_review_state/TASK_STATUS.md",
+      "ops/TASK-20260717__harden_surprising_outcome_preservation/EVIDENCE.md",
+      "ops/TASK-20260717__harden_surprising_outcome_preservation/TASK_LOG.md",
+      "ops/TASK-20260717__harden_surprising_outcome_preservation/TASK_STATUS.md",
+      "ops/TASK-20260717__repair_postcommit_review_state/EVIDENCE.md",
+      "ops/TASK-20260717__repair_postcommit_review_state/TASK_LOG.md",
+      "ops/TASK-20260717__repair_postcommit_review_state/TASK_STATUS.md",
+      "ops/TASK-20260717__repair_review_governance/EVIDENCE.md",
+      "ops/TASK-20260717__repair_review_governance/TASK_LOG.md",
+      "ops/TASK-20260717__repair_review_governance/TASK_STATUS.md",
+      "ops/TASK-20260718__isolate_whitespace_git_semantics/EVIDENCE.md",
+      "ops/TASK-20260718__isolate_whitespace_git_semantics/TASK_LOG.md",
+      "ops/TASK-20260718__isolate_whitespace_git_semantics/TASK_STATUS.md",
+      "ops/TASK-20260718__support_multi_worktree_whitespace_check/EVIDENCE.md",
+      "ops/TASK-20260718__support_multi_worktree_whitespace_check/TASK_LOG.md",
+      "ops/TASK-20260718__support_multi_worktree_whitespace_check/TASK_STATUS.md",
+      "ops/TASK-20260719__align_action_pin_documentation/EVIDENCE.md",
+      "ops/TASK-20260719__align_action_pin_documentation/TASK_LOG.md",
+      "ops/TASK-20260719__align_action_pin_documentation/TASK_STATUS.md",
+      "ops/TASK-20260719__define_environment_trust_boundary/EVIDENCE.md",
+      "ops/TASK-20260719__define_environment_trust_boundary/TASK_LOG.md",
+      "ops/TASK-20260719__define_environment_trust_boundary/TASK_STATUS.md",
+      "ops/TASK-20260719__pin_github_actions_immutable_shas/EVIDENCE.md",
+      "ops/TASK-20260719__pin_github_actions_immutable_shas/TASK_LOG.md",
+      "ops/TASK-20260719__pin_github_actions_immutable_shas/TASK_STATUS.md",
+      "ops/TASK-20260719__stabilize_inspector_timeout_test/EVIDENCE.md",
+      "ops/TASK-20260719__stabilize_inspector_timeout_test/TASK_LOG.md",
+      "ops/TASK-20260719__stabilize_inspector_timeout_test/TASK_STATUS.md",
+      "pyproject.toml",
+      "research/BIBLIOGRAPHY.md",
+      "research/CLAIMS_REGISTRY.yaml",
+      "research/ENVIRONMENT_LOCK_INVENTORY.json",
+      "research/ENVIRONMENT_TRUST_BOUNDARY.md",
+      "research/KNOWN_RESULTS.md",
+      "research/NEGATIVE_RESULTS.md",
+      "research/PROBLEM_STATEMENT.md",
+      "research/PRUNING_REGISTRY.md",
+      "research/REPRODUCIBILITY.md",
+      "research/SEARCH_MODEL.md",
+      "research/UPSTREAM_ALGORITHM.md",
+      "research/VERIFICATION_PROTOCOL.md",
+      "schemas/benchmark-result.schema.json",
+      "schemas/counterexample.schema.json",
+      "schemas/environment-lock-inventory.schema.json",
+      "schemas/experiment-manifest.schema.json",
+      "schemas/inspector-timeout-stability-evidence.schema.json",
+      "schemas/search-certificate.schema.json",
+      "schemas/search-partition.schema.json",
+      "schemas/surprising-process-outcome.schema.json",
+      "start.md",
+      "tests/differential/test_small_graph_oracles.py",
+      "tests/fixtures/README.md",
+      "tests/fixtures/c16.json",
+      "tests/fixtures/c3.json",
+      "tests/fixtures/c4.json",
+      "tests/fixtures/c5.json",
+      "tests/fixtures/c8.json",
+      "tests/fixtures/chorded-p4.json",
+      "tests/fixtures/complete-k4.json",
+      "tests/fixtures/complete-k5.json",
+      "tests/fixtures/disconnected.json",
+      "tests/fixtures/empty.json",
+      "tests/fixtures/malformed-duplicate-edge.json",
+      "tests/fixtures/malformed-duplicate-key.json",
+      "tests/fixtures/malformed-endpoint.json",
+      "tests/fixtures/malformed-json.json",
+      "tests/fixtures/malformed-loop.json",
+      "tests/fixtures/malformed-nonfinite.json",
+      "tests/fixtures/manifest-hash-target.txt",
+      "tests/fixtures/manifest-invalid-hash.json",
+      "tests/fixtures/manifest-valid-hash.json",
+      "tests/fixtures/path-p13.json",
+      "tests/fixtures/path-p14.json",
+      "tests/fixtures/path-p4.json",
+      "tests/integration/test_upstream_build.py",
+      "tests/integration/test_verifier_cli.py",
+      "tests/unit/test_benchmark_outcomes.py",
+      "tests/unit/test_counterexample.py",
+      "tests/unit/test_environment_lock_inventory.py",
+      "tests/unit/test_github_action_pins.py",
+      "tests/unit/test_graph.py",
+      "tests/unit/test_inspector_timeout_stability_evidence.py",
+      "tests/unit/test_manifest.py",
+      "tests/unit/test_predicates.py",
+      "tests/unit/test_review_range_whitespace.py",
+      "tests/unit/test_review_task_id.py",
+      "tests/unit/test_upstream_candidate_inspection.py",
+      "third_party/erdos-gyarfas/.gitignore",
+      "third_party/erdos-gyarfas/CITATION.cff",
+      "third_party/erdos-gyarfas/LICENSE",
+      "third_party/erdos-gyarfas/Makefile",
+      "third_party/erdos-gyarfas/README.md",
+      "third_party/erdos-gyarfas/include/graph.h",
+      "third_party/erdos-gyarfas/include/lib.h",
+      "third_party/erdos-gyarfas/src/graph.cpp",
+      "third_party/erdos-gyarfas/src/lib.cpp",
+      "third_party/erdos-gyarfas/src/main.cpp",
+      "tools/_common.py",
+      "tools/check_github_action_pins.py",
+      "tools/check_review_range_whitespace.py",
+      "tools/hash_artifacts.py",
+      "tools/inspect_upstream_candidate.py",
+      "tools/make_manifest.py",
+      "tools/resolve_review_task_id.py",
+      "tools/run_benchmark.py",
+      "tools/run_inspector_timeout_stability.py",
+      "tools/validate_schemas.py",
+      "tools/verify_inspector_timeout_stability.py",
+      "tools/verify_manifest.py",
+      "tools/verify_upstream_snapshot.py",
+      "upstream/README.md",
+      "upstream/UPSTREAM_PROVENANCE.json",
+      "upstream/UPSTREAM_REFS.json",
+      "upstream/patches/README.md",
+      "verifier/README.md",
+      "verifier/egverify/__init__.py",
+      "verifier/egverify/__main__.py",
+      "verifier/egverify/cli.py",
+      "verifier/egverify/counterexample.py",
+      "verifier/egverify/graph.py",
+      "verifier/egverify/manifest.py",
+      "verifier/egverify/predicates.py"
+    ],
+    "fingerprint_sha256": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+    "state": "dirty"
+  },
+  "execution_started_at_utc": "2026-07-19T13:31:35.919158Z",
+  "expected_plan": {
+    "focused_runs": 25,
+    "full_suite_runs": 2,
+    "retries": 0,
+    "serial": true,
+    "stop_on_first_failure": true
+  },
+  "limitations": [
+    "This is bounded V1 engineering-test evidence.",
+    "This is not an upstream reproduction.",
+    "This is not exhaustive-search evidence.",
+    "This is not a certificate.",
+    "This establishes no theorem, counterexample, or pruning result.",
+    "RFU-TEST-001 remains open until independent review."
+  ],
+  "repository": "falker47/erdos-gyarfas-p14",
+  "review_base_commit": "a7066e70b92d80be2d1772127f329c24222c1b41",
+  "runs": [
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-01"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-01",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:31:41.691296Z",
+      "phase": "focused",
+      "phase_index": 1,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 1,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:31:35.994724Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMTdzDQo=",
+        "byte_length": 101,
+        "sha256": "3a12c1199d94dd734922f34164c157df6ff89a2b792f22e0eb4487551350cbf1"
+      },
+      "wall_time_seconds": 5.6965179
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-02"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-02",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:31:47.751493Z",
+      "phase": "focused",
+      "phase_index": 2,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 2,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:31:41.770411Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjhzDQo=",
+        "byte_length": 101,
+        "sha256": "9547858ac8bb01b4501daff7b998815dc5f83e1f1fdc7dbf995cde5c1955a274"
+      },
+      "wall_time_seconds": 5.9810264
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-03"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-03",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:31:53.675062Z",
+      "phase": "focused",
+      "phase_index": 3,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 3,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:31:47.834741Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjBzDQo=",
+        "byte_length": 101,
+        "sha256": "bbc00acf2c2c82fac0e17af41f329a4a674b556f8ae8132924e5fb0c02a7f2cd"
+      },
+      "wall_time_seconds": 5.8402651
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-04"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-04",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:31:59.582789Z",
+      "phase": "focused",
+      "phase_index": 4,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 4,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:31:53.754565Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjNzDQo=",
+        "byte_length": 101,
+        "sha256": "2e5ee58942592101643dd19d38eda3aba81ba93ad02c91f3f48b8eb6d629a4e4"
+      },
+      "wall_time_seconds": 5.8281698
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-05"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-05",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:32:05.564387Z",
+      "phase": "focused",
+      "phase_index": 5,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 5,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:31:59.671120Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjRzDQo=",
+        "byte_length": 101,
+        "sha256": "302081da0d45f331a99022513d06f5f1d0dddc92ab4ce6780176a1d2711960c6"
+      },
+      "wall_time_seconds": 5.8932113
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-06"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-06",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:32:11.760974Z",
+      "phase": "focused",
+      "phase_index": 6,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 6,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:32:05.664748Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuNTRzDQo=",
+        "byte_length": 101,
+        "sha256": "ac09507e811e13f5583f7b5c2d888eddc0f35955aa2d7cf69f24f7a452c9a8ea"
+      },
+      "wall_time_seconds": 6.0961686
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-07"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-07",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:32:17.876700Z",
+      "phase": "focused",
+      "phase_index": 7,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 7,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:32:11.834781Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuNDJzDQo=",
+        "byte_length": 101,
+        "sha256": "b809ed80e8b44bc35fd49af778202f02447d0252a3fffff0b986f181a6d48ccd"
+      },
+      "wall_time_seconds": 6.0418583
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-08"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-08",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:32:23.686217Z",
+      "phase": "focused",
+      "phase_index": 8,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 8,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:32:17.957917Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMTlzDQo=",
+        "byte_length": 101,
+        "sha256": "d5eae581a45a5c70050938d39677f9743c464b086405b8c3452ce2d2b700b2d6"
+      },
+      "wall_time_seconds": 5.7282468
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-09"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-09",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:32:29.505875Z",
+      "phase": "focused",
+      "phase_index": 9,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 9,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:32:23.769654Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMTZzDQo=",
+        "byte_length": 101,
+        "sha256": "3c53e78b278bfe31416355d027e8d219a3c5935131505555047663b2d4807b09"
+      },
+      "wall_time_seconds": 5.7361675
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-10"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-10",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:32:35.326449Z",
+      "phase": "focused",
+      "phase_index": 10,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 10,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:32:29.586885Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMTdzDQo=",
+        "byte_length": 101,
+        "sha256": "3a12c1199d94dd734922f34164c157df6ff89a2b792f22e0eb4487551350cbf1"
+      },
+      "wall_time_seconds": 5.7395094
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-11"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-11",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:32:41.246727Z",
+      "phase": "focused",
+      "phase_index": 11,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 11,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:32:35.402867Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjVzDQo=",
+        "byte_length": 101,
+        "sha256": "cfc4b400eca96196aa0849245aad4d839ea26988a3dc93b4d6c24c9d192ede0b"
+      },
+      "wall_time_seconds": 5.8438046
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-12"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-12",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:32:47.168683Z",
+      "phase": "focused",
+      "phase_index": 12,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 12,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:32:41.322282Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjFzDQo=",
+        "byte_length": 101,
+        "sha256": "eec4655a96c6f88af8b5836c52c2b682dc3625992227ea3afad60ad7ece21457"
+      },
+      "wall_time_seconds": 5.8463455
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-13"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-13",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:32:53.408017Z",
+      "phase": "focused",
+      "phase_index": 13,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 13,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:32:47.243325Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuNjJzDQo=",
+        "byte_length": 101,
+        "sha256": "db20058be6016cffd616b3cc670b03126b6e7a6b3c4689ccdb7ee7bf0063c81a"
+      },
+      "wall_time_seconds": 6.1646306
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-14"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-14",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:32:59.365692Z",
+      "phase": "focused",
+      "phase_index": 14,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 14,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:32:53.491923Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjlzDQo=",
+        "byte_length": 101,
+        "sha256": "e7683d21e32cb839a47ec4fb9e404b253adf527043a39d7ece172faaf02d3ea6"
+      },
+      "wall_time_seconds": 5.8737126
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-15"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-15",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:33:05.407328Z",
+      "phase": "focused",
+      "phase_index": 15,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 15,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:32:59.442206Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjVzDQo=",
+        "byte_length": 101,
+        "sha256": "cfc4b400eca96196aa0849245aad4d839ea26988a3dc93b4d6c24c9d192ede0b"
+      },
+      "wall_time_seconds": 5.9650636
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-16"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-16",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:33:11.365497Z",
+      "phase": "focused",
+      "phase_index": 16,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 16,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:33:05.486993Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjdzDQo=",
+        "byte_length": 101,
+        "sha256": "7b4b87a156e0e393b879bd6f5aeb4bf639d3e47e21acb0ced0e304c7e506c8da"
+      },
+      "wall_time_seconds": 5.8784494
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-17"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-17",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:33:17.181390Z",
+      "phase": "focused",
+      "phase_index": 17,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 17,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:33:11.442581Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMThzDQo=",
+        "byte_length": 101,
+        "sha256": "af22f44cb0b3219bec47a9221be254289c485e4ffe75e41d677c9b42d2bc85ec"
+      },
+      "wall_time_seconds": 5.7387561
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-18"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-18",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:33:23.038485Z",
+      "phase": "focused",
+      "phase_index": 18,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 18,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:33:17.263479Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjBzDQo=",
+        "byte_length": 101,
+        "sha256": "bbc00acf2c2c82fac0e17af41f329a4a674b556f8ae8132924e5fb0c02a7f2cd"
+      },
+      "wall_time_seconds": 5.7749511
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-19"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-19",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:33:28.913979Z",
+      "phase": "focused",
+      "phase_index": 19,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 19,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:33:23.113556Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMTVzDQo=",
+        "byte_length": 101,
+        "sha256": "59e0ebabad459ac448c84b4a2f1dca034fdb2dc4af3581dbdfcbfeed1ba6a509"
+      },
+      "wall_time_seconds": 5.8003669
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-20"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-20",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:33:34.800301Z",
+      "phase": "focused",
+      "phase_index": 20,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 20,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:33:28.989272Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjNzDQo=",
+        "byte_length": 101,
+        "sha256": "2e5ee58942592101643dd19d38eda3aba81ba93ad02c91f3f48b8eb6d629a4e4"
+      },
+      "wall_time_seconds": 5.8109733
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-21"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-21",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:33:40.562807Z",
+      "phase": "focused",
+      "phase_index": 21,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 21,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:33:34.875771Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMTBzDQo=",
+        "byte_length": 101,
+        "sha256": "dc0bd9cc6dd8548f51cf291e93128f0308a6dd399dfede9c033444061abd1c88"
+      },
+      "wall_time_seconds": 5.6869839
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-22"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-22",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:33:46.343286Z",
+      "phase": "focused",
+      "phase_index": 22,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 22,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:33:40.643197Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMTJzDQo=",
+        "byte_length": 101,
+        "sha256": "5ea6c4fee33e2c2fcdb69e2da7e27336d73a967b2cace01d25dd458216aa1eee"
+      },
+      "wall_time_seconds": 5.7000353
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-23"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-23",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:33:52.090202Z",
+      "phase": "focused",
+      "phase_index": 23,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 23,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:33:46.416546Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMTJzDQo=",
+        "byte_length": 101,
+        "sha256": "5ea6c4fee33e2c2fcdb69e2da7e27336d73a967b2cace01d25dd458216aa1eee"
+      },
+      "wall_time_seconds": 5.6736035
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-24"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-24",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:33:58.039702Z",
+      "phase": "focused",
+      "phase_index": 24,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 24,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:33:52.169032Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuMjVzDQo=",
+        "byte_length": 101,
+        "sha256": "cfc4b400eca96196aa0849245aad4d839ea26988a3dc93b4d6c24c9d192ede0b"
+      },
+      "wall_time_seconds": 5.870608
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/unit/test_upstream_candidate_inspection.py",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-25"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/focused-25",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:34:04.171406Z",
+      "phase": "focused",
+      "phase_index": 25,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 31,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 25,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:33:58.116272Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzEgcGFzc2VkIGluIDQuNDZzDQo=",
+        "byte_length": 101,
+        "sha256": "e5c1983d5c7f53e1102c4aac666631a66e8793d5d5d50b3c905151d88f3b5295"
+      },
+      "wall_time_seconds": 6.0550765
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/full-suite-01"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/full-suite-01",
+      "environment_overrides": {
+        "EG_CMAKE": "C:/msys64/ucrt64/bin/cmake.exe",
+        "EG_CXX": "C:/msys64/ucrt64/bin/g++.exe",
+        "EG_MAKE": "C:/msys64/usr/bin/make.exe",
+        "EG_NINJA": "C:/msys64/ucrt64/bin/ninja.exe"
+      },
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:35:54.236708Z",
+      "phase": "full_suite",
+      "phase_index": 1,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 333,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 26,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:34:04.257078Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIFsgMjElXQ0KLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIFsgNDMlXQ0KLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIFsgNjQlXQ0KLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIFsgODYlXQ0KLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzMzIHBhc3NlZCBpbiAxMDguMjlzICgwOjAxOjQ4KQ0K",
+        "byte_length": 438,
+        "sha256": "11a83d04b9849e41bb7717287e65d00e641d05e4a2ff3a219a8b7d3426642719"
+      },
+      "wall_time_seconds": 109.9788788
+    },
+    {
+      "argv": [
+        "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "--basetemp",
+        "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/full-suite-02"
+      ],
+      "basetemp_path": "build/TASK-20260719__make_inspector_stability_evidence_auditable-basetemps/full-suite-02",
+      "environment_overrides": {
+        "EG_CMAKE": "C:/msys64/ucrt64/bin/cmake.exe",
+        "EG_CXX": "C:/msys64/ucrt64/bin/g++.exe",
+        "EG_MAKE": "C:/msys64/usr/bin/make.exe",
+        "EG_NINJA": "C:/msys64/ucrt64/bin/ninja.exe"
+      },
+      "exit_code": 0,
+      "finished_at_utc": "2026-07-19T13:37:37.120970Z",
+      "phase": "full_suite",
+      "phase_index": 2,
+      "pytest_summary": {
+        "diagnostic": null,
+        "errors": 0,
+        "failed": 0,
+        "parsed": true,
+        "passed": 333,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "sequence": 27,
+      "source_fingerprint_after": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "source_fingerprint_before": "415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a",
+      "started_at_utc": "2026-07-19T13:35:54.313206Z",
+      "status": "passed",
+      "stderr": {
+        "base64": "",
+        "byte_length": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "base64": "Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIFsgMjElXQ0KLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIFsgNDMlXQ0KLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIFsgNjQlXQ0KLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIFsgODYlXQ0KLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsxMDAlXQ0KMzMzIHBhc3NlZCBpbiAxMDEuMThzICgwOjAxOjQxKQ0K",
+        "byte_length": 438,
+        "sha256": "e6f6ed8f80c4b8e659744eb146d9c46d4d1c73ecd6f02b0c3219c98417292b5f"
+      },
+      "wall_time_seconds": 102.8070589
+    }
+  ],
+  "schema_version": "1.0",
+  "source_files": [
+    {
+      "byte_length": 359,
+      "path": ".dockerignore",
+      "sha256": "46d98cdd7a0c19863214d704b6eb7b1a8b1f993a0ee40cb48969f6d309a5c08b"
+    },
+    {
+      "byte_length": 193,
+      "path": ".gitattributes",
+      "sha256": "3d4fcd555869954eab9bbe5147d04514f8525dc500e8aa301bc20740a104f040"
+    },
+    {
+      "byte_length": 7780,
+      "path": ".github/workflows/ci.yml",
+      "sha256": "7bfef1f1d09a46bf7b0c1bd85eb19c44cec75071d943ce74dddaa88c17eaf809"
+    },
+    {
+      "byte_length": 8572,
+      "path": ".github/workflows/heavy-search.yml",
+      "sha256": "3af7eb1ddf7c12940f2251ac38a30115e29530b75e304e981b254149921cc803"
+    },
+    {
+      "byte_length": 609,
+      "path": ".gitignore",
+      "sha256": "3053384de6dfa87348d275369da46e440801a3c8c76cdd41d043fa5580acb60f"
+    },
+    {
+      "byte_length": 12534,
+      "path": "AGENTS.md",
+      "sha256": "0a94ea441f19e6ef00bc45bc6f751366b52105ecae3f067f8ef75a8d45c675d4"
+    },
+    {
+      "byte_length": 13798,
+      "path": "CHATGPT_REVIEW_PROTOCOL.md",
+      "sha256": "6aa531d6fd8acb140b347bc915d5a2aad99d9b58e635744eb02c98db88e24a26"
+    },
+    {
+      "byte_length": 446,
+      "path": "CITATION.cff",
+      "sha256": "633d0695751b6cdbb1f66b220080d55606a18e087e1b488a3a2f2b69782448a5"
+    },
+    {
+      "byte_length": 1076,
+      "path": "CMakeLists.txt",
+      "sha256": "4163b6957f68d05f316e1242c355d6d9a7fd9e585034cb48cc3c318f1021b71f"
+    },
+    {
+      "byte_length": 1240,
+      "path": "CMakePresets.json",
+      "sha256": "f23b0b5fb32333424e1540a8e0b4f638774225e0737a1fad452739fb5be016c1"
+    },
+    {
+      "byte_length": 4197,
+      "path": "DECISION_LOG.md",
+      "sha256": "8d3420fd5cdc066bb9bb34638367e2a26657f9c45008fee4cacbae91b6367373"
+    },
+    {
+      "byte_length": 1289,
+      "path": "Dockerfile",
+      "sha256": "812ac741b6b80eff545b88a837c83068e5443c3d2ebb244e542cbedf0f5038ff"
+    },
+    {
+      "byte_length": 1087,
+      "path": "LICENSE",
+      "sha256": "887fe90603c48d233b77a34756cbe089f0bb699a256a67a5c14553d18fdfb176"
+    },
+    {
+      "byte_length": 4836,
+      "path": "PROJECT_KNOWLEDGE.md",
+      "sha256": "ca4a8764e8a4f50cb92a6412b190147d4568c70c525aefebcdb3c9d58ebde09c"
+    },
+    {
+      "byte_length": 2440,
+      "path": "README.md",
+      "sha256": "bad662fee18095efb7170267279cc58fdeeb20d4881e4c5a8250d74cc45d989e"
+    },
+    {
+      "byte_length": 2198,
+      "path": "RESEARCH_LOG.md",
+      "sha256": "da1c0a81af7a06b9b73737222449d920f2788cd9328b70e6d4d07873fb59bf15"
+    },
+    {
+      "byte_length": 2206,
+      "path": "REVIEW_STATE.yaml",
+      "sha256": "422eb031f410b4aeb6762f05eaa216185ed72fc0942730342871fda9818d797b"
+    },
+    {
+      "byte_length": 225,
+      "path": "_TEMPLATES/DECISION_TEMPLATE.md",
+      "sha256": "b75f45e916445ad72bfc7049027d4d989df0a835db5e202a54d35a2e0eeb2b6d"
+    },
+    {
+      "byte_length": 267,
+      "path": "_TEMPLATES/EVIDENCE_TEMPLATE.md",
+      "sha256": "840645da35dbe4356dfe05ad5fad811b9117224e574a3b545b7178a36ac538ee"
+    },
+    {
+      "byte_length": 1398,
+      "path": "_TEMPLATES/EXPERIMENT_MANIFEST_TEMPLATE.json",
+      "sha256": "cb49f68f04a464dd50a6ca14329d8a9e532b8484036483baa9c2f488243666be"
+    },
+    {
+      "byte_length": 291,
+      "path": "_TEMPLATES/TASK_LOG_TEMPLATE.md",
+      "sha256": "ac9ea2b8b2e561cb41f3f3bb4c0af5d7361206fb9e92c97a0420a38f43aa2d90"
+    },
+    {
+      "byte_length": 817,
+      "path": "_TEMPLATES/TASK_STATUS_TEMPLATE.md",
+      "sha256": "604444e89397a9f0285d179090e5829c8f6053992f7be4828040eb9c02af32f0"
+    },
+    {
+      "byte_length": 1017,
+      "path": "artifacts/README.md",
+      "sha256": "9f29301755dcedcc7a60acdcf88f62bb7186adca6342011abe8e0e6b5fb51fac"
+    },
+    {
+      "byte_length": 1,
+      "path": "artifacts/certificates/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "byte_length": 1,
+      "path": "artifacts/checkpoints/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "byte_length": 1,
+      "path": "artifacts/counterexamples/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "byte_length": 1,
+      "path": "artifacts/manifests/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "byte_length": 2188,
+      "path": "benchmarks/README.md",
+      "sha256": "4bc891d33e130292ae5d4996f1832bbc1892308f8a6650d68da86ae6643ef4a9"
+    },
+    {
+      "byte_length": 672,
+      "path": "benchmarks/cases/upstream-small-k.json",
+      "sha256": "e645b55ef29aded979be8ff0e140da54d3d56e2c0f7a567f7ebef47119d547f6"
+    },
+    {
+      "byte_length": 1,
+      "path": "benchmarks/results/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "byte_length": 3745,
+      "path": "docs/ARTIFACT_FORMATS.md",
+      "sha256": "ad6866fd92985253a60ca02245eface11b147748a59195e018d6548b2a471ed9"
+    },
+    {
+      "byte_length": 17114,
+      "path": "docs/CI.md",
+      "sha256": "30c909b0ae861aed9d03ebed31b1edf7a1b5d24b4618edff5276965d5ecb169d"
+    },
+    {
+      "byte_length": 2514,
+      "path": "docs/DEVELOPMENT.md",
+      "sha256": "885d95f6748f668650751794fefaba827490d7e879b667c4bdfc9e9a393ee951"
+    },
+    {
+      "byte_length": 2403,
+      "path": "docs/TRUST_BOUNDARY.md",
+      "sha256": "0f718144c0c6d07ccd13ca753e2fb3f0fe311970cb793ac9aa968d437ccb4947"
+    },
+    {
+      "byte_length": 14187,
+      "path": "ops/TASK-20260715__bootstrap_reproducible_baseline/EVIDENCE.md",
+      "sha256": "5a2f247478939b1ef3c5b2056fdca6f3ea496a4be38f86f01bd2177bdc2f2ddc"
+    },
+    {
+      "byte_length": 6935,
+      "path": "ops/TASK-20260715__bootstrap_reproducible_baseline/TASK_LOG.md",
+      "sha256": "6430df496bcba13241f200f1fcd07be60aa18b48f9a24c8bfab6109f5ae0e01a"
+    },
+    {
+      "byte_length": 5318,
+      "path": "ops/TASK-20260715__bootstrap_reproducible_baseline/TASK_STATUS.md",
+      "sha256": "840348c916ee283eed9d5c5e6aae83ad606d387b0f4e782bdd3eaf7cdcb664bd"
+    },
+    {
+      "byte_length": 25446,
+      "path": "ops/TASK-20260717__bind_heavy_workflow_task_identity/EVIDENCE.md",
+      "sha256": "1721b16dd7461e897f44f8d05206b34239efa93b9d8899c117148b800fda82cb"
+    },
+    {
+      "byte_length": 8669,
+      "path": "ops/TASK-20260717__bind_heavy_workflow_task_identity/TASK_LOG.md",
+      "sha256": "b3370536fbaf8b773b9729a21cc3a70aa676d59b6cd431aeff55ffa0e0c5e94f"
+    },
+    {
+      "byte_length": 3162,
+      "path": "ops/TASK-20260717__bind_heavy_workflow_task_identity/TASK_STATUS.md",
+      "sha256": "6f8daf910747c19b42e75f5ae50b26615e388dc2b555b40c7c9ba4fbc1a8fe6c"
+    },
+    {
+      "byte_length": 29236,
+      "path": "ops/TASK-20260717__enforce_committed_range_whitespace/EVIDENCE.md",
+      "sha256": "28e5f033063efff9c6f3171787c33ce3bfb2d1b47b38eaf925c4fc9ec939b1fd"
+    },
+    {
+      "byte_length": 9533,
+      "path": "ops/TASK-20260717__enforce_committed_range_whitespace/TASK_LOG.md",
+      "sha256": "97ff33422d665ea871771453dbb598f97d37f096f45c3c5c707ff3de7e496e4d"
+    },
+    {
+      "byte_length": 2399,
+      "path": "ops/TASK-20260717__enforce_committed_range_whitespace/TASK_STATUS.md",
+      "sha256": "ec02b65edf01e501469bf5ee49b0e09c7cdd9113db02bb99c2427686daabf0a6"
+    },
+    {
+      "byte_length": 22773,
+      "path": "ops/TASK-20260717__enforce_process_outcome_semantics/EVIDENCE.md",
+      "sha256": "f1b1f536b47dbf7fc497ea653271a9cab1fb2059126ffbb059792ad5943bc56d"
+    },
+    {
+      "byte_length": 4424,
+      "path": "ops/TASK-20260717__enforce_process_outcome_semantics/TASK_LOG.md",
+      "sha256": "54912993f804c3505d512754aae352f2ae15ceef3719586c8a1f06783fb17c85"
+    },
+    {
+      "byte_length": 5357,
+      "path": "ops/TASK-20260717__enforce_process_outcome_semantics/TASK_STATUS.md",
+      "sha256": "bfdbd317ee1be548b120a28651599d9064bef3bf2af05ec87f92d1b07b476017"
+    },
+    {
+      "byte_length": 6064,
+      "path": "ops/TASK-20260717__establish_review_state/EVIDENCE.md",
+      "sha256": "469e16608452bd3ed7a10fcf42d1ff0139ae2998e1e45fa3e78f589de24d7dbf"
+    },
+    {
+      "byte_length": 2105,
+      "path": "ops/TASK-20260717__establish_review_state/TASK_LOG.md",
+      "sha256": "546d1c53035eca3fd4acab51fb90b0fbabe0129bae7e38f9253e9cf3b360541a"
+    },
+    {
+      "byte_length": 2333,
+      "path": "ops/TASK-20260717__establish_review_state/TASK_STATUS.md",
+      "sha256": "61eb259cae0521a33d47d985e35704e169f39b62686471041516f816e9bc5bd1"
+    },
+    {
+      "byte_length": 14729,
+      "path": "ops/TASK-20260717__harden_surprising_outcome_preservation/EVIDENCE.md",
+      "sha256": "d712add8cd8099dec17f5d66581fdb3d110be27fb0a05c2de72370a969ab6697"
+    },
+    {
+      "byte_length": 6662,
+      "path": "ops/TASK-20260717__harden_surprising_outcome_preservation/TASK_LOG.md",
+      "sha256": "b0762416b336705a8959f8332e5642eca4deba9c4ce65b160c2cf6fa922e21f9"
+    },
+    {
+      "byte_length": 4204,
+      "path": "ops/TASK-20260717__harden_surprising_outcome_preservation/TASK_STATUS.md",
+      "sha256": "62d55efc559a0efc919eeebb2160b44ecbc8225ca04e58cbf568eb1bb33bcede"
+    },
+    {
+      "byte_length": 37009,
+      "path": "ops/TASK-20260717__repair_postcommit_review_state/EVIDENCE.md",
+      "sha256": "729e39a96b5bac9d53a95dc5295a4a7944c215b2a6adfccfa8e361ec6c116df9"
+    },
+    {
+      "byte_length": 3730,
+      "path": "ops/TASK-20260717__repair_postcommit_review_state/TASK_LOG.md",
+      "sha256": "dd0190eca2a5d03f67039e817a6ce7edf3725c36f2a617a690c596ac11c352b0"
+    },
+    {
+      "byte_length": 4228,
+      "path": "ops/TASK-20260717__repair_postcommit_review_state/TASK_STATUS.md",
+      "sha256": "12aea699cc738a328cefb68926bc650d4e60bb2bdac968fd9d1acdb203595188"
+    },
+    {
+      "byte_length": 26279,
+      "path": "ops/TASK-20260717__repair_review_governance/EVIDENCE.md",
+      "sha256": "b123fb5f86845f0d35d8f196c6b7ca90074aaa506747f19dac84fd47c9ac169d"
+    },
+    {
+      "byte_length": 3952,
+      "path": "ops/TASK-20260717__repair_review_governance/TASK_LOG.md",
+      "sha256": "5df73a79eac45306d35c97d13622dbb8af5de6082e4f25c6640eca012d56edcb"
+    },
+    {
+      "byte_length": 4427,
+      "path": "ops/TASK-20260717__repair_review_governance/TASK_STATUS.md",
+      "sha256": "91f7c5902feaa9279901d9ba7568004c16d82a1529d203d83e20f36d40f3c346"
+    },
+    {
+      "byte_length": 18018,
+      "path": "ops/TASK-20260718__isolate_whitespace_git_semantics/EVIDENCE.md",
+      "sha256": "1e0f345d90c86e72394ae350619016b75a019ff68f0aa0d7128386e4e525671d"
+    },
+    {
+      "byte_length": 9916,
+      "path": "ops/TASK-20260718__isolate_whitespace_git_semantics/TASK_LOG.md",
+      "sha256": "ad6be3c5faf3e9af7316f4efdac0de935ff86d04c29cc8bbca0a84cb7d8a4350"
+    },
+    {
+      "byte_length": 3172,
+      "path": "ops/TASK-20260718__isolate_whitespace_git_semantics/TASK_STATUS.md",
+      "sha256": "d67492fc5b8f7fc61cb14253eb8190ee46dd7bea473d16e9cf304b561db54adf"
+    },
+    {
+      "byte_length": 16489,
+      "path": "ops/TASK-20260718__support_multi_worktree_whitespace_check/EVIDENCE.md",
+      "sha256": "87838cfe6b9ff74fdec5801bf9a9ce19b5137cf1af65ec0f04dba4113d18a79d"
+    },
+    {
+      "byte_length": 8472,
+      "path": "ops/TASK-20260718__support_multi_worktree_whitespace_check/TASK_LOG.md",
+      "sha256": "1a445b1031232209fda8708563734fc74100ec0ae63e53c5c81e1879b4ecf040"
+    },
+    {
+      "byte_length": 2377,
+      "path": "ops/TASK-20260718__support_multi_worktree_whitespace_check/TASK_STATUS.md",
+      "sha256": "3288cbed5b841d3a22b1e8e00ea5e1c479906ea3aec67588256ab43366ce0458"
+    },
+    {
+      "byte_length": 17112,
+      "path": "ops/TASK-20260719__align_action_pin_documentation/EVIDENCE.md",
+      "sha256": "2679b44c1c7bec40fe6e95d573691957ab6efa5858258ddd0fe7a5e836145355"
+    },
+    {
+      "byte_length": 8494,
+      "path": "ops/TASK-20260719__align_action_pin_documentation/TASK_LOG.md",
+      "sha256": "bc5aaad24b63276f0ef7d87d5f30654d6445d674476a03bcaedd3b21ac030e1e"
+    },
+    {
+      "byte_length": 4025,
+      "path": "ops/TASK-20260719__align_action_pin_documentation/TASK_STATUS.md",
+      "sha256": "f1c321916f252cb0c5dc53d94a2d8159b3de94cee4e8c8b40111b9662f1ef7ab"
+    },
+    {
+      "byte_length": 20462,
+      "path": "ops/TASK-20260719__define_environment_trust_boundary/EVIDENCE.md",
+      "sha256": "bee46b3b44ff20a502c16329e372a87ceab713e54f4307f009e1fa5825a8f135"
+    },
+    {
+      "byte_length": 8193,
+      "path": "ops/TASK-20260719__define_environment_trust_boundary/TASK_LOG.md",
+      "sha256": "b2840fca3138e898f783e1dc10fac6587bca8566cd12707a47a8c65bb018dbd5"
+    },
+    {
+      "byte_length": 6010,
+      "path": "ops/TASK-20260719__define_environment_trust_boundary/TASK_STATUS.md",
+      "sha256": "d883e2fa2e62ddc445dd373a3b9594d3eb1b69cc490bbe9d6a13cb0436de9f64"
+    },
+    {
+      "byte_length": 16344,
+      "path": "ops/TASK-20260719__pin_github_actions_immutable_shas/EVIDENCE.md",
+      "sha256": "5d2cfb17500eaa8e290aeb580fd746592f29d7791885d6f5777a06e09de3a060"
+    },
+    {
+      "byte_length": 7207,
+      "path": "ops/TASK-20260719__pin_github_actions_immutable_shas/TASK_LOG.md",
+      "sha256": "d624fadc1f2f67d71ae0fe86a08cadfaaa052d4ab82ce1dab02fade20699aa0b"
+    },
+    {
+      "byte_length": 2707,
+      "path": "ops/TASK-20260719__pin_github_actions_immutable_shas/TASK_STATUS.md",
+      "sha256": "ba4bb26966226b457da6be4360f68d15430707366b2d5dfd2ff35d0ca7d0a9f6"
+    },
+    {
+      "byte_length": 16703,
+      "path": "ops/TASK-20260719__stabilize_inspector_timeout_test/EVIDENCE.md",
+      "sha256": "b0ea48f1d1a3e1d1c817c2d2746e0c6aad20b1b148db8d6182af450d45c3d731"
+    },
+    {
+      "byte_length": 8751,
+      "path": "ops/TASK-20260719__stabilize_inspector_timeout_test/TASK_LOG.md",
+      "sha256": "78a4e08a50525ad46df84488099abadbd4ba61bd1891c3074f1ca9340eaf290f"
+    },
+    {
+      "byte_length": 5516,
+      "path": "ops/TASK-20260719__stabilize_inspector_timeout_test/TASK_STATUS.md",
+      "sha256": "84a6077b992df616f3f72564cc7691416a65186b80eb1f84e8ccb264517553cd"
+    },
+    {
+      "byte_length": 794,
+      "path": "pyproject.toml",
+      "sha256": "c247d389d0c72c5c9ecdfff39ab6197ecc96526d0a87859eb5248700812a9243"
+    },
+    {
+      "byte_length": 1861,
+      "path": "research/BIBLIOGRAPHY.md",
+      "sha256": "27f1be619e704af059e02b8aceff52b9332ad8a5dc6e20ce10ffaedd4ead1a2b"
+    },
+    {
+      "byte_length": 5495,
+      "path": "research/CLAIMS_REGISTRY.yaml",
+      "sha256": "0329bcf07a4f9a4f8baab351bf039641c9af6cbfe9a0612833c6ecd680cc3b2c"
+    },
+    {
+      "byte_length": 99971,
+      "path": "research/ENVIRONMENT_LOCK_INVENTORY.json",
+      "sha256": "1c51bf98a567c24b2b4058a11c499bb2aebd13a3f18606b15d90d791c401b144"
+    },
+    {
+      "byte_length": 22469,
+      "path": "research/ENVIRONMENT_TRUST_BOUNDARY.md",
+      "sha256": "d197fbe8e26b0cc4f19b78af358699438a25ae50122ca634c7931a43040bedd7"
+    },
+    {
+      "byte_length": 6391,
+      "path": "research/KNOWN_RESULTS.md",
+      "sha256": "0c481fe74166d51b904c987da0946eb9e85b314b19cc3fa2ade529c1d2e626a9"
+    },
+    {
+      "byte_length": 802,
+      "path": "research/NEGATIVE_RESULTS.md",
+      "sha256": "c5346478633e27c2b88d30c27bfd6981b8c767489353ae44f8f3f202b0e131c0"
+    },
+    {
+      "byte_length": 6145,
+      "path": "research/PROBLEM_STATEMENT.md",
+      "sha256": "a13035b18f49cbb3d619d4fff13ad12a387ee169b53b2306f3f7a266b5b138f6"
+    },
+    {
+      "byte_length": 3160,
+      "path": "research/PRUNING_REGISTRY.md",
+      "sha256": "34e821c1fc622dea4ed28cfa32cbcbc1eb1e6ae92c2bb1f3538c27c69db2e22a"
+    },
+    {
+      "byte_length": 20872,
+      "path": "research/REPRODUCIBILITY.md",
+      "sha256": "2c3f5dccebf613134fa9bb2bf02a2e6505461d5c3aa10676252babef78fbeb62"
+    },
+    {
+      "byte_length": 3690,
+      "path": "research/SEARCH_MODEL.md",
+      "sha256": "36fdcb302bf2cc23695891f9b9671f0d97fa29a092bc9bce9588dad1addd8c0a"
+    },
+    {
+      "byte_length": 7026,
+      "path": "research/UPSTREAM_ALGORITHM.md",
+      "sha256": "420d9dc0b5e128131db8a9890fc4cc170944528f8a5cadfe0fdca56142f652d4"
+    },
+    {
+      "byte_length": 11892,
+      "path": "research/VERIFICATION_PROTOCOL.md",
+      "sha256": "afda121a4b0a15a6c59b6c8ed1fbc2811ecf53c33bdc331ebc6d81c0190a0818"
+    },
+    {
+      "byte_length": 7281,
+      "path": "schemas/benchmark-result.schema.json",
+      "sha256": "80afb08c75a73746f9d8091891a221e9aa1edd2f083deaaa0cd679c04ab7761f"
+    },
+    {
+      "byte_length": 5213,
+      "path": "schemas/counterexample.schema.json",
+      "sha256": "0d31abf2d69787ab9ef1ab2ac5920034fb9f4cc10af818da2f485c3cbcd58da0"
+    },
+    {
+      "byte_length": 6568,
+      "path": "schemas/environment-lock-inventory.schema.json",
+      "sha256": "cafe394bdb2d2a9636ec9f4d7f775cdbb331b92f9593ce34ee70859127ed6ea0"
+    },
+    {
+      "byte_length": 12378,
+      "path": "schemas/experiment-manifest.schema.json",
+      "sha256": "f9ddb119d36018250d03e8e0322938d12e47fef4dfe8d3959662d82362203032"
+    },
+    {
+      "byte_length": 20364,
+      "path": "schemas/inspector-timeout-stability-evidence.schema.json",
+      "sha256": "f49b702e142b95d6b52c0f96cfd78263c11ce8eb45616c81e5c694d757c0ea68"
+    },
+    {
+      "byte_length": 4886,
+      "path": "schemas/search-certificate.schema.json",
+      "sha256": "48d3ab11b0aff8974e5f364b3694c979df1e5689e332287add56019dc50b6ba5"
+    },
+    {
+      "byte_length": 3892,
+      "path": "schemas/search-partition.schema.json",
+      "sha256": "3a03d666ce270c15367e3448af5081ebf00eca7f5d25bd748fd85489c2cd59e8"
+    },
+    {
+      "byte_length": 13916,
+      "path": "schemas/surprising-process-outcome.schema.json",
+      "sha256": "348399acf747dbb9bd3305e354d718ec72bc2ac0605e68870856cc77d3f370cb"
+    },
+    {
+      "byte_length": 3089,
+      "path": "start.md",
+      "sha256": "ccc8863e10d3dd49f3994573e8daa161b4d53a659c752a790bfb46e204a48b12"
+    },
+    {
+      "byte_length": 3899,
+      "path": "tests/differential/test_small_graph_oracles.py",
+      "sha256": "9a0a4f454a4ab4d71cd92e368945527048100786d05b585b607a160259e08e2c"
+    },
+    {
+      "byte_length": 1880,
+      "path": "tests/fixtures/README.md",
+      "sha256": "fb5ee39126ee33f155f1b38bff189312a442bd9cfc2368320335bf8594d72b21"
+    },
+    {
+      "byte_length": 194,
+      "path": "tests/fixtures/c16.json",
+      "sha256": "6696052fb89e0c5a4ecf9675b1f89905c693177ea2286c7628d341dd5e15fe70"
+    },
+    {
+      "byte_length": 72,
+      "path": "tests/fixtures/c3.json",
+      "sha256": "a35a251d8910e75a6ed9f2c39d46bcb7a472a6f24cfa68ca09bdaa07e51b0916"
+    },
+    {
+      "byte_length": 80,
+      "path": "tests/fixtures/c4.json",
+      "sha256": "9d9925d1d2e0feb57e5608210037412b2e4ed6ff4a6b57bee8528dea4872e37e"
+    },
+    {
+      "byte_length": 88,
+      "path": "tests/fixtures/c5.json",
+      "sha256": "24702579e1b4a0b66dedd3f847ba3eef8c82502a6126efd8b6c8f3b73ba3575a"
+    },
+    {
+      "byte_length": 112,
+      "path": "tests/fixtures/c8.json",
+      "sha256": "8fa41921ece2d307e38133ad930f1352c73d07545d16a93e270e733c9029c759"
+    },
+    {
+      "byte_length": 80,
+      "path": "tests/fixtures/chorded-p4.json",
+      "sha256": "74a9fffe5b044a3172500788621800609aa701adeaf152009cb55e8f5b9f5254"
+    },
+    {
+      "byte_length": 92,
+      "path": "tests/fixtures/complete-k4.json",
+      "sha256": "c423921c28d31c5ca500533d703db40e58689e8a1a7e4c69c0fe7e66e9b8b6df"
+    },
+    {
+      "byte_length": 118,
+      "path": "tests/fixtures/complete-k5.json",
+      "sha256": "9e4d0a9714edb160a402903746bd9a5a6456387948be277c6f2cea7888b0665c"
+    },
+    {
+      "byte_length": 84,
+      "path": "tests/fixtures/disconnected.json",
+      "sha256": "29ac7ed0a903be00bfc96ac7512317d4aace7b3e67f680855b5f14b1fde10336"
+    },
+    {
+      "byte_length": 50,
+      "path": "tests/fixtures/empty.json",
+      "sha256": "fdccfd623ede19c3405fd3ed006c60d2170f5500d3862bea6fb088e7da2286d5"
+    },
+    {
+      "byte_length": 64,
+      "path": "tests/fixtures/malformed-duplicate-edge.json",
+      "sha256": "9ded38f8060a56f0d8eb07952bd79e932bb8ba86fe789315a45d32a0141ec043"
+    },
+    {
+      "byte_length": 65,
+      "path": "tests/fixtures/malformed-duplicate-key.json",
+      "sha256": "a688cccad621760e371c468751fb6e908d120fafe9666c4a79c128bdf7d6bc7f"
+    },
+    {
+      "byte_length": 58,
+      "path": "tests/fixtures/malformed-endpoint.json",
+      "sha256": "dfa02e8f14919a2af484c3caf7309126bc9ea526c88bd0e90f68982eeb33e3c0"
+    },
+    {
+      "byte_length": 12,
+      "path": "tests/fixtures/malformed-json.json",
+      "sha256": "aa859051ba6439c5e78d3d920709e07977f49b4bfa023b35c66d80c68744a86d"
+    },
+    {
+      "byte_length": 56,
+      "path": "tests/fixtures/malformed-loop.json",
+      "sha256": "f705477490642db4d4fe3f3861aa919ef99c80185ccb3fbdd177108acb4dc76f"
+    },
+    {
+      "byte_length": 53,
+      "path": "tests/fixtures/malformed-nonfinite.json",
+      "sha256": "b8ae9ba946374d343bdeda45de845ace58852965c13a63f4f0488d0ee07f0877"
+    },
+    {
+      "byte_length": 27,
+      "path": "tests/fixtures/manifest-hash-target.txt",
+      "sha256": "fe444d0d8bbde9d2b3b7828bf7ec74aaafd9039a991ff3055d743a26f8e9800b"
+    },
+    {
+      "byte_length": 1521,
+      "path": "tests/fixtures/manifest-invalid-hash.json",
+      "sha256": "cd57852fdc86303dda599522396e54e32b84af4407e0f2950675f64b3e1bbb0e"
+    },
+    {
+      "byte_length": 1507,
+      "path": "tests/fixtures/manifest-valid-hash.json",
+      "sha256": "783e8e518ec07db981911603802e1a9d4892e518f8ed61da311b5b8ff65835d4"
+    },
+    {
+      "byte_length": 154,
+      "path": "tests/fixtures/path-p13.json",
+      "sha256": "759482e1c78b450d71be56eaa043bf20f154a87d9e2041f0f2de012ab7d5a22c"
+    },
+    {
+      "byte_length": 165,
+      "path": "tests/fixtures/path-p14.json",
+      "sha256": "850fcddd091374cfc32f49e0a2814c0ec7cd3cb6c768d554eb2635a9bec0a73e"
+    },
+    {
+      "byte_length": 74,
+      "path": "tests/fixtures/path-p4.json",
+      "sha256": "49c8e2795d67224994e00995286377ed0662742fd064d5f3b4dcc3331f6a4840"
+    },
+    {
+      "byte_length": 7905,
+      "path": "tests/integration/test_upstream_build.py",
+      "sha256": "ed09fe2b9da9c5c41fcf1f330c2543034ab3dc3aca420c185284db01b081ca1b"
+    },
+    {
+      "byte_length": 6663,
+      "path": "tests/integration/test_verifier_cli.py",
+      "sha256": "2f8d37f2b8411faf294ea955c95a94729afb682eae863c79e9d4149dabe43d17"
+    },
+    {
+      "byte_length": 14341,
+      "path": "tests/unit/test_benchmark_outcomes.py",
+      "sha256": "75eef097b142cf960d154a09be6a2b173cf113bf17c2f1a359d186a4bcf27fa2"
+    },
+    {
+      "byte_length": 2103,
+      "path": "tests/unit/test_counterexample.py",
+      "sha256": "eb5fbbb46eccbbd81e9d8ee9eb5092a60afea717a23631dbf4b420eda116298f"
+    },
+    {
+      "byte_length": 15601,
+      "path": "tests/unit/test_environment_lock_inventory.py",
+      "sha256": "a850aa43b1d83cb116aa70fec52017cd00c9bca823382e42599690d1791cf046"
+    },
+    {
+      "byte_length": 15149,
+      "path": "tests/unit/test_github_action_pins.py",
+      "sha256": "4474418c44cc3d6310a362f753a77bcbf76b3bc8b63f87d2658c270e42536822"
+    },
+    {
+      "byte_length": 4246,
+      "path": "tests/unit/test_graph.py",
+      "sha256": "595a2b1459d4b521f3be8a269996a213f32c977cfec21d2146d574473f0f3480"
+    },
+    {
+      "byte_length": 28206,
+      "path": "tests/unit/test_inspector_timeout_stability_evidence.py",
+      "sha256": "1d80bb914452f7eecfa31aa288eff1ac14721ff3c090e643134caf306acd33ce"
+    },
+    {
+      "byte_length": 2738,
+      "path": "tests/unit/test_manifest.py",
+      "sha256": "e8a262a83858a766f3630ae04e20e13ccea21beb161c63526e76cb28c18e67c7"
+    },
+    {
+      "byte_length": 3527,
+      "path": "tests/unit/test_predicates.py",
+      "sha256": "56ab98a34f4f617b54ad9987c05ae2ade6323497a1313fe61353bb780b87cf05"
+    },
+    {
+      "byte_length": 37513,
+      "path": "tests/unit/test_review_range_whitespace.py",
+      "sha256": "0d2c33fbeeb215452fbedf91ff263766f7a5bcf4af86f119660f829dbee3e80e"
+    },
+    {
+      "byte_length": 12281,
+      "path": "tests/unit/test_review_task_id.py",
+      "sha256": "e2fa689f87286eb3b6b75ac8e06154ffc055c1ca399412534e0b44b7f3607de1"
+    },
+    {
+      "byte_length": 29837,
+      "path": "tests/unit/test_upstream_candidate_inspection.py",
+      "sha256": "936dd1463a41905c268c5d07238629bf83980e672c2f76cc0099ec8c98f257ea"
+    },
+    {
+      "byte_length": 3742,
+      "path": "third_party/erdos-gyarfas/.gitignore",
+      "sha256": "f8fc530ae527e8a6d42ea97a32179e2ba39dec147d6fb0739a21a5775a90465d"
+    },
+    {
+      "byte_length": 351,
+      "path": "third_party/erdos-gyarfas/CITATION.cff",
+      "sha256": "a50294c6e14e9a5a80b5ae0806670b2ed68949b83a76607feb5544995dc9b3cc"
+    },
+    {
+      "byte_length": 1066,
+      "path": "third_party/erdos-gyarfas/LICENSE",
+      "sha256": "6c87527a065e12d3be189d606cf243b10dc97445a0b3e436ea1605062968be74"
+    },
+    {
+      "byte_length": 682,
+      "path": "third_party/erdos-gyarfas/Makefile",
+      "sha256": "dc6cd1d4c56700dc7535336dc68848df60c2cbee2eef66a3a9f45b7f25dde35e"
+    },
+    {
+      "byte_length": 911,
+      "path": "third_party/erdos-gyarfas/README.md",
+      "sha256": "5ebe79372c98613c1af7bff9af2a975f280bb017e98576b28ba86d894c8e6349"
+    },
+    {
+      "byte_length": 1223,
+      "path": "third_party/erdos-gyarfas/include/graph.h",
+      "sha256": "1c0a2272df05da78ad6c178ef2e6052d2256a9adbf5e2cbd1d8e60c80abfdb12"
+    },
+    {
+      "byte_length": 144,
+      "path": "third_party/erdos-gyarfas/include/lib.h",
+      "sha256": "cbda4598ede04c5cc30a669ed3fdcc5f55e6c0b3ff3c6fcbd55660196aee7322"
+    },
+    {
+      "byte_length": 8366,
+      "path": "third_party/erdos-gyarfas/src/graph.cpp",
+      "sha256": "7494142a14f664acafaa116e65a8de75186ebac6f550705ebe4aea1a98d9b186"
+    },
+    {
+      "byte_length": 1910,
+      "path": "third_party/erdos-gyarfas/src/lib.cpp",
+      "sha256": "12bec2c62a169142e718d88ee7771f6336b0a5d49cad3c3eb1bbfc2e68298bcb"
+    },
+    {
+      "byte_length": 677,
+      "path": "third_party/erdos-gyarfas/src/main.cpp",
+      "sha256": "b3e6695238287a94c18da7370cc598717c1d3f95e7f1cc0136855444df708845"
+    },
+    {
+      "byte_length": 6511,
+      "path": "tools/_common.py",
+      "sha256": "90847e7afa8aaea131ea4954779803c7a60e6d00db543b8872802ad4ca14e9e8"
+    },
+    {
+      "byte_length": 15603,
+      "path": "tools/check_github_action_pins.py",
+      "sha256": "34cdb531193f0e46d85c736d12a5d0a67ff47336b8040d2cca369683439f0d77"
+    },
+    {
+      "byte_length": 12886,
+      "path": "tools/check_review_range_whitespace.py",
+      "sha256": "858662bd40a3ddd8ff3c89a3819bada8c053be64a95cf9585e92d569dfd90c09"
+    },
+    {
+      "byte_length": 2142,
+      "path": "tools/hash_artifacts.py",
+      "sha256": "3ac990157962f9acba98b942f09b9098113449cdee7670515573a2a3ea75aacc"
+    },
+    {
+      "byte_length": 46163,
+      "path": "tools/inspect_upstream_candidate.py",
+      "sha256": "301c427a768e80065d1219a917ac026168c0ab2e9a5226a8f521009d1a73678f"
+    },
+    {
+      "byte_length": 13290,
+      "path": "tools/make_manifest.py",
+      "sha256": "e003a3197f95c3c9d958fa385b672c405d43ab9c58267c4c9321391ae27ee8fc"
+    },
+    {
+      "byte_length": 5939,
+      "path": "tools/resolve_review_task_id.py",
+      "sha256": "affab6ed5d49ccf1ecfa38ee550fe6e23b8d354914190fce4f8e58ae66a4e584"
+    },
+    {
+      "byte_length": 21484,
+      "path": "tools/run_benchmark.py",
+      "sha256": "0b413a915452c31ce97ee998740d84f25a6ffafffa95088038103c434e4962bd"
+    },
+    {
+      "byte_length": 40598,
+      "path": "tools/run_inspector_timeout_stability.py",
+      "sha256": "d6ce31c4cc67aaf6b1f01173714f453e26570b35f65641ce600fb6cda2a8ae8f"
+    },
+    {
+      "byte_length": 3256,
+      "path": "tools/validate_schemas.py",
+      "sha256": "c9849f75db7c45786cb7ddbb3ac6de0f44eb23d7d90331d5d2797fa0ff5fb5dd"
+    },
+    {
+      "byte_length": 29724,
+      "path": "tools/verify_inspector_timeout_stability.py",
+      "sha256": "f7b6903ca3ed1de7a05c6a8a6659bab6a8fb96eb43dd5f02e1e79460a66b9bae"
+    },
+    {
+      "byte_length": 4395,
+      "path": "tools/verify_manifest.py",
+      "sha256": "64a4369640092932c32ac6100b0080e242bc418f11b291a205c35ac1d972ddc0"
+    },
+    {
+      "byte_length": 3155,
+      "path": "tools/verify_upstream_snapshot.py",
+      "sha256": "0a79f7475d1cde9a1a7d5b2c89eaa5108366cba2c1c0d2b515a4ccae602505c2"
+    },
+    {
+      "byte_length": 5188,
+      "path": "upstream/README.md",
+      "sha256": "29daba524345584e837b8b4d396358f0243956e4c7f31b885a874e5003532e0c"
+    },
+    {
+      "byte_length": 4468,
+      "path": "upstream/UPSTREAM_PROVENANCE.json",
+      "sha256": "0fbad279d79b61fbdd29a0b9f3fabbdfd09d41a3aaf546a11434ec52413439b5"
+    },
+    {
+      "byte_length": 1528,
+      "path": "upstream/UPSTREAM_REFS.json",
+      "sha256": "562a5c8b9faad3fe2f7c80f97e262f14a51332eacc4da1ddc9b0ed0fff619130"
+    },
+    {
+      "byte_length": 612,
+      "path": "upstream/patches/README.md",
+      "sha256": "9efd90b3d75ebbb45c841ef9b23d0f650b9ea5e6aa738c3f466993491e55bbaa"
+    },
+    {
+      "byte_length": 3881,
+      "path": "verifier/README.md",
+      "sha256": "24759c40037b270e929e2eb2082f1d16dd69c3bdc6f7a46a4e9dc8c8c622ff19"
+    },
+    {
+      "byte_length": 741,
+      "path": "verifier/egverify/__init__.py",
+      "sha256": "e3774c401ac091a045f2582aa066b69656846caefc459d6e45a5dfa7ef060a98"
+    },
+    {
+      "byte_length": 134,
+      "path": "verifier/egverify/__main__.py",
+      "sha256": "dc8ada8505f05e54fec4a8be4a3d5b5515d10accb14e6ba3d5930eef3013f4f8"
+    },
+    {
+      "byte_length": 9766,
+      "path": "verifier/egverify/cli.py",
+      "sha256": "5acc3ff765a252947d4e5829b3ea706f40e5f301ff8e1f3e7d08ab81387a6682"
+    },
+    {
+      "byte_length": 2707,
+      "path": "verifier/egverify/counterexample.py",
+      "sha256": "9f9c6f46a645f4d4e877fb5223311a4d3b0476ea170f01dbbc47a058eac7dd85"
+    },
+    {
+      "byte_length": 9537,
+      "path": "verifier/egverify/graph.py",
+      "sha256": "18ffd80b55c0631bec39fc8c79b32c7733a0279700ed41a4b93426ca43bfe1f1"
+    },
+    {
+      "byte_length": 7435,
+      "path": "verifier/egverify/manifest.py",
+      "sha256": "34479f01db489b9c02c21613d02131c3af75142bfe30c73dc32f07eb672d63da"
+    },
+    {
+      "byte_length": 4683,
+      "path": "verifier/egverify/predicates.py",
+      "sha256": "02bfbfc9d0085edb876f5f317a71969657ced5c9c69e322fda3bb5229da256f5"
+    }
+  ],
+  "summary": {
+    "failed_run_count": 0,
+    "failure_detail": null,
+    "focused_pass_counts": [
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31
+    ],
+    "focused_run_count": 25,
+    "full_suite_pass_counts": [
+      333,
+      333
+    ],
+    "full_suite_run_count": 2,
+    "recorded_run_count": 27,
+    "retries": 0,
+    "stop_reason": "completed",
+    "successful_run_count": 27
+  },
+  "task_id": "TASK-20260719__make_inspector_stability_evidence_auditable",
+  "task_start_head": "c71d66995ae6a36620a2aa8f938faf6d84fe1af7"
+}
