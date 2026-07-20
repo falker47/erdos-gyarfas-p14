@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
+import shutil
 from types import SimpleNamespace
 from typing import Any, Callable
 
@@ -18,24 +19,35 @@ from tools import verify_inspector_timeout_stability as verifier
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-SCHEMA_RELATIVE_PATH = (
-    "schemas/inspector-timeout-stability-evidence.schema.json"
+V2_SCHEMA_RELATIVE_PATH = (
+    "schemas/inspector-timeout-stability-evidence-v2.schema.json"
 )
-FIXED_TIMESTAMP = "2026-07-19T12:00:00.000000Z"
-SECRET_ENVIRONMENT_NAME = "INSPECTOR_STABILITY_TEST_SECRET"
+
+FOCUSED_NODE_IDS = (
+    "tests/unit/test_upstream_candidate_inspection.py::test_one",
+    "tests/unit/test_upstream_candidate_inspection.py::test_two",
+)
+FULL_SUITE_NODE_IDS = (
+    *FOCUSED_NODE_IDS,
+    "tests/unit/test_graph.py::test_three",
+    "tests/integration/test_verifier_cli.py::test_four",
+)
 
 
-@dataclass(slots=True)
-class Bundle:
-    root: Path
-    report_path: Path
-    schema_path: Path
-    config: runner.RunnerConfig
-    calls: list[dict[str, Any]]
-    tool_values: dict[str, str]
-    sibling_sentinel: Path
-    exit_code: int
-    report: dict[str, Any]
+class ScriptedClock:
+    """Deterministic strictly increasing UTC and monotonic test clock."""
+
+    def __init__(self) -> None:
+        self._ticks = 0
+
+    def utc_now(self) -> str:
+        self._ticks += 1
+        seconds, micros = divmod(self._ticks, 1_000_000)
+        return f"2026-07-20T08:00:{seconds:02d}.{micros:06d}Z"
+
+    def monotonic_ns(self) -> int:
+        self._ticks += 1
+        return self._ticks * 1_000
 
 
 def _canonical_json_bytes(value: Any) -> bytes:
@@ -75,781 +87,1205 @@ def _stream_bytes(stream: dict[str, Any]) -> bytes:
     return value
 
 
-def _replace_run_stdout(run: dict[str, Any], stdout: bytes, passed: int) -> None:
-    run["stdout"] = {
-        "base64": base64.b64encode(stdout).decode("ascii"),
-        "byte_length": len(stdout),
-        "sha256": hashlib.sha256(stdout).hexdigest(),
-    }
-    run["pytest_summary"] = {
-        "parsed": True,
-        "passed": passed,
-        "failed": 0,
-        "errors": 0,
-        "skipped": 0,
-        "xfailed": 0,
-        "xpassed": 0,
-        "diagnostic": None,
+def _captured_stream(value: bytes) -> dict[str, Any]:
+    return {
+        "base64": base64.b64encode(value).decode("ascii"),
+        "byte_length": len(value),
+        "sha256": hashlib.sha256(value).hexdigest(),
     }
 
 
-def _create_repository(base: Path) -> tuple[Path, Path, dict[str, str], Path]:
-    root = base / "repository"
-    root.mkdir(parents=True)
-    source_schema = PROJECT_ROOT / SCHEMA_RELATIVE_PATH
-    for relative_path in runner.SOURCE_PATHS:
-        destination = root / relative_path
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        if relative_path == SCHEMA_RELATIVE_PATH:
-            destination.write_bytes(source_schema.read_bytes())
-        else:
-            destination.write_bytes(
-                f"synthetic source fixture: {relative_path}\n".encode("utf-8")
-            )
-
-    executable_directory = root / "fixtures" / "executables"
-    executable_directory.mkdir(parents=True)
-    executable_paths = {
-        "PYTHON": executable_directory / "python-fixture.exe",
-        "EG_CMAKE": executable_directory / "cmake-fixture.exe",
-        "EG_CXX": executable_directory / "cxx-fixture.exe",
-        "EG_NINJA": executable_directory / "ninja-fixture.exe",
-        "EG_MAKE": executable_directory / "make-fixture.exe",
-    }
-    for name, path in executable_paths.items():
-        path.write_bytes(f"synthetic executable: {name}\n".encode("ascii"))
-    tool_values = {
-        name: executable_paths[name].resolve().as_posix()
-        for name in runner.TOOL_NAMES
-    }
-    python_value = executable_paths["PYTHON"].resolve().as_posix()
-
-    sibling_sentinel = root / "build" / "unrelated-output" / "keep.txt"
-    sibling_sentinel.parent.mkdir(parents=True)
-    sibling_sentinel.write_bytes(b"must survive task-owned cleanup\n")
-    return root, root / SCHEMA_RELATIVE_PATH, tool_values, Path(python_value)
+def _nul_paths(paths: tuple[str, ...] | list[str]) -> bytes:
+    return b"".join(path.encode("utf-8") + b"\0" for path in paths)
 
 
-def _run_bundle(
-    base: Path,
+def _porcelain_v2_ordinary(path: str, xy: str = ".M") -> bytes:
+    zero = "0" * 40
+    return (
+        f"1 {xy} N... 100644 100644 100644 {zero} {zero} {path}"
+    ).encode("utf-8") + b"\0"
+
+
+def _porcelain_v2_unmerged(path: str, xy: str) -> bytes:
+    zero = "0" * 40
+    return (
+        f"u {xy} N... 100644 100644 100644 100644 "
+        f"{zero} {zero} {zero} {path}"
+    ).encode("utf-8") + b"\0"
+
+
+def _porcelain_v2_status(
     *,
-    failure_at: int | None = None,
-    interrupt_at: int | None = None,
-    full_pass_counts: tuple[int, int] = (299, 299),
-    extra_tracked_sources: dict[str, bytes] | None = None,
-) -> Bundle:
-    root, schema_path, tool_values, python_path = _create_repository(base)
-    for relative_path, data in (extra_tracked_sources or {}).items():
-        destination = root / relative_path
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_bytes(data)
-    report_path = (
-        root
-        / "ops"
-        / runner.TASK_ID
-        / "STABILITY_EVIDENCE.json"
+    modified: tuple[str, ...] = (),
+    deleted: tuple[str, ...] = (),
+    staged: tuple[str, ...] = (),
+    untracked: tuple[str, ...] = (),
+) -> bytes:
+    staged_set = set(staged)
+    modified_set = set(modified)
+    deleted_set = set(deleted)
+    records = [
+        _porcelain_v2_ordinary(path, "MM" if path in staged_set else ".M")
+        for path in modified
+    ]
+    records.extend(
+        _porcelain_v2_ordinary(path, "MD" if path in staged_set else ".D")
+        for path in deleted
     )
-    config = runner.RunnerConfig(
-        repository_root=root,
-        report_path=report_path,
-        basetemp_root=runner.DEFAULT_BASETEMP_ROOT,
-        tool_values=tool_values,
-        python_executable=python_path.resolve().as_posix(),
+    records.extend(
+        _porcelain_v2_ordinary(path, "M.")
+        for path in staged
+        if path not in modified_set | deleted_set
     )
-    calls: list[dict[str, Any]] = []
-    in_process_runner = False
+    records.extend(f"? {path}".encode("utf-8") + b"\0" for path in untracked)
+    return b"".join(records)
 
-    def fake_process_runner(
-        argv: list[str], *, cwd: Path, env: dict[str, str]
+
+@dataclass(slots=True)
+class SyntheticGitState:
+    tracked: tuple[str, ...]
+    modified: tuple[str, ...] = ()
+    deleted: tuple[str, ...] = ()
+    staged: tuple[str, ...] = ()
+    untracked: tuple[str, ...] = ()
+    ignored: tuple[str, ...] = ()
+
+    def status_stdout(self) -> bytes:
+        return _porcelain_v2_status(
+            modified=self.modified,
+            deleted=self.deleted,
+            staged=self.staged,
+            untracked=self.untracked,
+        )
+
+    def tracked_stdout(self) -> bytes:
+        return _nul_paths(self.tracked)
+
+    def untracked_stdout(self) -> bytes:
+        return _nul_paths(self.untracked)
+
+    def ignored_stdout(self) -> bytes:
+        return _nul_paths(self.ignored)
+
+    def staged_stdout(self) -> bytes:
+        return _nul_paths(self.staged)
+
+
+def _collection_stdout(node_ids: tuple[str, ...]) -> bytes:
+    noun = "test" if len(node_ids) == 1 else "tests"
+    return (
+        "\n".join(node_ids)
+        + f"\n\n{len(node_ids)} {noun} collected in 0.01s\n"
+    ).encode("utf-8")
+
+
+class SyntheticProcessRunner:
+    """In-process stand-in for two collections and all 27 stability attempts."""
+
+    def __init__(
+        self,
+        *,
+        report_path: Path,
+        failure_at: int | None = None,
+        interrupt_at: int | None = None,
+        before_call: Callable[[int, list[str]], None] | None = None,
+        after_call: Callable[[int, list[str]], None] | None = None,
+    ) -> None:
+        self.report_path = report_path
+        self.failure_at = failure_at
+        self.interrupt_at = interrupt_at
+        self.before_call = before_call
+        self.after_call = after_call
+        self.calls: list[dict[str, Any]] = []
+        self._in_call = False
+        self._stability_calls = 0
+
+    def __call__(
+        self, argv: list[str], *, cwd: Path, env: dict[str, str]
     ) -> SimpleNamespace:
-        nonlocal in_process_runner
-        assert not in_process_runner, "process attempts must be strictly serial"
-        in_process_runner = True
+        assert not self._in_call, "pytest subprocesses must be strictly serial"
+        self._in_call = True
         try:
-            call_number = len(calls) + 1
-            persisted = _load_report(report_path)
-            phase = "focused" if runner.FOCUSED_TEST_PATH in argv else "full_suite"
-            basetemp = argv[-1]
+            process_sequence = len(self.calls) + 1
+            if self.before_call is not None:
+                self.before_call(process_sequence, argv)
+            assert self.report_path.is_file(), "initial report precedes every child"
+            persisted = _load_report(self.report_path)
+            is_collection = "--collect-only" in argv
+            is_focused = runner.FOCUSED_TEST_PATH in argv
+            phase = (
+                "collect_focused"
+                if is_collection and is_focused
+                else "collect_full_suite"
+                if is_collection
+                else "focused"
+                if is_focused
+                else "full_suite"
+            )
+            basetemp = argv[argv.index("--basetemp") + 1]
             basetemp_path = cwd / basetemp
-            assert cwd == root.resolve()
-            assert argv[-2] == "--basetemp"
             assert basetemp_path.is_dir()
             (basetemp_path / "pytest-owned.tmp").write_bytes(
-                f"attempt {call_number}\n".encode("ascii")
+                f"synthetic process {process_sequence}\n".encode("ascii")
             )
-            if phase == "focused":
-                passed = 31
+
+            returncode = 0
+            if is_collection:
+                nodes = FOCUSED_NODE_IDS if is_focused else FULL_SUITE_NODE_IDS
+                stdout = _collection_stdout(nodes)
+                stability_sequence = None
             else:
-                passed = full_pass_counts[call_number - 26]
-            return_code = 0
-            stdout = (
-                f"synthetic attempt {call_number}\n"
-                f"{passed} passed in 0.01s\n"
-            ).encode("ascii")
-            if failure_at == call_number:
-                return_code = 1
-                stdout = b"30 passed, 1 failed in 0.01s\n"
-            stderr = f"synthetic stderr {call_number}\n".encode("ascii")
-            calls.append(
-                {
-                    "argv": list(argv),
-                    "basetemp": basetemp,
-                    "phase": phase,
-                    "persisted_run_count": len(persisted["runs"]),
-                    "tool_environment": {
-                        name: env.get(name) for name in runner.TOOL_NAMES
-                    },
-                    "secret": env.get(SECRET_ENVIRONMENT_NAME),
-                    "stdout": stdout,
-                    "stderr": stderr,
-                    "returncode": return_code,
-                }
-            )
-            if interrupt_at == call_number:
+                self._stability_calls += 1
+                stability_sequence = self._stability_calls
+                passed = len(FOCUSED_NODE_IDS if is_focused else FULL_SUITE_NODE_IDS)
+                stdout = f"{passed} passed in 0.01s\n".encode("ascii")
+                if self.failure_at == stability_sequence:
+                    returncode = 1
+                    stdout = (
+                        f"{max(0, passed - 1)} passed, 1 failed in 0.01s\n"
+                    ).encode("ascii")
+            stderr = f"synthetic stderr {process_sequence}\n".encode("ascii")
+            call = {
+                "argv": list(argv),
+                "cwd": cwd,
+                "env": dict(env),
+                "phase": phase,
+                "persisted_collection_count": len(
+                    persisted.get("collection_identity", {}).get("records", [])
+                ),
+                "persisted_run_count": len(persisted.get("runs", [])),
+                "stdout": stdout,
+                "stderr": stderr,
+                "returncode": returncode,
+                "stability_sequence": stability_sequence,
+            }
+            self.calls.append(call)
+            if self.after_call is not None:
+                self.after_call(process_sequence, argv)
+            if (
+                stability_sequence is not None
+                and self.interrupt_at == stability_sequence
+            ):
                 raise runner.ProcessInterrupted(
                     returncode=-9,
                     stdout=stdout,
                     stderr=stderr,
                 )
             return SimpleNamespace(
-                returncode=return_code,
+                returncode=returncode,
                 stdout=stdout,
                 stderr=stderr,
             )
         finally:
-            in_process_runner = False
+            self._in_call = False
 
+
+class SyntheticGitProbeProvider:
+    """Raw-byte provider for every five-command worktree snapshot."""
+
+    def __init__(
+        self,
+        state_provider: Callable[[], SyntheticGitState],
+        on_label: Callable[[str], None] | None = None,
+        failure_provider: Callable[[], tuple[str, str, int, bytes] | None]
+        | None = None,
+    ) -> None:
+        self.state_provider = state_provider
+        self.on_label = on_label
+        self.failure_provider = failure_provider
+        self.calls: list[dict[str, Any]] = []
+
+    def __call__(
+        self,
+        root: Path,
+        label: str,
+        commands: dict[str, list[str]],
+    ) -> dict[str, SimpleNamespace]:
+        if self.on_label is not None:
+            self.on_label(label)
+        state = self.state_provider()
+        assert set(commands) == {"status", "tracked", "untracked", "ignored", "staged"}
+        payloads = {
+            "status": state.status_stdout(),
+            "tracked": state.tracked_stdout(),
+            "untracked": state.untracked_stdout(),
+            "ignored": state.ignored_stdout(),
+            "staged": state.staged_stdout(),
+        }
+        self.calls.append(
+            {
+                "root": root.resolve(),
+                "label": label,
+                "commands": copy.deepcopy(commands),
+                "payloads": payloads,
+            }
+        )
+        failure = self.failure_provider() if self.failure_provider is not None else None
+        results: dict[str, SimpleNamespace] = {}
+        for name in commands:
+            if failure is not None and (label, name) == failure[:2]:
+                results[name] = SimpleNamespace(
+                    returncode=failure[2],
+                    stdout=payloads[name],
+                    stderr=failure[3],
+                )
+            else:
+                results[name] = SimpleNamespace(
+                    returncode=0,
+                    stdout=payloads[name],
+                    stderr=b"",
+                )
+        return results
+
+
+@dataclass(slots=True)
+class V2Repository:
+    root: Path
+    schema_path: Path
+    report_path: Path
+    tracked_paths: tuple[str, ...]
+    modified_paths: tuple[str, ...]
+    base_untracked_paths: tuple[str, ...]
+    ignored_paths: tuple[str, ...]
+    tool_values: dict[str, str]
+    python_path: str
+    git_path: str
+    sibling_sentinel: Path
+
+    def state(
+        self,
+        *,
+        extra_untracked: tuple[str, ...] = (),
+        staged: tuple[str, ...] = (),
+        ignored: tuple[str, ...] | None = None,
+    ) -> SyntheticGitState:
+        untracked = set(self.base_untracked_paths) | set(extra_untracked)
+        if self.report_path.is_file():
+            untracked.add(runner.REPORT_RELATIVE_PATH)
+        return SyntheticGitState(
+            tracked=self.tracked_paths,
+            modified=self.modified_paths,
+            staged=staged,
+            untracked=tuple(sorted(untracked)),
+            ignored=self.ignored_paths if ignored is None else tuple(sorted(ignored)),
+        )
+
+
+def _create_v2_repository(base: Path) -> V2Repository:
+    root = base / "repository"
+    root.mkdir(parents=True)
+    tracked = (
+        (set(runner.SOURCE_PATHS) - set(runner.UNTRACKED_EXECUTION_INPUTS))
+        | set(runner.ALLOWED_TRACKED_MODIFIED)
+        | {"tests/unit/synthetic_tracked_execution_input.py"}
+    )
+    for relative_path in sorted(tracked):
+        destination = root / relative_path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(
+            f"synthetic tracked source: {relative_path}\n".encode("utf-8")
+        )
+
+    schema_path = root / V2_SCHEMA_RELATIVE_PATH
+    schema_path.parent.mkdir(parents=True, exist_ok=True)
+    schema_path.write_bytes((PROJECT_ROOT / V2_SCHEMA_RELATIVE_PATH).read_bytes())
+    dossier = root / "ops" / runner.TASK_ID
+    dossier.mkdir(parents=True, exist_ok=True)
+    for name in ("TASK_STATUS.md", "TASK_LOG.md", "EVIDENCE.md"):
+        (dossier / name).write_bytes(f"synthetic {name}\n".encode("ascii"))
+
+    ignored_paths = (
+        "build/pytest-prior/current",
+        "build/release/synthetic-build-input.txt",
+        "tests/unit/__pycache__/synthetic.cpython.pyc",
+    )
+    for relative_path in ignored_paths:
+        destination = root / relative_path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(b"neutralized ignored fixture\n")
+
+    executable_directory = root / "fixtures" / "executables"
+    executable_directory.mkdir(parents=True)
+    executables = {
+        "PYTHON": executable_directory / "python-fixture.exe",
+        "GIT": executable_directory / "git-fixture.exe",
+        "EG_CMAKE": executable_directory / "cmake-fixture.exe",
+        "EG_CXX": executable_directory / "cxx-fixture.exe",
+        "EG_NINJA": executable_directory / "ninja-fixture.exe",
+        "EG_MAKE": executable_directory / "make-fixture.exe",
+    }
+    for name, path in executables.items():
+        path.write_bytes(f"synthetic executable: {name}\n".encode("ascii"))
+    sibling_sentinel = root / "build" / "unrelated-output" / "keep.txt"
+    sibling_sentinel.parent.mkdir(parents=True, exist_ok=True)
+    sibling_sentinel.write_bytes(b"must survive task-owned cleanup\n")
+    report_path = root / runner.REPORT_RELATIVE_PATH
+    return V2Repository(
+        root=root,
+        schema_path=schema_path,
+        report_path=report_path,
+        tracked_paths=tuple(sorted(tracked)),
+        modified_paths=tuple(sorted(runner.ALLOWED_TRACKED_MODIFIED)),
+        base_untracked_paths=tuple(
+            sorted(set(runner.ALLOWED_UNTRACKED) - {runner.REPORT_RELATIVE_PATH})
+        ),
+        ignored_paths=ignored_paths,
+        tool_values={
+            name: executables[name].resolve().as_posix() for name in runner.TOOL_NAMES
+        },
+        python_path=executables["PYTHON"].resolve().as_posix(),
+        git_path=executables["GIT"].resolve().as_posix(),
+        sibling_sentinel=sibling_sentinel,
+    )
+
+
+@dataclass(slots=True)
+class MutableGitInputs:
+    extra_untracked: tuple[str, ...] = ()
+    staged: tuple[str, ...] = ()
+    ignored: tuple[str, ...] | None = None
+    probe_failure: tuple[str, str, int, bytes] | None = None
+
+
+@dataclass(slots=True)
+class Bundle:
+    repo: V2Repository
+    config: runner.RunnerConfig
+    process: SyntheticProcessRunner
+    probes: SyntheticGitProbeProvider
+    git_inputs: MutableGitInputs
+    exit_code: int
+    report: dict[str, Any]
+
+
+ProbeHook = Callable[[str, V2Repository, MutableGitInputs], None]
+ProcessHook = Callable[[int, list[str], V2Repository, MutableGitInputs], None]
+
+
+def _execute_repository(
+    repo: V2Repository,
+    *,
+    failure_at: int | None = None,
+    interrupt_at: int | None = None,
+    extra_untracked: tuple[str, ...] = (),
+    staged: tuple[str, ...] = (),
+    ignored: tuple[str, ...] | None = None,
+    on_probe: ProbeHook | None = None,
+    before_process: ProcessHook | None = None,
+    after_process: ProcessHook | None = None,
+) -> Bundle:
+    git_inputs = MutableGitInputs(extra_untracked, staged, ignored)
+
+    def probe_hook(label: str) -> None:
+        if on_probe is not None:
+            on_probe(label, repo, git_inputs)
+
+    def before_hook(sequence: int, argv: list[str]) -> None:
+        if before_process is not None:
+            before_process(sequence, argv, repo, git_inputs)
+
+    def after_hook(sequence: int, argv: list[str]) -> None:
+        if after_process is not None:
+            after_process(sequence, argv, repo, git_inputs)
+
+    probes = SyntheticGitProbeProvider(
+        lambda: repo.state(
+            extra_untracked=git_inputs.extra_untracked,
+            staged=git_inputs.staged,
+            ignored=git_inputs.ignored,
+        ),
+        on_label=probe_hook,
+        failure_provider=lambda: git_inputs.probe_failure,
+    )
+    process = SyntheticProcessRunner(
+        report_path=repo.report_path,
+        failure_at=failure_at,
+        interrupt_at=interrupt_at,
+        before_call=before_hook,
+        after_call=after_hook,
+    )
+    config = runner.RunnerConfig(
+        repository_root=repo.root,
+        report_path=repo.report_path,
+        basetemp_root=runner.DEFAULT_BASETEMP_ROOT,
+        tool_values=repo.tool_values,
+        python_executable=repo.python_path,
+        git_executable=repo.git_path,
+    )
+    clock = ScriptedClock()
     exit_code, report = runner.run_evidence(
         config,
-        process_runner=fake_process_runner,
-        utc_now=lambda: FIXED_TIMESTAMP,
-        monotonic=lambda: 0.0,
+        process_runner=process,
+        utc_now=clock.utc_now,
+        monotonic_ns=clock.monotonic_ns,
         git_checker=lambda _root: None,
-        tracked_path_provider=lambda _root: tuple(
-            sorted((extra_tracked_sources or {}).keys())
-        ),
+        git_probe_provider=probes,
     )
-    return Bundle(
-        root=root,
-        report_path=report_path,
-        schema_path=schema_path,
-        config=config,
-        calls=calls,
-        tool_values=tool_values,
-        sibling_sentinel=root / "build" / "unrelated-output" / "keep.txt",
-        exit_code=exit_code,
-        report=report,
+    assert report == _load_report(repo.report_path)
+    return Bundle(repo, config, process, probes, git_inputs, exit_code, report)
+
+
+def _run_bundle(base: Path, **kwargs: Any) -> Bundle:
+    return _execute_repository(_create_v2_repository(base), **kwargs)
+
+
+def _verify(
+    bundle: Bundle,
+    report_path: Path | None = None,
+    *,
+    allow_partial: bool = False,
+    rehash_environment: bool = False,
+) -> dict[str, Any]:
+    return verifier.verify_report(
+        report_path or bundle.repo.report_path,
+        repository_root=bundle.repo.root,
+        schema_path=bundle.repo.schema_path,
+        verify_git=False,
+        rehash_environment=rehash_environment,
+        allow_partial=allow_partial,
     )
 
 
-@pytest.fixture(scope="module")
-def successful_bundle(tmp_path_factory: pytest.TempPathFactory) -> Bundle:
-    return _run_bundle(tmp_path_factory.mktemp("inspector-stability-success"))
+def _assert_schema_valid(bundle: Bundle, report: dict[str, Any] | None = None) -> None:
+    errors = list(_schema_validator(bundle.repo.schema_path).iter_errors(report or bundle.report))
+    assert not errors, errors[0].message if errors else ""
 
 
 def _mutated_report(
     tmp_path: Path,
-    bundle: Bundle,
-    mutate: Callable[[dict[str, Any]], None],
+    successful_bundle: Bundle,
+    mutator: Callable[[dict[str, Any]], None],
 ) -> Path:
-    report = copy.deepcopy(bundle.report)
-    mutate(report)
-    path = tmp_path / "mutated-report.json"
+    report = copy.deepcopy(successful_bundle.report)
+    mutator(report)
+    path = tmp_path / "mutated.json"
     _write_report(path, report)
     return path
 
 
-def _verify_failure(
-    path: Path,
-    bundle: Bundle,
-    match: str,
+def _assert_mutation_rejected(
+    tmp_path: Path,
+    successful_bundle: Bundle,
+    mutator: Callable[[dict[str, Any]], None],
 ) -> None:
-    with pytest.raises(verifier.EvidenceVerificationError, match=match):
-        verifier.verify_report(
-            path,
-            repository_root=bundle.root,
-            schema_path=bundle.schema_path,
-            verify_git=False,
-        )
+    path = _mutated_report(tmp_path, successful_bundle, mutator)
+    with pytest.raises(verifier.EvidenceVerificationError):
+        _verify(successful_bundle, path)
 
 
-def test_canonical_success_is_schema_valid_and_independently_verified(
+@pytest.fixture(scope="module")
+def successful_bundle(tmp_path_factory: pytest.TempPathFactory) -> Bundle:
+    return _run_bundle(tmp_path_factory.mktemp("v2-success"))
+
+
+def test_valid_v2_bundle_is_canonical_schema_valid_and_independently_verified(
     successful_bundle: Bundle,
 ) -> None:
     bundle = successful_bundle
-    raw = bundle.report_path.read_bytes()
     assert bundle.exit_code == 0
-    assert raw == _canonical_json_bytes(bundle.report)
-    assert _load_report(bundle.report_path) == bundle.report
-    _schema_validator(bundle.schema_path).validate(bundle.report)
-
-    result = verifier.verify_report(
-        bundle.report_path,
-        repository_root=bundle.root,
-        schema_path=bundle.schema_path,
-        verify_git=False,
-    )
+    assert bundle.report["completed"] is True
+    assert bundle.repo.report_path.read_bytes() == _canonical_json_bytes(bundle.report)
+    _assert_schema_valid(bundle)
+    result = _verify(bundle, rehash_environment=True)
     assert result["ok"] is True
-    assert result["focused_runs"] == 25
-    assert result["focused_passes_each"] == 31
-    assert result["full_suite_runs"] == 2
-    assert result["full_suite_passes_each"] == 299
+    assert result["completed"] is True
 
 
-def test_runner_is_serial_and_uses_exact_phase_sequence(
+def test_synthetic_runner_is_exactly_serial_2_plus_25_plus_2_with_zero_retry(
     successful_bundle: Bundle,
 ) -> None:
     bundle = successful_bundle
-    runs = bundle.report["runs"]
-    assert [run["sequence"] for run in runs] == list(range(1, 28))
-    assert [run["phase"] for run in runs] == ["focused"] * 25 + [
-        "full_suite"
-    ] * 2
-    assert [run["phase_index"] for run in runs] == list(range(1, 26)) + [1, 2]
-    assert [call["persisted_run_count"] for call in bundle.calls] == list(
-        range(27)
-    )
-    assert [call["phase"] for call in bundle.calls] == ["focused"] * 25 + [
-        "full_suite"
-    ] * 2
-    for call in bundle.calls[:25]:
-        assert call["tool_environment"] == {
-            name: None for name in runner.TOOL_NAMES
-        }
-    for call in bundle.calls[25:]:
-        assert call["tool_environment"] == bundle.tool_values
+    calls = bundle.process.calls
+    assert len(calls) == 29
+    assert [call["phase"] for call in calls] == [
+        "collect_focused",
+        "collect_full_suite",
+        *(["focused"] * 25),
+        "full_suite",
+        "full_suite",
+    ]
+    assert [call["stability_sequence"] for call in calls[2:]] == list(range(1, 28))
+    assert len(bundle.probes.calls) == 58
+    assert [call["label"] for call in bundle.probes.calls] == [
+        label
+        for process_sequence, phase in enumerate(
+            [
+                "collect_focused",
+                "collect_full_suite",
+                *(["focused"] * 25),
+                "full_suite",
+                "full_suite",
+            ],
+            start=1,
+        )
+        for label in (
+            f"before:{process_sequence}:{phase}",
+            f"after:{process_sequence}:{phase}",
+        )
+    ]
+    assert calls[0]["persisted_collection_count"] == 0
+    assert calls[1]["persisted_collection_count"] == 1
+    assert calls[2]["persisted_collection_count"] == 2
+    assert calls[2]["persisted_run_count"] == 0
+    assert calls[-1]["persisted_run_count"] == 26
+    assert bundle.report["summary"]["retries"] == 0
+    assert len(bundle.report["collection_identity"]["records"]) == 2
+    assert len(bundle.report["runs"]) == 27
+
+    for call in calls:
+        assert call["argv"][:4] == [
+            bundle.repo.python_path,
+            "-m",
+            "pytest",
+            "-q",
+        ]
+        plugin_index = call["argv"].index("-p")
+        assert call["argv"][plugin_index : plugin_index + 2] == [
+            "-p",
+            "no:cacheprovider",
+        ]
+        assert call["env"]["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] == "1"
+        pycache = Path(call["env"]["PYTHONPYCACHEPREFIX"])
+        basetemp = call["argv"][call["argv"].index("--basetemp") + 1]
+        assert pycache == (bundle.repo.root / basetemp / "pycache").resolve()
 
 
-def test_stream_base64_lengths_and_hashes_agree(
-    successful_bundle: Bundle,
-) -> None:
-    for run_record, call in zip(
-        successful_bundle.report["runs"], successful_bundle.calls, strict=True
-    ):
-        assert _stream_bytes(run_record["stdout"]) == call["stdout"]
-        assert _stream_bytes(run_record["stderr"]) == call["stderr"]
-
-
-def test_cleanup_removes_only_fixed_task_owned_paths(
+def test_raw_streams_and_cleanup_are_complete_and_task_owned(
     successful_bundle: Bundle,
 ) -> None:
     bundle = successful_bundle
+    records = [
+        *bundle.report["collection_identity"]["records"],
+        *bundle.report["runs"],
+    ]
+    for record in records:
+        assert _stream_bytes(record["stdout"])
+        assert _stream_bytes(record["stderr"])
+    for snapshot in bundle.report["worktree_snapshots"]:
+        for probe in snapshot["commands"].values():
+            _stream_bytes(probe["stdout"])
+            assert _stream_bytes(probe["stderr"]) == b""
     cleanup = bundle.report["cleanup"]
-    assert cleanup["root"] == runner.DEFAULT_BASETEMP_ROOT
-    assert cleanup["expected"] == [run["basetemp_path"] for run in bundle.report["runs"]]
+    assert cleanup["created"] == cleanup["expected"]
     assert cleanup["removed"] == cleanup["expected"]
     assert cleanup["remaining"] == []
+    assert cleanup["unexpected"] == []
     assert cleanup["completed"] is True
-    assert not (bundle.root / runner.DEFAULT_BASETEMP_ROOT).exists()
-    assert bundle.sibling_sentinel.read_bytes() == b"must survive task-owned cleanup\n"
+    assert not (bundle.repo.root / runner.DEFAULT_BASETEMP_ROOT).exists()
+    assert bundle.repo.sibling_sentinel.read_bytes() == b"must survive task-owned cleanup\n"
 
 
-def test_first_failure_preserves_partial_report_and_never_retries(
+def test_first_failure_preserves_schema_valid_partial_report_without_retry(
     tmp_path: Path,
 ) -> None:
     bundle = _run_bundle(tmp_path, failure_at=3)
     assert bundle.exit_code == 1
-    assert len(bundle.calls) == 3
-    assert [call["persisted_run_count"] for call in bundle.calls] == [0, 1, 2]
-    assert bundle.report_path.read_bytes() == _canonical_json_bytes(bundle.report)
-    _schema_validator(bundle.schema_path).validate(bundle.report)
-    assert bundle.report["completed"] is False
+    assert len(bundle.process.calls) == 5
+    assert len(bundle.report["runs"]) == 3
     assert [run["status"] for run in bundle.report["runs"]] == [
         "passed",
         "passed",
         "failed",
     ]
-    assert bundle.report["summary"]["recorded_run_count"] == 3
-    assert bundle.report["summary"]["failed_run_count"] == 1
     assert bundle.report["summary"]["retries"] == 0
     assert bundle.report["summary"]["stop_reason"] == "failure"
+    _assert_schema_valid(bundle)
+    assert _verify(bundle, allow_partial=True)["completed"] is False
 
 
-def test_interruption_preserves_captured_streams_and_never_retries(
-    tmp_path: Path,
-) -> None:
+def test_interruption_preserves_both_streams_and_never_retries(tmp_path: Path) -> None:
     bundle = _run_bundle(tmp_path, interrupt_at=2)
     assert bundle.exit_code == 1
-    assert len(bundle.calls) == 2
-    assert [run["status"] for run in bundle.report["runs"]] == [
-        "passed",
-        "interrupted",
-    ]
-    interrupted = bundle.report["runs"][1]
-    assert interrupted["exit_code"] == -9
-    assert _stream_bytes(interrupted["stdout"]) == bundle.calls[1]["stdout"]
-    assert _stream_bytes(interrupted["stderr"]) == bundle.calls[1]["stderr"]
-    assert interrupted["pytest_summary"]["parsed"] is False
-    assert bundle.report["completed"] is False
-    assert bundle.report["summary"]["recorded_run_count"] == 2
-    assert bundle.report["summary"]["retries"] == 0
-    assert bundle.report["summary"]["stop_reason"] == "interrupted"
-    _schema_validator(bundle.schema_path).validate(bundle.report)
-
-
-def test_post_process_interruption_preserves_completed_attempt_streams(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    original = runner._current_source_fingerprint
-    calls = 0
-
-    def interrupt_first_post_process_inventory(
-        root: Path, paths: tuple[str, ...]
-    ) -> str:
-        nonlocal calls
-        calls += 1
-        if calls == 2:
-            raise KeyboardInterrupt
-        return original(root, paths)
-
-    monkeypatch.setattr(
-        runner,
-        "_current_source_fingerprint",
-        interrupt_first_post_process_inventory,
-    )
-    bundle = _run_bundle(tmp_path)
-    assert bundle.exit_code == 1
-    assert len(bundle.calls) == 1
-    assert len(bundle.report["runs"]) == 1
-    interrupted = bundle.report["runs"][0]
+    assert len(bundle.process.calls) == 4
+    assert len(bundle.report["runs"]) == 2
+    interrupted = bundle.report["runs"][-1]
     assert interrupted["status"] == "interrupted"
-    assert interrupted["exit_code"] == 0
-    assert _stream_bytes(interrupted["stdout"]) == bundle.calls[0]["stdout"]
-    assert _stream_bytes(interrupted["stderr"]) == bundle.calls[0]["stderr"]
-    assert interrupted["pytest_summary"]["parsed"] is True
+    assert interrupted["exit_code"] == -9
+    assert _stream_bytes(interrupted["stdout"]) == bundle.process.calls[-1]["stdout"]
+    assert _stream_bytes(interrupted["stderr"]) == bundle.process.calls[-1]["stderr"]
     assert bundle.report["summary"]["stop_reason"] == "interrupted"
-    assert bundle.report["summary"]["failure_detail"] == (
-        "runner interrupted after subprocess completion"
+    _assert_schema_valid(bundle)
+    assert _verify(bundle, allow_partial=True)["completed"] is False
+
+
+def test_source_mutation_in_before_guard_stops_before_next_pytest(tmp_path: Path) -> None:
+    source = "tests/unit/synthetic_tracked_execution_input.py"
+
+    def mutate(label: str, repo: V2Repository, _inputs: MutableGitInputs) -> None:
+        if label == "before:3:focused":
+            (repo.root / source).write_bytes(b"mutated before focused run\n")
+
+    bundle = _run_bundle(tmp_path, on_probe=mutate)
+    assert bundle.exit_code == 1
+    assert len(bundle.process.calls) == 2
+    assert len(bundle.report["runs"]) == 0
+    terminal = bundle.report["worktree_snapshots"][-1]
+    assert terminal["label"] == "before:3:focused"
+    assert terminal["accepted"] is False
+    assert "source fingerprint" in terminal["diagnostic"]
+    _assert_schema_valid(bundle)
+    _verify(bundle, allow_partial=True)
+
+
+def test_source_mutation_during_run_preserves_attempt_and_stops(tmp_path: Path) -> None:
+    source = "tests/unit/synthetic_tracked_execution_input.py"
+
+    def mutate(
+        sequence: int,
+        _argv: list[str],
+        repo: V2Repository,
+        _inputs: MutableGitInputs,
+    ) -> None:
+        if sequence == 3:
+            (repo.root / source).write_bytes(b"mutated during focused run\n")
+
+    bundle = _run_bundle(tmp_path, after_process=mutate)
+    assert bundle.exit_code == 1
+    assert len(bundle.process.calls) == 3
+    assert len(bundle.report["runs"]) == 1
+    attempt = bundle.report["runs"][0]
+    assert attempt["status"] == "failed"
+    assert _stream_bytes(attempt["stdout"]) == bundle.process.calls[-1]["stdout"]
+    assert _stream_bytes(attempt["stderr"]) == bundle.process.calls[-1]["stderr"]
+    assert bundle.report["worktree_snapshots"][-1]["accepted"] is False
+    _assert_schema_valid(bundle)
+    _verify(bundle, allow_partial=True)
+
+
+def test_post_child_git_guard_failure_preserves_raw_guard_and_child_streams(
+    tmp_path: Path,
+) -> None:
+    git_stderr = b"synthetic post-child Git guard failure\n"
+
+    def fail_guard(
+        label: str,
+        _repo: V2Repository,
+        inputs: MutableGitInputs,
+    ) -> None:
+        if label == "after:3:focused":
+            inputs.probe_failure = (label, "status", 7, git_stderr)
+
+    bundle = _run_bundle(tmp_path, on_probe=fail_guard)
+    assert bundle.exit_code == 1
+    assert len(bundle.process.calls) == 3
+    assert len(bundle.report["runs"]) == 1
+    run = bundle.report["runs"][0]
+    assert run["status"] == "failed"
+    assert _stream_bytes(run["stdout"]) == bundle.process.calls[-1]["stdout"]
+    assert _stream_bytes(run["stderr"]) == bundle.process.calls[-1]["stderr"]
+
+    guard = bundle.report["worktree_snapshots"][-1]
+    assert guard["label"] == "after:3:focused"
+    assert guard["accepted"] is False
+    assert guard["parsed"] is None
+    assert guard["normalized_sha256"] is None
+    assert guard["execution_state_sha256"] is None
+    assert guard["source_fingerprint_sha256"] is None
+    assert guard["commands"]["status"]["exit_code"] == 7
+    assert _stream_bytes(guard["commands"]["status"]["stderr"]) == git_stderr
+    assert "Git status probe exited with 7" in guard["diagnostic"]
+    _assert_schema_valid(bundle)
+    _verify(bundle, allow_partial=True)
+
+
+def test_worktree_mutation_between_runs_is_a_rejected_orphan_guard(
+    tmp_path: Path,
+) -> None:
+    def mutate(label: str, _repo: V2Repository, inputs: MutableGitInputs) -> None:
+        if label == "before:4:focused":
+            inputs.extra_untracked = ("pytest.ini",)
+
+    bundle = _run_bundle(tmp_path, on_probe=mutate)
+    assert bundle.exit_code == 1
+    assert len(bundle.process.calls) == 3
+    assert len(bundle.report["runs"]) == 1
+    terminal = bundle.report["worktree_snapshots"][-1]
+    assert terminal["label"] == "before:4:focused"
+    assert terminal["accepted"] is False
+    assert "pytest.ini" in terminal["parsed"]["unexpected_paths"]
+    _assert_schema_valid(bundle)
+    _verify(bundle, allow_partial=True)
+
+
+def test_staged_path_is_rejected_before_any_pytest(tmp_path: Path) -> None:
+    bundle = _run_bundle(tmp_path, staged=("pyproject.toml",))
+    assert bundle.exit_code == 1
+    assert bundle.process.calls == []
+    terminal = bundle.report["worktree_snapshots"][0]
+    assert terminal["accepted"] is False
+    assert terminal["parsed"]["staged"] == [
+        {"path": "pyproject.toml", "index_status": "M"}
+    ]
+    _assert_schema_valid(bundle)
+    _verify(bundle, allow_partial=True)
+
+
+@pytest.mark.parametrize(
+    "unexpected",
+    [
+        "pytest.ini",
+        "tests/conftest.py",
+        "tests/unit/test_untracked_collection_input.py",
+        "sitecustomize.py",
+        "notes/arbitrary.txt",
+    ],
+)
+def test_execution_affecting_or_arbitrary_untracked_path_fails_preflight(
+    tmp_path: Path,
+    unexpected: str,
+) -> None:
+    bundle = _run_bundle(tmp_path, extra_untracked=(unexpected,))
+    assert bundle.exit_code == 1
+    assert bundle.process.calls == []
+    snapshot = bundle.report["worktree_snapshots"][0]
+    assert unexpected in snapshot["parsed"]["untracked"]
+    assert unexpected in snapshot["parsed"]["unexpected_paths"]
+    _assert_schema_valid(bundle)
+    _verify(bundle, allow_partial=True)
+
+
+def test_allowed_dossier_and_report_paths_are_non_execution_artifacts(
+    successful_bundle: Bundle,
+) -> None:
+    report = successful_bundle.report
+    source_paths = [record["path"] for record in report["source_files"]]
+    assert "REVIEW_STATE.yaml" in source_paths
+    assert V2_SCHEMA_RELATIVE_PATH in source_paths
+    assert "tests/unit/synthetic_tracked_execution_input.py" in source_paths
+    assert next(
+        record for record in report["source_files"]
+        if record["path"] == V2_SCHEMA_RELATIVE_PATH
+    )["origin"] == "untracked"
+    release_source = next(
+        record for record in report["source_files"]
+        if record["path"] == "build/release/synthetic-build-input.txt"
     )
-    _schema_validator(bundle.schema_path).validate(bundle.report)
-    assert bundle.report["cleanup"]["completed"] is True
-    assert not (bundle.root / runner.DEFAULT_BASETEMP_ROOT).exists()
-    _verify_failure(bundle.report_path, bundle, "report completed must be true")
+    assert release_source["origin"] == "untracked"
+    assert "build/release/synthetic-build-input.txt" in report[
+        "worktree_snapshots"
+    ][0]["parsed"]["execution_input_paths"]
+    for excluded in runner.NON_EXECUTION_TASK_PATHS:
+        assert excluded not in source_paths
+
+    first = report["worktree_snapshots"][0]["parsed"]
+    later = report["worktree_snapshots"][1]["parsed"]
+    for path in (
+        "CURRENT_STATUS.md",
+        "research/NEXT_RESEARCH_STEPS.md",
+        runner.TASK_STATUS_PATH,
+        f"ops/{runner.TASK_ID}/TASK_LOG.md",
+        f"ops/{runner.TASK_ID}/EVIDENCE.md",
+    ):
+        assert path in first["task_owned_non_execution_paths"]
+    assert runner.REPORT_RELATIVE_PATH not in first["untracked"]
+    assert runner.REPORT_RELATIVE_PATH in later["task_owned_non_execution_paths"]
+    healthy = {
+        "path": runner.TASK_STATUS_PATH,
+        "exists": True,
+        "kind": "regular_file",
+        "symlink": False,
+    }
+    assert all(
+        snapshot["task_status_file"] == healthy
+        for snapshot in report["worktree_snapshots"]
+    )
 
 
-def test_post_process_inventory_failure_records_null_source_fingerprint(
+def test_authorized_untracked_execution_source_cannot_be_omitted(
+    tmp_path: Path,
+    successful_bundle: Bundle,
+) -> None:
+    def omit(report: dict[str, Any]) -> None:
+        report["source_files"] = [
+            source
+            for source in report["source_files"]
+            if source["path"] != V2_SCHEMA_RELATIVE_PATH
+        ]
+
+    _assert_mutation_rejected(tmp_path, successful_bundle, omit)
+
+
+def test_altered_raw_git_output_is_independently_reconstructed(
+    tmp_path: Path,
+    successful_bundle: Bundle,
+) -> None:
+    def alter(report: dict[str, Any]) -> None:
+        probe = report["worktree_snapshots"][0]["commands"]["status"]["stdout"]
+        raw = _stream_bytes(probe)
+        probe.update(_captured_stream(raw.split(b"\0", 1)[1]))
+
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
+
+
+def test_wrong_git_status_stream_hash_is_rejected(
+    tmp_path: Path,
+    successful_bundle: Bundle,
+) -> None:
+    def alter(report: dict[str, Any]) -> None:
+        report["worktree_snapshots"][0]["commands"]["status"]["stdout"][
+            "sha256"
+        ] = "0" * 64
+
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
+
+
+def test_unmerged_git_status_preserves_every_porcelain_xy_state() -> None:
+    for xy in ("DD", "AU", "UD", "UA", "DU", "AA", "UU"):
+        parsed = verifier._parse_porcelain_v2(
+            _porcelain_v2_unmerged("conflicted.py", xy),
+            f"synthetic {xy}",
+        )
+        assert parsed["tracked_states"] == {
+            "conflicted.py": (xy[0], xy[1])
+        }
+
+
+@pytest.mark.parametrize("kind", ["duplicate", "malformed"])
+def test_duplicate_or_malformed_nul_git_record_is_rejected(
+    tmp_path: Path,
+    successful_bundle: Bundle,
+    kind: str,
+) -> None:
+    def alter(report: dict[str, Any]) -> None:
+        probe = report["worktree_snapshots"][0]["commands"]["untracked"]["stdout"]
+        raw = _stream_bytes(probe)
+        if kind == "duplicate":
+            first = raw.split(b"\0", 1)[0] + b"\0"
+            raw += first
+        else:
+            raw = raw[:-1]
+        probe.update(_captured_stream(raw))
+
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
+
+
+@pytest.mark.parametrize("path", ["../escape.py", "/absolute.py", "C:/absolute.py"])
+def test_git_paths_reject_traversal_and_absolute_forms(
+    tmp_path: Path,
+    successful_bundle: Bundle,
+    path: str,
+) -> None:
+    def alter(report: dict[str, Any]) -> None:
+        probe = report["worktree_snapshots"][0]["commands"]["untracked"]["stdout"]
+        probe.update(_captured_stream(_stream_bytes(probe) + path.encode() + b"\0"))
+
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
+
+
+def test_source_symlink_is_rejected_before_pytest(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    original = runner._current_source_fingerprint
-    calls = 0
-
-    def fail_first_post_process_inventory(
-        root: Path, paths: tuple[str, ...]
-    ) -> str:
-        nonlocal calls
-        calls += 1
-        if calls == 2:
-            raise runner.RunnerError("synthetic post-run inventory failure")
-        return original(root, paths)
-
+    repo = _create_v2_repository(tmp_path)
+    target = repo.root / "pyproject.toml"
+    original = runner._is_link_like
     monkeypatch.setattr(
         runner,
-        "_current_source_fingerprint",
-        fail_first_post_process_inventory,
+        "_is_link_like",
+        lambda path: Path(path) == target or original(Path(path)),
     )
-    bundle = _run_bundle(tmp_path)
+    bundle = _execute_repository(repo)
     assert bundle.exit_code == 1
-    assert len(bundle.calls) == 1
-    failed = bundle.report["runs"][0]
-    assert failed["status"] == "failed"
-    assert failed["exit_code"] == 0
-    assert failed["source_fingerprint_after"] is None
-    assert _stream_bytes(failed["stdout"]) == bundle.calls[0]["stdout"]
-    assert _stream_bytes(failed["stderr"]) == bundle.calls[0]["stderr"]
-    assert bundle.report["summary"]["failure_detail"] == (
-        "source fingerprint could not be acquired after the run"
-    )
-    _schema_validator(bundle.schema_path).validate(bundle.report)
+    assert bundle.process.calls == []
+    assert bundle.report["completed"] is False
+    assert bundle.report["source_files"] == []
+    revision = bundle.report["execution_project_revision"]
+    assert revision["fingerprint_scope"] == []
+    assert revision["fingerprint_sha256"] is None
+    assert revision["worktree_identity_sha256"] is None
+    assert len(bundle.report["worktree_snapshots"]) == 1
+    snapshot = bundle.report["worktree_snapshots"][0]
+    assert snapshot["accepted"] is False
+    assert snapshot["source_fingerprint_sha256"] is None
+    assert "symlink" in snapshot["diagnostic"]
+    _assert_schema_valid(bundle)
+    with pytest.raises(verifier.EvidenceVerificationError):
+        _verify(bundle)
+    _verify(bundle, allow_partial=True)
 
 
-def test_existing_report_is_never_overwritten(
-    successful_bundle: Bundle,
-) -> None:
-    bundle = successful_bundle
-    before = bundle.report_path.read_bytes()
-    attempted = False
-
-    def forbidden_process_runner(*_args: Any, **_kwargs: Any) -> SimpleNamespace:
-        nonlocal attempted
-        attempted = True
-        raise AssertionError("process runner must not be called")
-
-    with pytest.raises(FileExistsError, match="refusing to overwrite"):
-        runner.run_evidence(
-            bundle.config,
-            process_runner=forbidden_process_runner,
-            git_checker=lambda _root: None,
-        )
-    assert attempted is False
-    assert bundle.report_path.read_bytes() == before
-
-
-def test_tracked_source_inventory_failure_is_closed(
+@pytest.mark.parametrize("mutation", ["missing", "directory", "symlink"])
+def test_active_task_status_requires_exact_regular_non_symlink_shape(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    mutation: str,
 ) -> None:
-    failure = SimpleNamespace(
-        returncode=1,
-        stdout=b"",
-        stderr=b"synthetic git inventory failure",
-    )
-    monkeypatch.setattr(
-        runner.subprocess,
-        "run",
-        lambda *_args, **_kwargs: failure,
-    )
-    with pytest.raises(
-        runner.RunnerError,
-        match=(
-            "cannot inventory tracked source files: "
-            "synthetic git inventory failure"
-        ),
-    ):
-        runner._git_tracked_paths(tmp_path)
-
-
-def test_source_file_hash_mismatch_is_detected(
-    successful_bundle: Bundle,
-) -> None:
-    bundle = successful_bundle
-    source = bundle.root / "tools" / "inspect_upstream_candidate.py"
-    original = source.read_bytes()
-    try:
-        source.write_bytes(original + b"changed after evidence\n")
-        _verify_failure(
-            bundle.report_path,
-            bundle,
-            "source byte length mismatch|source SHA-256 mismatch",
+    repo = _create_v2_repository(tmp_path)
+    status = repo.root / runner.TASK_STATUS_PATH
+    if mutation == "missing":
+        status.unlink()
+    elif mutation == "directory":
+        status.unlink()
+        status.mkdir()
+    else:
+        original = runner._is_link_like
+        monkeypatch.setattr(
+            runner,
+            "_is_link_like",
+            lambda path: Path(path) == status or original(Path(path)),
         )
-    finally:
-        source.write_bytes(original)
+    with pytest.raises(runner.RunnerError, match="TASK_STATUS"):
+        _execute_repository(repo)
+    assert not repo.report_path.exists()
 
 
-def test_extra_tracked_execution_source_is_pinned_and_mutation_is_rejected(
-    tmp_path: Path,
-) -> None:
-    relative_path = "extra/tracked_execution_input.py"
-    bundle = _run_bundle(
-        tmp_path,
-        extra_tracked_sources={relative_path: b"VALUE = 1\n"},
-    )
-    source_paths = [
-        record["path"] for record in bundle.report["source_files"]
-    ]
-    assert relative_path in source_paths
-    assert relative_path in bundle.report["execution_project_revision"][
-        "fingerprint_scope"
-    ]
-    (bundle.root / relative_path).write_bytes(b"VALUE = 2\n")
-    _verify_failure(bundle.report_path, bundle, "source SHA-256 mismatch")
-
-
-@pytest.mark.parametrize("case", ["duplicate", "missing", "sequence"])
-def test_duplicate_missing_and_malformed_runs_are_rejected(
+@pytest.mark.parametrize("mutation", ["missing", "duplicate", "altered"])
+def test_collection_node_id_missing_duplicate_or_altered_is_rejected(
     tmp_path: Path,
     successful_bundle: Bundle,
-    case: str,
+    mutation: str,
 ) -> None:
-    expected = {
-        "duplicate": "schema validation failed",
-        "missing": "expected exactly 27 run records",
-        "sequence": "run sequences must be exactly",
-    }[case]
-
-    def mutate(report: dict[str, Any]) -> None:
-        if case == "duplicate":
-            report["runs"][1] = copy.deepcopy(report["runs"][0])
-        elif case == "missing":
-            report["runs"].pop()
+    def alter(report: dict[str, Any]) -> None:
+        collection = report["collection_identity"]
+        if mutation == "missing":
+            collection["records"][0]["node_ids"].pop()
+        elif mutation == "duplicate":
+            record = collection["records"][0]
+            duplicate = (FOCUSED_NODE_IDS[0], FOCUSED_NODE_IDS[0])
+            record["stdout"] = _captured_stream(_collection_stdout(duplicate))
         else:
-            report["runs"][0]["sequence"] = 2
+            collection["full_suite_node_ids"][-1] = (
+                "tests/integration/test_verifier_cli.py::test_altered"
+            )
 
-    path = _mutated_report(tmp_path, successful_bundle, mutate)
-    _verify_failure(path, successful_bundle, expected)
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
 
 
-def test_focused_count_mismatch_is_rejected(
+@pytest.mark.parametrize("phase", ["focused", "full_suite"])
+def test_run_pass_count_must_equal_its_recorded_collection(
     tmp_path: Path,
     successful_bundle: Bundle,
+    phase: str,
 ) -> None:
-    def mutate(report: dict[str, Any]) -> None:
-        _replace_run_stdout(
-            report["runs"][0], b"30 passed in 0.01s\n", passed=30
+    def alter(report: dict[str, Any]) -> None:
+        run = next(item for item in report["runs"] if item["phase"] == phase)
+        observed = run["expected_pass_count"] - 1
+        run["stdout"] = _captured_stream(f"{observed} passed in 0.01s\n".encode())
+        run["pytest_summary"]["passed"] = observed
+
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
+
+
+def test_noncanonical_base64_is_rejected(tmp_path: Path, successful_bundle: Bundle) -> None:
+    def alter(report: dict[str, Any]) -> None:
+        stream = report["runs"][0]["stderr"]
+        stream.update(
+            {
+                "base64": "Zh==",
+                "byte_length": 1,
+                "sha256": hashlib.sha256(b"f").hexdigest(),
+            }
         )
 
-    path = _mutated_report(tmp_path, successful_bundle, mutate)
-    _verify_failure(path, successful_bundle, "focused pass count is 30")
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
 
 
-def test_inconsistent_full_suite_counts_are_rejected(
+def test_wrong_captured_stream_hash_is_rejected(
     tmp_path: Path,
     successful_bundle: Bundle,
 ) -> None:
-    def mutate(report: dict[str, Any]) -> None:
-        _replace_run_stdout(
-            report["runs"][26], b"300 passed in 0.01s\n", passed=300
-        )
+    def alter(report: dict[str, Any]) -> None:
+        report["runs"][0]["stdout"]["sha256"] = "f" * 64
 
-    path = _mutated_report(tmp_path, successful_bundle, mutate)
-    _verify_failure(path, successful_bundle, "full-suite pass counts are inconsistent")
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
 
 
-def test_nonzero_exit_is_rejected(
+def test_forged_summary_totals_are_rejected(
     tmp_path: Path,
     successful_bundle: Bundle,
 ) -> None:
-    path = _mutated_report(
+    _assert_mutation_rejected(
         tmp_path,
         successful_bundle,
-        lambda report: report["runs"][0].update(
-            {"exit_code": 1, "status": "failed"}
-        ),
+        lambda report: report["summary"].__setitem__("successful_run_count", 26),
     )
-    _verify_failure(path, successful_bundle, "exit code is nonzero")
-
-
-def test_completed_false_is_rejected(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-) -> None:
-    path = _mutated_report(
-        tmp_path,
-        successful_bundle,
-        lambda report: report.update({"completed": False}),
-    )
-    _verify_failure(path, successful_bundle, "report completed must be true")
-
-
-def test_schema_rejects_nested_unknown_property(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-) -> None:
-    def mutate(report: dict[str, Any]) -> None:
-        report["runs"][0]["stdout"]["unknown"] = True
-
-    path = _mutated_report(tmp_path, successful_bundle, mutate)
-    _verify_failure(path, successful_bundle, "schema validation failed")
-
-
-def test_missing_root_limitations_are_rejected(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-) -> None:
-    path = _mutated_report(
-        tmp_path,
-        successful_bundle,
-        lambda report: report.pop("limitations"),
-    )
-    _verify_failure(path, successful_bundle, "schema validation failed")
-
-
-def test_noncanonical_base64_is_rejected_semantically(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-) -> None:
-    def mutate(report: dict[str, Any]) -> None:
-        report["runs"][0]["stdout"]["base64"] = "AB=="
-
-    path = _mutated_report(tmp_path, successful_bundle, mutate)
-    _verify_failure(path, successful_bundle, "Base64 is not canonical")
-
-
-@pytest.mark.parametrize("stream_name", ["stdout", "stderr"])
-def test_stream_hash_mismatch_is_rejected(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-    stream_name: str,
-) -> None:
-    def mutate(report: dict[str, Any]) -> None:
-        report["runs"][0][stream_name]["sha256"] = "0" * 64
-
-    path = _mutated_report(tmp_path, successful_bundle, mutate)
-    _verify_failure(path, successful_bundle, "SHA-256 mismatch")
-
-
-def test_arbitrary_process_environment_is_not_captured(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    secret = "test-secret-value-that-must-not-enter-the-report"
-    monkeypatch.setenv(SECRET_ENVIRONMENT_NAME, secret)
-    bundle = _run_bundle(tmp_path)
-    assert all(call["secret"] is None for call in bundle.calls)
-    assert secret.encode("utf-8") not in bundle.report_path.read_bytes()
-    assert set(bundle.report["environment"]) == {
-        "python_version",
-        "python_implementation",
-        "python_executable",
-        "operating_system",
-        "architecture",
-        "machine_identifier",
-        "processor_identifier",
-        "cpu_count",
-        "working_directory",
-        "tool_overrides",
-        "limitations",
-    }
-
-
-def test_default_process_runner_kills_drains_and_preserves_interrupted_output(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    class FakeProcess:
-        def __init__(self) -> None:
-            self.returncode = -9
-            self.communicate_calls = 0
-            self.killed = False
-
-        def communicate(self) -> tuple[bytes, bytes]:
-            self.communicate_calls += 1
-            if self.communicate_calls == 1:
-                raise KeyboardInterrupt
-            return b"partial stdout\n", b"partial stderr\n"
-
-        def kill(self) -> None:
-            self.killed = True
-
-    process = FakeProcess()
-
-    def fake_popen(*_args: Any, **_kwargs: Any) -> FakeProcess:
-        return process
-
-    monkeypatch.setattr(runner.subprocess, "Popen", fake_popen)
-    with pytest.raises(runner.ProcessInterrupted) as raised:
-        runner._default_process_runner(
-            ["python", "-m", "pytest"],
-            cwd=tmp_path,
-            env={"PATH": "synthetic"},
-        )
-    assert process.killed is True
-    assert process.communicate_calls == 2
-    assert raised.value.returncode == -9
-    assert raised.value.stdout == b"partial stdout\n"
-    assert raised.value.stderr == b"partial stderr\n"
-
-
-def test_effective_and_resolved_tool_identity_mismatch_is_rejected(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-) -> None:
-    def mutate(report: dict[str, Any]) -> None:
-        report["environment"]["tool_overrides"]["EG_CMAKE"][
-            "effective_value"
-        ] = bundle_value = report["environment"]["tool_overrides"]["EG_CXX"][
-            "effective_value"
-        ]
-        assert bundle_value
-
-    path = _mutated_report(tmp_path, successful_bundle, mutate)
-    _verify_failure(path, successful_bundle, "effective value resolves to")
-
-
-def test_same_host_environment_rehash_rejects_mutated_tool(
-    tmp_path: Path,
-) -> None:
-    bundle = _run_bundle(tmp_path)
-    result = verifier.verify_report(
-        bundle.report_path,
-        repository_root=bundle.root,
-        schema_path=bundle.schema_path,
-        verify_git=False,
-        rehash_environment=True,
-    )
-    assert result["ok"] is True
-    tool = Path(bundle.tool_values["EG_CMAKE"])
-    changed = bytearray(tool.read_bytes())
-    changed[0] ^= 1
-    tool.write_bytes(changed)
-    with pytest.raises(
-        verifier.EvidenceVerificationError,
-        match="EG_CMAKE SHA-256 does not match",
-    ):
-        verifier.verify_report(
-            bundle.report_path,
-            repository_root=bundle.root,
-            schema_path=bundle.schema_path,
-            verify_git=False,
-            rehash_environment=True,
-        )
-
-
-def test_environment_trust_boundary_limitation_is_required(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-) -> None:
-    def mutate(report: dict[str, Any]) -> None:
-        report["environment"]["limitations"].pop(0)
-
-    path = _mutated_report(tmp_path, successful_bundle, mutate)
-    _verify_failure(path, successful_bundle, "environment limitations omit")
-
-
-def test_optional_machine_limitation_is_accepted(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-) -> None:
-    def mutate(report: dict[str, Any]) -> None:
-        report["environment"]["machine_identifier"] = None
-        limitation = "Machine identifier is unavailable."
-        if limitation not in report["environment"]["limitations"]:
-            report["environment"]["limitations"].append(limitation)
-
-    path = _mutated_report(tmp_path, successful_bundle, mutate)
-    result = verifier.verify_report(
-        path,
-        repository_root=successful_bundle.root,
-        schema_path=successful_bundle.schema_path,
-        verify_git=False,
-    )
-    assert result["ok"] is True
-
-
-def test_completed_report_with_null_finish_has_precise_failure(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-) -> None:
-    path = _mutated_report(
-        tmp_path,
-        successful_bundle,
-        lambda report: report.update({"execution_finished_at_utc": None}),
-    )
-    _verify_failure(path, successful_bundle, "must be a non-null UTC timestamp")
 
 
 def test_cleanup_root_substitution_is_rejected(
     tmp_path: Path,
     successful_bundle: Bundle,
 ) -> None:
-    def mutate(report: dict[str, Any]) -> None:
-        report["cleanup"]["root"] = "build/not-task-owned"
-
-    path = _mutated_report(tmp_path, successful_bundle, mutate)
-    _verify_failure(path, successful_bundle, "cleanup root is not the fixed task-owned root")
-
-
-def test_duplicate_json_key_is_rejected(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-) -> None:
-    raw = successful_bundle.report_path.read_bytes()
-    field = b'  "schema_version": "1.0",\n'
-    assert raw.count(field) == 1
-    path = tmp_path / "duplicate-key.json"
-    path.write_bytes(raw.replace(field, field + field, 1))
-    _verify_failure(path, successful_bundle, "duplicate JSON key")
-
-
-def test_noncanonical_json_is_rejected(
-    tmp_path: Path,
-    successful_bundle: Bundle,
-) -> None:
-    path = tmp_path / "noncanonical.json"
-    path.write_text(
-        json.dumps(successful_bundle.report, sort_keys=True),
-        encoding="utf-8",
-        newline="\n",
+    _assert_mutation_rejected(
+        tmp_path,
+        successful_bundle,
+        lambda report: report["cleanup"].__setitem__("root", "build/foreign-root"),
     )
-    _verify_failure(path, successful_bundle, "report is not canonical")
+
+
+def test_delete_recreate_cleanup_root_fails_identity_check_without_deleting_replacement(
+    tmp_path: Path,
+) -> None:
+    replacement_sentinel = b"foreign replacement must survive cleanup\n"
+
+    def replace_root(
+        sequence: int,
+        _argv: list[str],
+        repo: V2Repository,
+        _inputs: MutableGitInputs,
+    ) -> None:
+        if sequence != 3:
+            return
+        base = repo.root / runner.DEFAULT_BASETEMP_ROOT
+        shutil.rmtree(base)
+        base.mkdir()
+        marker = base / runner.OWNER_MARKER_NAME
+        marker.write_bytes(
+            _canonical_json_bytes(
+                {
+                    "artifact_kind": runner.ARTIFACT_KIND,
+                    "task_id": runner.TASK_ID,
+                    "basetemp_root": runner.DEFAULT_BASETEMP_ROOT,
+                }
+            )
+        )
+        (base / "foreign-sentinel.txt").write_bytes(replacement_sentinel)
+
+    bundle = _run_bundle(tmp_path, after_process=replace_root)
+    base = bundle.repo.root / runner.DEFAULT_BASETEMP_ROOT
+    try:
+        assert bundle.exit_code == 1
+        assert len(bundle.process.calls) == 3
+        assert len(bundle.report["runs"]) == 1
+        cleanup = bundle.report["cleanup"]
+        assert cleanup["completed"] is False
+        assert cleanup["identity_verified"] is False
+        assert "identity changed" in cleanup["diagnostic"]
+        assert base.is_dir()
+        assert (base / "foreign-sentinel.txt").read_bytes() == replacement_sentinel
+        _assert_schema_valid(bundle)
+        _verify(bundle, allow_partial=True)
+    finally:
+        if base.is_dir():
+            shutil.rmtree(base)
+
+
+def test_environment_tool_identity_tampering_and_same_host_change_are_rejected(
+    tmp_path: Path,
+    successful_bundle: Bundle,
+) -> None:
+    def alter(report: dict[str, Any]) -> None:
+        report["environment"]["tool_overrides"]["EG_CMAKE"][
+            "effective_value"
+        ] = successful_bundle.repo.tool_values["EG_CXX"]
+
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
+
+    tool = Path(successful_bundle.repo.tool_values["EG_CMAKE"])
+    original = tool.read_bytes()
+    try:
+        tool.write_bytes(b"same-host tool mutation\n")
+        with pytest.raises(verifier.EvidenceVerificationError):
+            _verify(successful_bundle, rehash_environment=True)
+    finally:
+        tool.write_bytes(original)
+
+
+@pytest.mark.parametrize("control", ["cache_plugin", "plugin_autoload"])
+def test_recorded_child_execution_controls_cannot_be_removed_or_changed(
+    tmp_path: Path,
+    successful_bundle: Bundle,
+    control: str,
+) -> None:
+    def alter(report: dict[str, Any]) -> None:
+        run = report["runs"][0]
+        if control == "cache_plugin":
+            index = run["argv"].index("-p")
+            del run["argv"][index : index + 2]
+        else:
+            run["environment_overrides"]["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "0"
+
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
+
+
+def test_child_environment_does_not_capture_arbitrary_parent_secret(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("INSPECTOR_STABILITY_SYNTHETIC_SECRET", "do-not-copy")
+    bundle = _run_bundle(tmp_path, failure_at=1)
+    assert all(
+        "INSPECTOR_STABILITY_SYNTHETIC_SECRET" not in call["env"]
+        for call in bundle.process.calls
+    )
+
+
+def test_unsafe_ignored_path_is_rejected_before_pytest(tmp_path: Path) -> None:
+    bundle = _run_bundle(
+        tmp_path,
+        ignored=("dist/uncontrolled-plugin.py",),
+    )
+    assert bundle.exit_code == 1
+    assert bundle.process.calls == []
+    snapshot = bundle.report["worktree_snapshots"][0]
+    assert snapshot["accepted"] is False
+    assert "dist/uncontrolled-plugin.py" in snapshot["parsed"]["unexpected_paths"]
+    _assert_schema_valid(bundle)
+    _verify(bundle, allow_partial=True)
+
+
+def test_neutralized_ignored_path_set_is_frozen_across_all_processes(
+    tmp_path: Path,
+) -> None:
+    def mutate(label: str, repo: V2Repository, inputs: MutableGitInputs) -> None:
+        if label == "before:4:focused":
+            inputs.ignored = (*repo.ignored_paths, "build/pytest-new/stale")
+
+    bundle = _run_bundle(tmp_path, on_probe=mutate)
+    assert bundle.exit_code == 1
+    assert len(bundle.process.calls) == 3
+    terminal = bundle.report["worktree_snapshots"][-1]
+    assert terminal["parsed"]["unexpected_paths"] == []
+    assert terminal["accepted"] is False
+    assert "execution-state identity" in terminal["diagnostic"]
+    _assert_schema_valid(bundle)
+    _verify(bundle, allow_partial=True)
+
+
+@pytest.mark.parametrize("location", ["root", "nested"])
+def test_schema_rejects_unknown_properties_recursively(
+    tmp_path: Path,
+    successful_bundle: Bundle,
+    location: str,
+) -> None:
+    def alter(report: dict[str, Any]) -> None:
+        target = report if location == "root" else report["runs"][0]
+        target["unknown_property"] = True
+
+    _assert_mutation_rejected(tmp_path, successful_bundle, alter)
+
+
+@pytest.mark.parametrize(
+    "encoding",
+    ["noncanonical", "duplicate_key", "nonfinite", "non_utf8"],
+)
+def test_strict_json_rejects_noncanonical_duplicate_nonfinite_and_non_utf8(
+    tmp_path: Path,
+    successful_bundle: Bundle,
+    encoding: str,
+) -> None:
+    report = successful_bundle.report
+    canonical = _canonical_json_bytes(report)
+    if encoding == "noncanonical":
+        raw = json.dumps(report, sort_keys=True).encode("utf-8")
+    elif encoding == "duplicate_key":
+        needle = (
+            b'  "artifact_kind": "inspector_timeout_stability_evidence",\n'
+        )
+        raw = canonical.replace(needle, needle + needle, 1)
+    elif encoding == "nonfinite":
+        raw = b'{"value": NaN}\n'
+    else:
+        raw = canonical + b"\xff"
+    path = tmp_path / f"{encoding}.json"
+    path.write_bytes(raw)
+    with pytest.raises(verifier.EvidenceVerificationError):
+        _verify(successful_bundle, path)
+
+
+def test_preexisting_report_is_never_overwritten(tmp_path: Path) -> None:
+    repo = _create_v2_repository(tmp_path)
+    original = b"preexisting evidence must survive\n"
+    repo.report_path.write_bytes(original)
+    with pytest.raises(FileExistsError):
+        _execute_repository(repo)
+    assert repo.report_path.read_bytes() == original

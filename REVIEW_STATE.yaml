@@ -3,12 +3,12 @@
   "repository": "falker47/erdos-gyarfas-p14",
   "branch": "main",
   "review_base_commit": "a7066e70b92d80be2d1772127f329c24222c1b41",
-  "last_reviewed_head": "c71d66995ae6a36620a2aa8f938faf6d84fe1af7",
+  "last_reviewed_head": "b1eb792a2a771485f37979cd932303f14ab52f56",
   "last_verdict": "REJECT",
   "accepted_baseline_commit": "a7066e70b92d80be2d1772127f329c24222c1b41",
   "accepted_task_id": "TASK-20260719__define_environment_trust_boundary",
-  "active_task_id": "TASK-20260719__make_inspector_stability_evidence_auditable",
-  "updated_at_utc": "2026-07-19T12:22:54Z",
+  "active_task_id": "TASK-20260720__bind_stability_evidence_to_exact_worktree",
+  "updated_at_utc": "2026-07-20T07:50:03Z",
   "pending_follow_ups": [
     {
       "id": "RFU-TEST-001",

@@ -1,74 +1,65 @@
 # CURRENT_STATUS - erdos-gyarfas-p14
 
-Last updated: 2026-07-19 UTC
+Last updated: 2026-07-20 UTC
 
 ## Current state
 
-- Current phase: make the inspector timeout-test stability evidence auditable
-  before any environment attestation or upstream research execution.
+- Current phase: bind inspector timeout-test stability evidence to the exact
+  execution-affecting worktree before any environment attestation or upstream
+  research execution.
 - Active task:
-  `TASK-20260719__make_inspector_stability_evidence_auditable`.
-- Task status: `READY_FOR_REVIEW`.
+  `TASK-20260720__bind_stability_evidence_to_exact_worktree`.
+- Task status: `BLOCKED`.
 - Repository: Git worktree for `falker47/erdos-gyarfas-p14`.
 - Working branch: `main`.
 - Accepted review baseline:
   `a7066e70b92d80be2d1772127f329c24222c1b41`.
 - Task-start HEAD:
-  `c71d66995ae6a36620a2aa8f938faf6d84fe1af7`.
+  `b1eb792a2a771485f37979cd932303f14ab52f56`.
 - Last reviewed candidate HEAD:
-  `c71d66995ae6a36620a2aa8f938faf6d84fe1af7`.
+  `b1eb792a2a771485f37979cd932303f14ab52f56`.
 - Last review verdict: `REJECT`.
 - Accepted task: `TASK-20260719__define_environment_trust_boundary`.
 - Accepted review occurrence: `2026-07-19T10:24:26Z`.
-- Rejected review occurrence: `2026-07-19T11:58:09Z`.
-- Next review: the cumulative range from the unchanged accepted baseline
-  through this evidence-audit correction; the candidate SHA is intentionally
-  resolved from Git by the reviewer.
+- Governance update occurrence: `2026-07-20T07:50:03Z`.
+- No candidate is ready for review from this task. A later atomic correction
+  must begin from the unchanged accepted baseline; its candidate SHA will be
+  intentionally resolved from Git by the reviewer.
 
 The environment trust-boundary task remains accepted at exact commit
 `a7066e70b92d80be2d1772127f329c24222c1b41`. Both accepted-baseline fields
-remain fixed there. The later timeout-test stabilization candidate at
-`c71d66995ae6a36620a2aa8f938faf6d84fe1af7` was rejected solely because its
-central repeated-stability evidence was available only as Markdown
-transcription. The test redesign was statically sound, but the repository did
-not contain raw output, JUnit results, a machine-readable run bundle, a CI
-artifact, or another independently checkable execution record for the claimed
-25 focused runs and two complete suites.
+remain fixed there. The cumulative candidate through
+`b1eb792a2a771485f37979cd932303f14ab52f56` received `REJECT`. Its v1 report
+contains raw streams for 25 focused runs and two full suites, but its execution
+identity is not fail-closed over every untracked input that can alter pytest
+collection or behavior. It also accepts full-suite counts through an arbitrary
+minimum threshold instead of binding every run to one recorded collection.
 
-The rejected dossier under
-`ops/TASK-20260719__stabilize_inspector_timeout_test/` is immutable historical
-evidence and is not reused or edited by this correction.
+Both earlier dossiers under
+`ops/TASK-20260719__stabilize_inspector_timeout_test/` and
+`ops/TASK-20260719__make_inspector_stability_evidence_auditable/` are immutable
+historical evidence and are not reused or edited by this correction.
 
-## Active evidence-audit correction
+## Blocked exact-worktree correction
 
-The current task has created a strict, closed-world JSON evidence format, a
-serial standard-library runner, an independent verifier, focused unit tests,
-and one completed report at
-`ops/TASK-20260719__make_inspector_stability_evidence_auditable/STABILITY_EVIDENCE.json`.
-That JSON report, not a Markdown table, will be the canonical record of exactly
-25 focused inspector-test executions followed immediately by two complete
-pytest-suite executions.
+The strict v2 schema, runner, independent verifier, and 52-case synthetic test
+suite are implemented. The tooling gate passed with 52 focused synthetic tests
+and 336 total unit tests. The final preflight accepted the exact task allowlist
+with zero staged or unexpected paths and 195 execution inputs.
 
-The one and only actual runner invocation completed from
-`2026-07-19T13:31:35.919158Z` through `2026-07-19T13:37:40.838505Z` with exit
-zero. All 27 required serial attempts passed without retry: each of the 25
-focused attempts reported 31 passes, and both complete suites reported 333
-passes. Every recorded non-passing outcome count is zero. Cleanup removed all
-27 task basetemps, left none, and removed the task-owned root.
+The single permitted real runner invocation then failed before its first
+collection subprocess. Git's ignored-path probe exited `0` but emitted 792
+bytes of permission-denied warnings while attempting to open nine pre-existing
+ignored `build/pytest-*` directories. The runner correctly failed closed,
+recorded zero subprocesses and zero stability attempts, preserved a canonical
+partial report, and removed its one created basetemp and task-owned root. The
+task rule prohibits retry, so this task is `BLOCKED`.
 
-The canonical report is 93,644 bytes with SHA-256
-`b370e24312b69423c757a69368860f0316added6f86af4c9c7fe7fddc9c484f1`.
-Its 170-file execution scope has fingerprint
-`415ef1d6ab427a28f5c437371364f181fc3a489f228b2b87cbba80887400f26a`.
-The independent verifier, including opt-in same-host source and tool
-rehashing, exited zero and recomputed the report hashes and counts. Schema,
-focused tooling, all-unit, Action-pin, upstream-snapshot, strict-state, and
-protected-inventory checks also pass.
-
-This bounded result is not accepted review state. Final complete-diff,
-exact-allowlist, protected-inventory, and `git diff --check` inspections pass,
-so the task is `READY_FOR_REVIEW`. `RFU-TEST-001` remains `OPEN` until the
-machine-readable report and cumulative candidate receive independent review.
+The partial report is schema-valid. The independent same-host verifier accepts
+it only with `--allow-partial`, returning `completed=false` and
+`evidence_success=false`; normal completed-evidence verification correctly
+fails. No source, normalized worktree, or collection digest and no focused or
+full-suite count were established. `RFU-TEST-001` remains `OPEN`.
 
 ## Accepted environment boundary
 
@@ -102,8 +93,9 @@ reproduction, exhaustive computation, certificate, theorem, or proof.
 
 - `RFU-DOC-001`: resolved by accepted commit
   `41fb0a9b64ff2c6deeeb8080f41d1ea82bcb568d` and no longer pending.
-- `RFU-TEST-001`: `OPEN`; the correction must produce independently auditable
-  repeated-stability evidence, and the follow-up cannot close before review.
+- `RFU-TEST-001`: `OPEN`; this correction is blocked without completed
+  stability evidence. A later atomic task must address the unreadable ignored
+  paths before producing a new independently reviewable execution.
 - `RFU-ENV-001`: `OPEN` and unchanged; its canonical scope remains the
   unresolved locking, capture, and external-service trust obligations in
   `research/ENVIRONMENT_LOCK_INVENTORY.json` and
@@ -121,7 +113,9 @@ mathematical target statuses remain unchanged.
 
 ## Remaining scientific and engineering obligations
 
-- Review the cumulative candidate from the unchanged accepted baseline.
+- Resolve the ignored-path readability/authority mismatch in a separate atomic
+  task and produce a fresh exact-worktree correction from the unchanged
+  accepted baseline.
 - Keep `RFU-TEST-001` open until that review accepts the evidence.
 - Resolve or explicitly accept every relevant environment lock, capture, and
   external-service dependency under later `RFU-ENV-001` work before using that

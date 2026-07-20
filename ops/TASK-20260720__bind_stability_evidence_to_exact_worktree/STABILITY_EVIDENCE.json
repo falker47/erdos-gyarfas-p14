@@ -1,0 +1,342 @@
+{
+  "artifact_kind": "inspector_timeout_stability_evidence",
+  "classification": "EMPIRICAL_OBSERVATION",
+  "cleanup": {
+    "completed": true,
+    "created": [
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/collection-focused"
+    ],
+    "diagnostic": null,
+    "expected": [
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/collection-focused",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/collection-full-suite",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-01",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-02",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-03",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-04",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-05",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-06",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-07",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-08",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-09",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-10",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-11",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-12",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-13",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-14",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-15",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-16",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-17",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-18",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-19",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-20",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-21",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-22",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-23",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-24",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/focused-25",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/full-suite-01",
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/full-suite-02"
+    ],
+    "identity_verified": true,
+    "owner_marker": "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/.inspector-timeout-stability-owner.json",
+    "owner_marker_identity": {
+      "device": 7131112120414668207,
+      "inode": 39969446693083210
+    },
+    "remaining": [],
+    "removed": [
+      "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps/collection-focused"
+    ],
+    "root": "build/TASK-20260720__bind_stability_evidence_to_exact_worktree-basetemps",
+    "root_identity": {
+      "device": 7131112120414668207,
+      "inode": 29554872554756716
+    },
+    "root_removed": true,
+    "unexpected": []
+  },
+  "collection_identity": {
+    "diagnostic": null,
+    "digest_kind": "canonical_collection_node_ids_v1",
+    "digest_sha256": null,
+    "focused_count": null,
+    "focused_node_ids": [],
+    "full_suite_count": null,
+    "full_suite_node_ids": [],
+    "records": [],
+    "status": "pending"
+  },
+  "completed": false,
+  "environment": {
+    "architecture": "AMD64",
+    "cpu_count": 16,
+    "git_executable": {
+      "byte_length": 45032,
+      "effective_value": "C:/Program Files/Git/cmd/git.exe",
+      "limitation": null,
+      "readable": true,
+      "resolved_path": "C:/Program Files/Git/cmd/git.exe",
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae"
+    },
+    "limitations": [
+      "Only a minimized allowlist of inherited child-environment names is retained.",
+      "Credentials and the complete parent environment are deliberately not recorded."
+    ],
+    "machine_identifier": "HYCARUS",
+    "operating_system": "Windows-11-10.0.26200-SP0",
+    "processor_identifier": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "python_executable": {
+      "byte_length": 106328,
+      "effective_value": "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "limitation": null,
+      "readable": true,
+      "resolved_path": "C:/Users/Falker/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "sha256": "cce21c0e8710e304273e98ac4b2b0f5aceb639acbcd2343cbaa5c4e81619c45b"
+    },
+    "python_implementation": "CPython",
+    "python_version": "3.14.3",
+    "tool_overrides": {
+      "EG_CMAKE": {
+        "byte_length": 9777292,
+        "effective_value": "C:/msys64/ucrt64/bin/cmake.exe",
+        "limitation": null,
+        "readable": true,
+        "resolved_path": "C:/msys64/ucrt64/bin/cmake.exe",
+        "sha256": "ffca3626caf34f69bdcfb38d5040ff622080d5add3928ee678582d3d92e83bc0"
+      },
+      "EG_CXX": {
+        "byte_length": 2781056,
+        "effective_value": "C:/msys64/ucrt64/bin/g++.exe",
+        "limitation": null,
+        "readable": true,
+        "resolved_path": "C:/msys64/ucrt64/bin/g++.exe",
+        "sha256": "9e69b6c6d6593d143476ae93098ba8df897835949e5fd6be4f3df919371f4913"
+      },
+      "EG_MAKE": {
+        "byte_length": 228832,
+        "effective_value": "C:/msys64/usr/bin/make.exe",
+        "limitation": null,
+        "readable": true,
+        "resolved_path": "C:/msys64/usr/bin/make.exe",
+        "sha256": "6732605294c9f11ffc9e0ed112786bc63d65c8d8b6a22d14281bcb4e90148f20"
+      },
+      "EG_NINJA": {
+        "byte_length": 1318176,
+        "effective_value": "C:/msys64/ucrt64/bin/ninja.exe",
+        "limitation": null,
+        "readable": true,
+        "resolved_path": "C:/msys64/ucrt64/bin/ninja.exe",
+        "sha256": "de6836289099ec47cc4aa4671b1522eafc73b9b4dd73ac407b8bb7cdd46b60ce"
+      }
+    },
+    "working_directory": "C:/Users/Falker/Desktop/Code/circle/erdos-gyarfas-p14"
+  },
+  "execution_finished_at_utc": "2026-07-20T09:46:48.414933Z",
+  "execution_project_revision": {
+    "fingerprint_kind": "canonical_source_inventory_v2",
+    "fingerprint_scope": [],
+    "fingerprint_sha256": null,
+    "state": "dirty",
+    "worktree_identity_sha256": null
+  },
+  "execution_started_at_utc": "2026-07-20T09:46:48.207097Z",
+  "expected_plan": {
+    "collection_preflight_runs": 2,
+    "focused_runs": 25,
+    "full_suite_runs": 2,
+    "retries": 0,
+    "serial": true,
+    "stop_on_first_failure": true
+  },
+  "limitations": [
+    "This is bounded V1 engineering-test evidence classified EMPIRICAL_OBSERVATION.",
+    "This is not an upstream reproduction.",
+    "This is not exhaustive-search evidence or a certificate.",
+    "This establishes no theorem, counterexample, pruning rule, or mathematical result.",
+    "RFU-TEST-001 remains OPEN until a later independent review.",
+    "RFU-ENV-001 remains OPEN and is outside this task.",
+    "Pre/post snapshots cannot detect a mutation that is fully restored within one child.",
+    "Old explicit-basetemp outputs and in-tree bytecode caches are path-bound but content-neutralized by the child controls."
+  ],
+  "non_execution_task_paths": [
+    "CURRENT_STATUS.md",
+    "ops/TASK-20260720__bind_stability_evidence_to_exact_worktree/EVIDENCE.md",
+    "ops/TASK-20260720__bind_stability_evidence_to_exact_worktree/STABILITY_EVIDENCE.json",
+    "ops/TASK-20260720__bind_stability_evidence_to_exact_worktree/STABILITY_EVIDENCE.json.tmp",
+    "ops/TASK-20260720__bind_stability_evidence_to_exact_worktree/TASK_LOG.md",
+    "ops/TASK-20260720__bind_stability_evidence_to_exact_worktree/TASK_STATUS.md",
+    "research/NEXT_RESEARCH_STEPS.md"
+  ],
+  "report_persistence": {
+    "atomic_replace": true,
+    "fsync_file": true,
+    "initial_write_mode": "same_directory_temp_then_replace",
+    "replacement_mode": "same_directory_temp_then_replace",
+    "report_path": "ops/TASK-20260720__bind_stability_evidence_to_exact_worktree/STABILITY_EVIDENCE.json",
+    "temporary_absent_at_finish": true,
+    "temporary_path": "ops/TASK-20260720__bind_stability_evidence_to_exact_worktree/STABILITY_EVIDENCE.json.tmp"
+  },
+  "repository": "falker47/erdos-gyarfas-p14",
+  "review_base_commit": "a7066e70b92d80be2d1772127f329c24222c1b41",
+  "runs": [],
+  "schema_version": "2.0",
+  "source_files": [],
+  "summary": {
+    "failed_run_count": 0,
+    "failure_detail": "Git ignored probe emitted unexpected stderr",
+    "focused_pass_counts": [],
+    "focused_run_count": 0,
+    "full_suite_pass_counts": [],
+    "full_suite_run_count": 0,
+    "recorded_process_count": 0,
+    "recorded_run_count": 0,
+    "retries": 0,
+    "stop_reason": "failure",
+    "successful_run_count": 0
+  },
+  "task_id": "TASK-20260720__bind_stability_evidence_to_exact_worktree",
+  "task_start_head": "b1eb792a2a771485f37979cd932303f14ab52f56",
+  "worktree_snapshots": [
+    {
+      "accepted": false,
+      "captured_at_utc": "2026-07-20T09:46:48.408827Z",
+      "commands": {
+        "ignored": {
+          "argv": [
+            "C:/Program Files/Git/cmd/git.exe",
+            "-c",
+            "safe.directory=C:/Users/Falker/Desktop/Code/circle/erdos-gyarfas-p14",
+            "-c",
+            "core.excludesFile=",
+            "ls-files",
+            "--others",
+            "--ignored",
+            "--exclude-standard",
+            "-z"
+          ],
+          "exit_code": 0,
+          "stderr": {
+            "base64": "d2FybmluZzogY291bGQgbm90IG9wZW4gZGlyZWN0b3J5ICdidWlsZC9weXRlc3QtYmVuY2htYXJrLWZpbmFsLyc6IFBlcm1pc3Npb24gZGVuaWVkCndhcm5pbmc6IGNvdWxkIG5vdCBvcGVuIGRpcmVjdG9yeSAnYnVpbGQvcHl0ZXN0LWJlbmNobWFyay1yZXF1aXJlZC8nOiBQZXJtaXNzaW9uIGRlbmllZAp3YXJuaW5nOiBjb3VsZCBub3Qgb3BlbiBkaXJlY3RvcnkgJ2J1aWxkL3B5dGVzdC1ib3VuZGVkLXJlcXVpcmVkLyc6IFBlcm1pc3Npb24gZGVuaWVkCndhcm5pbmc6IGNvdWxkIG5vdCBvcGVuIGRpcmVjdG9yeSAnYnVpbGQvcHl0ZXN0LWluc3BlY3Rvci1yZXF1aXJlZC8nOiBQZXJtaXNzaW9uIGRlbmllZAp3YXJuaW5nOiBjb3VsZCBub3Qgb3BlbiBkaXJlY3RvcnkgJ2J1aWxkL3B5dGVzdC1pbnRlZ3JhdGlvbi1maW5hbC8nOiBQZXJtaXNzaW9uIGRlbmllZAp3YXJuaW5nOiBjb3VsZCBub3Qgb3BlbiBkaXJlY3RvcnkgJ2J1aWxkL3B5dGVzdC1pbnRlZ3JhdGlvbi1oYXJkZW4vJzogUGVybWlzc2lvbiBkZW5pZWQKd2FybmluZzogY291bGQgbm90IG9wZW4gZGlyZWN0b3J5ICdidWlsZC9weXRlc3QtaW50ZWdyYXRpb24taGFyZGVuLTIvJzogUGVybWlzc2lvbiBkZW5pZWQKd2FybmluZzogY291bGQgbm90IG9wZW4gZGlyZWN0b3J5ICdidWlsZC9weXRlc3QtaW50ZWdyYXRpb24tb3V0Y29tZXMvJzogUGVybWlzc2lvbiBkZW5pZWQKd2FybmluZzogY291bGQgbm90IG9wZW4gZGlyZWN0b3J5ICdidWlsZC9weXRlc3QtaW50ZWdyYXRpb24tcmVxdWlyZWQvJzogUGVybWlzc2lvbiBkZW5pZWQK",
+            "byte_length": 792,
+            "sha256": "e03b5828ea227da73e49f4c4733bcf4c27281c388653bec129cd84050de2ae73"
+          },
+          "stdout": {
+            "base64": "YnVpbGQvVEFTSy0yMDI2MDcyMF9fYmluZF9zdGFiaWxpdHlfZXZpZGVuY2VfdG9fZXhhY3Rfd29ya3RyZWUtYmFzZXRlbXBzLy5pbnNwZWN0b3ItdGltZW91dC1zdGFiaWxpdHktb3duZXIuanNvbgBidWlsZC9yZWxlYXNlLy5uaW5qYV9kZXBzAGJ1aWxkL3JlbGVhc2UvLm5pbmphX2xvZwBidWlsZC9yZWxlYXNlL0NNYWtlQ2FjaGUudHh0AGJ1aWxkL3JlbGVhc2UvQ01ha2VGaWxlcy8zLjI2LjQvQ01ha2VDWFhDb21waWxlci5jbWFrZQBidWlsZC9yZWxlYXNlL0NNYWtlRmlsZXMvMy4yNi40L0NNYWtlRGV0ZXJtaW5lQ29tcGlsZXJBQklfQ1hYLmJpbgBidWlsZC9yZWxlYXNlL0NNYWtlRmlsZXMvMy4yNi40L0NNYWtlUkNDb21waWxlci5jbWFrZQBidWlsZC9yZWxlYXNlL0NNYWtlRmlsZXMvMy4yNi40L0NNYWtlU3lzdGVtLmNtYWtlAGJ1aWxkL3JlbGVhc2UvQ01ha2VGaWxlcy8zLjI2LjQvQ29tcGlsZXJJZENYWC9DTWFrZUNYWENvbXBpbGVySWQuY3BwAGJ1aWxkL3JlbGVhc2UvQ01ha2VGaWxlcy8zLjI2LjQvQ29tcGlsZXJJZENYWC9hLmV4ZQBidWlsZC9yZWxlYXNlL0NNYWtlRmlsZXMvQ01ha2VDb25maWd1cmVMb2cueWFtbABidWlsZC9yZWxlYXNlL0NNYWtlRmlsZXMvVGFyZ2V0RGlyZWN0b3JpZXMudHh0AGJ1aWxkL3JlbGVhc2UvQ01ha2VGaWxlcy9jbWFrZS5jaGVja19jYWNoZQBidWlsZC9yZWxlYXNlL0NNYWtlRmlsZXMvZWctdXBzdHJlYW0tc2VyaWFsLmRpci90aGlyZF9wYXJ0eS9lcmRvcy1neWFyZmFzL3NyYy9ncmFwaC5jcHAub2JqAGJ1aWxkL3JlbGVhc2UvQ01ha2VGaWxlcy9lZy11cHN0cmVhbS1zZXJpYWwuZGlyL3RoaXJkX3BhcnR5L2VyZG9zLWd5YXJmYXMvc3JjL2xpYi5jcHAub2JqAGJ1aWxkL3JlbGVhc2UvQ01ha2VGaWxlcy9lZy11cHN0cmVhbS1zZXJpYWwuZGlyL3RoaXJkX3BhcnR5L2VyZG9zLWd5YXJmYXMvc3JjL21haW4uY3BwLm9iagBidWlsZC9yZWxlYXNlL0NNYWtlRmlsZXMvcnVsZXMubmluamEAYnVpbGQvcmVsZWFzZS9iaW4vZWctdXBzdHJlYW0tc2VyaWFsLmV4ZQBidWlsZC9yZWxlYXNlL2J1aWxkLm5pbmphAGJ1aWxkL3JlbGVhc2UvY21ha2VfaW5zdGFsbC5jbWFrZQBidWlsZC9yZWxlYXNlL2NvbXBpbGVfY29tbWFuZHMuanNvbgB0ZXN0cy9kaWZmZXJlbnRpYWwvX19weWNhY2hlX18vdGVzdF9zbWFsbF9ncmFwaF9vcmFjbGVzLmNweXRob24tMzE0LXB5dGVzdC05LjAuMi5weWMAdGVzdHMvaW50ZWdyYXRpb24vX19weWNhY2hlX18vdGVzdF91cHN0cmVhbV9idWlsZC5jcHl0aG9uLTMxNC1weXRlc3QtOS4wLjIucHljAHRlc3RzL2ludGVncmF0aW9uL19fcHljYWNoZV9fL3Rlc3RfdmVyaWZpZXJfY2xpLmNweXRob24tMzE0LXB5dGVzdC05LjAuMi5weWMAdGVzdHMvdW5pdC9fX3B5Y2FjaGVfXy90ZXN0X2JlbmNobWFya19vdXRjb21lcy5jcHl0aG9uLTMxNC1weXRlc3QtOS4wLjIucHljAHRlc3RzL3VuaXQvX19weWNhY2hlX18vdGVzdF9jb3VudGVyZXhhbXBsZS5jcHl0aG9uLTMxNC1weXRlc3QtOS4wLjIucHljAHRlc3RzL3VuaXQvX19weWNhY2hlX18vdGVzdF9lbnZpcm9ubWVudF9sb2NrX2ludmVudG9yeS5jcHl0aG9uLTMxNC1weXRlc3QtOS4wLjIucHljAHRlc3RzL3VuaXQvX19weWNhY2hlX18vdGVzdF9naXRodWJfYWN0aW9uX3BpbnMuY3B5dGhvbi0zMTQtcHl0ZXN0LTkuMC4yLnB5YwB0ZXN0cy91bml0L19fcHljYWNoZV9fL3Rlc3RfZ3JhcGguY3B5dGhvbi0zMTQtcHl0ZXN0LTkuMC4yLnB5YwB0ZXN0cy91bml0L19fcHljYWNoZV9fL3Rlc3RfaW5zcGVjdG9yX3RpbWVvdXRfc3RhYmlsaXR5X2V2aWRlbmNlLmNweXRob24tMzE0LXB5dGVzdC05LjAuMi5weWMAdGVzdHMvdW5pdC9fX3B5Y2FjaGVfXy90ZXN0X2luc3BlY3Rvcl90aW1lb3V0X3N0YWJpbGl0eV9ldmlkZW5jZS5jcHl0aG9uLTMxNC5weWMAdGVzdHMvdW5pdC9fX3B5Y2FjaGVfXy90ZXN0X21hbmlmZXN0LmNweXRob24tMzE0LXB5dGVzdC05LjAuMi5weWMAdGVzdHMvdW5pdC9fX3B5Y2FjaGVfXy90ZXN0X3ByZWRpY2F0ZXMuY3B5dGhvbi0zMTQtcHl0ZXN0LTkuMC4yLnB5YwB0ZXN0cy91bml0L19fcHljYWNoZV9fL3Rlc3RfcmV2aWV3X3JhbmdlX3doaXRlc3BhY2UuY3B5dGhvbi0zMTQtcHl0ZXN0LTkuMC4yLnB5YwB0ZXN0cy91bml0L19fcHljYWNoZV9fL3Rlc3RfcmV2aWV3X3Rhc2tfaWQuY3B5dGhvbi0zMTQtcHl0ZXN0LTkuMC4yLnB5YwB0ZXN0cy91bml0L19fcHljYWNoZV9fL3Rlc3RfdXBzdHJlYW1fY2FuZGlkYXRlX2luc3BlY3Rpb24uY3B5dGhvbi0zMTQtcHl0ZXN0LTkuMC4yLnB5YwB0b29scy9fX3B5Y2FjaGVfXy9fY29tbW9uLmNweXRob24tMzE0LnB5YwB0b29scy9fX3B5Y2FjaGVfXy9jaGVja19naXRodWJfYWN0aW9uX3BpbnMuY3B5dGhvbi0zMTQucHljAHRvb2xzL19fcHljYWNoZV9fL2NoZWNrX3Jldmlld19yYW5nZV93aGl0ZXNwYWNlLmNweXRob24tMzE0LnB5YwB0b29scy9fX3B5Y2FjaGVfXy9pbnNwZWN0X3Vwc3RyZWFtX2NhbmRpZGF0ZS5jcHl0aG9uLTMxNC5weWMAdG9vbHMvX19weWNhY2hlX18vcmVzb2x2ZV9yZXZpZXdfdGFza19pZC5jcHl0aG9uLTMxNC5weWMAdG9vbHMvX19weWNhY2hlX18vcnVuX2JlbmNobWFyay5jcHl0aG9uLTMxNC5weWMAdG9vbHMvX19weWNhY2hlX18vcnVuX2luc3BlY3Rvcl90aW1lb3V0X3N0YWJpbGl0eS5jcHl0aG9uLTMxNC5weWMAdG9vbHMvX19weWNhY2hlX18vdmVyaWZ5X2luc3BlY3Rvcl90aW1lb3V0X3N0YWJpbGl0eS5jcHl0aG9uLTMxNC5weWMAdmVyaWZpZXIvZWd2ZXJpZnkvX19weWNhY2hlX18vX19pbml0X18uY3B5dGhvbi0zMTQucHljAHZlcmlmaWVyL2VndmVyaWZ5L19fcHljYWNoZV9fL19fbWFpbl9fLmNweXRob24tMzE0LnB5YwB2ZXJpZmllci9lZ3ZlcmlmeS9fX3B5Y2FjaGVfXy9jbGkuY3B5dGhvbi0zMTQucHljAHZlcmlmaWVyL2VndmVyaWZ5L19fcHljYWNoZV9fL2NvdW50ZXJleGFtcGxlLmNweXRob24tMzE0LnB5YwB2ZXJpZmllci9lZ3ZlcmlmeS9fX3B5Y2FjaGVfXy9ncmFwaC5jcHl0aG9uLTMxNC5weWMAdmVyaWZpZXIvZWd2ZXJpZnkvX19weWNhY2hlX18vbWFuaWZlc3QuY3B5dGhvbi0zMTQucHljAHZlcmlmaWVyL2VndmVyaWZ5L19fcHljYWNoZV9fL3ByZWRpY2F0ZXMuY3B5dGhvbi0zMTQucHljAA==",
+            "byte_length": 3136,
+            "sha256": "f0c460076ef28242e9063df93d7a9b658137d12c3ddf2d42ce7ab97d04972bba"
+          }
+        },
+        "staged": {
+          "argv": [
+            "C:/Program Files/Git/cmd/git.exe",
+            "-c",
+            "safe.directory=C:/Users/Falker/Desktop/Code/circle/erdos-gyarfas-p14",
+            "-c",
+            "core.excludesFile=",
+            "diff",
+            "--cached",
+            "--name-only",
+            "-z",
+            "--"
+          ],
+          "exit_code": 0,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "status": {
+          "argv": [
+            "C:/Program Files/Git/cmd/git.exe",
+            "-c",
+            "safe.directory=C:/Users/Falker/Desktop/Code/circle/erdos-gyarfas-p14",
+            "-c",
+            "core.excludesFile=",
+            "status",
+            "--porcelain=v2",
+            "-z",
+            "--untracked-files=all",
+            "--no-renames"
+          ],
+          "exit_code": 0,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "MSAuTSBOLi4uIDEwMDY0NCAxMDA2NDQgMTAwNjQ0IDY0OWUxNDVjNzUyMjA1NzE3MTdiNDllMjU3ZmY0OTEzZmEwYTMzNGQgNjQ5ZTE0NWM3NTIyMDU3MTcxN2I0OWUyNTdmZjQ5MTNmYTBhMzM0ZCBDVVJSRU5UX1NUQVRVUy5tZAAxIC5NIE4uLi4gMTAwNjQ0IDEwMDY0NCAxMDA2NDQgZDE2NjBkYjI5NTBjOGM3ODU0ZWJmY2VkZTc2MzQxMjBlZWIzZDg0YSBkMTY2MGRiMjk1MGM4Yzc4NTRlYmZjZWRlNzYzNDEyMGVlYjNkODRhIFJFVklFV19TVEFURS55YW1sADEgLk0gTi4uLiAxMDA2NDQgMTAwNjQ0IDEwMDY0NCA4MjYyMzc5YWZhNzhjNjE5ODBhODQ3ZWMxNzUzMWMzMmIxM2E2NjMyIDgyNjIzNzlhZmE3OGM2MTk4MGE4NDdlYzE3NTMxYzMyYjEzYTY2MzIgcmVzZWFyY2gvTkVYVF9SRVNFQVJDSF9TVEVQUy5tZAAxIC5NIE4uLi4gMTAwNjQ0IDEwMDY0NCAxMDA2NDQgMmMyNmM3MjdmYzM5MDUxYmMyN2JmNjZkZmRlNTlkZmVlOGViYWM2OSAyYzI2YzcyN2ZjMzkwNTFiYzI3YmY2NmRmZGU1OWRmZWU4ZWJhYzY5IHRlc3RzL3VuaXQvdGVzdF9pbnNwZWN0b3JfdGltZW91dF9zdGFiaWxpdHlfZXZpZGVuY2UucHkAMSAuTSBOLi4uIDEwMDY0NCAxMDA2NDQgMTAwNjQ0IDY5NGFmNDk5MGE4YzA5MDJiMTNhNjAzMWFhNTRjYTYyNmFhNTcxZTMgNjk0YWY0OTkwYThjMDkwMmIxM2E2MDMxYWE1NGNhNjI2YWE1NzFlMyB0b29scy9ydW5faW5zcGVjdG9yX3RpbWVvdXRfc3RhYmlsaXR5LnB5ADEgLk0gTi4uLiAxMDA2NDQgMTAwNjQ0IDEwMDY0NCBhM2IxZTE2MTJmYmQzZTI4ZjMzNmIwNTZkYmE2OTc0YTFkOTEwZmZjIGEzYjFlMTYxMmZiZDNlMjhmMzM2YjA1NmRiYTY5NzRhMWQ5MTBmZmMgdG9vbHMvdmVyaWZ5X2luc3BlY3Rvcl90aW1lb3V0X3N0YWJpbGl0eS5weQA/IG9wcy9UQVNLLTIwMjYwNzIwX19iaW5kX3N0YWJpbGl0eV9ldmlkZW5jZV90b19leGFjdF93b3JrdHJlZS9FVklERU5DRS5tZAA/IG9wcy9UQVNLLTIwMjYwNzIwX19iaW5kX3N0YWJpbGl0eV9ldmlkZW5jZV90b19leGFjdF93b3JrdHJlZS9UQVNLX0xPRy5tZAA/IG9wcy9UQVNLLTIwMjYwNzIwX19iaW5kX3N0YWJpbGl0eV9ldmlkZW5jZV90b19leGFjdF93b3JrdHJlZS9UQVNLX1NUQVRVUy5tZAA/IHNjaGVtYXMvaW5zcGVjdG9yLXRpbWVvdXQtc3RhYmlsaXR5LWV2aWRlbmNlLXYyLnNjaGVtYS5qc29uAA==",
+            "byte_length": 1177,
+            "sha256": "642686c00937a3ba7ede82c98ddda9b99590d1e1649afd0cfdc19bcea12be50d"
+          }
+        },
+        "tracked": {
+          "argv": [
+            "C:/Program Files/Git/cmd/git.exe",
+            "-c",
+            "safe.directory=C:/Users/Falker/Desktop/Code/circle/erdos-gyarfas-p14",
+            "-c",
+            "core.excludesFile=",
+            "ls-files",
+            "-z"
+          ],
+          "exit_code": 0,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "LmRvY2tlcmlnbm9yZQAuZ2l0YXR0cmlidXRlcwAuZ2l0aHViL3dvcmtmbG93cy9jaS55bWwALmdpdGh1Yi93b3JrZmxvd3MvaGVhdnktc2VhcmNoLnltbAAuZ2l0aWdub3JlAEFHRU5UUy5tZABDSEFUR1BUX1JFVklFV19QUk9UT0NPTC5tZABDSVRBVElPTi5jZmYAQ01ha2VMaXN0cy50eHQAQ01ha2VQcmVzZXRzLmpzb24AQ1VSUkVOVF9TVEFUVVMubWQAREVDSVNJT05fTE9HLm1kAERvY2tlcmZpbGUATElDRU5TRQBQUk9KRUNUX0tOT1dMRURHRS5tZABSRUFETUUubWQAUkVTRUFSQ0hfTE9HLm1kAFJFVklFV19TVEFURS55YW1sAF9URU1QTEFURVMvREVDSVNJT05fVEVNUExBVEUubWQAX1RFTVBMQVRFUy9FVklERU5DRV9URU1QTEFURS5tZABfVEVNUExBVEVTL0VYUEVSSU1FTlRfTUFOSUZFU1RfVEVNUExBVEUuanNvbgBfVEVNUExBVEVTL1RBU0tfTE9HX1RFTVBMQVRFLm1kAF9URU1QTEFURVMvVEFTS19TVEFUVVNfVEVNUExBVEUubWQAYXJ0aWZhY3RzL1JFQURNRS5tZABhcnRpZmFjdHMvY2VydGlmaWNhdGVzLy5naXRrZWVwAGFydGlmYWN0cy9jaGVja3BvaW50cy8uZ2l0a2VlcABhcnRpZmFjdHMvY291bnRlcmV4YW1wbGVzLy5naXRrZWVwAGFydGlmYWN0cy9tYW5pZmVzdHMvLmdpdGtlZXAAYmVuY2htYXJrcy9SRUFETUUubWQAYmVuY2htYXJrcy9jYXNlcy91cHN0cmVhbS1zbWFsbC1rLmpzb24AYmVuY2htYXJrcy9yZXN1bHRzLy5naXRrZWVwAGRvY3MvQVJUSUZBQ1RfRk9STUFUUy5tZABkb2NzL0NJLm1kAGRvY3MvREVWRUxPUE1FTlQubWQAZG9jcy9UUlVTVF9CT1VOREFSWS5tZABvcHMvVEFTSy0yMDI2MDcxNV9fYm9vdHN0cmFwX3JlcHJvZHVjaWJsZV9iYXNlbGluZS9FVklERU5DRS5tZABvcHMvVEFTSy0yMDI2MDcxNV9fYm9vdHN0cmFwX3JlcHJvZHVjaWJsZV9iYXNlbGluZS9UQVNLX0xPRy5tZABvcHMvVEFTSy0yMDI2MDcxNV9fYm9vdHN0cmFwX3JlcHJvZHVjaWJsZV9iYXNlbGluZS9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxN19fYmluZF9oZWF2eV93b3JrZmxvd190YXNrX2lkZW50aXR5L0VWSURFTkNFLm1kAG9wcy9UQVNLLTIwMjYwNzE3X19iaW5kX2hlYXZ5X3dvcmtmbG93X3Rhc2tfaWRlbnRpdHkvVEFTS19MT0cubWQAb3BzL1RBU0stMjAyNjA3MTdfX2JpbmRfaGVhdnlfd29ya2Zsb3dfdGFza19pZGVudGl0eS9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxN19fZW5mb3JjZV9jb21taXR0ZWRfcmFuZ2Vfd2hpdGVzcGFjZS9FVklERU5DRS5tZABvcHMvVEFTSy0yMDI2MDcxN19fZW5mb3JjZV9jb21taXR0ZWRfcmFuZ2Vfd2hpdGVzcGFjZS9UQVNLX0xPRy5tZABvcHMvVEFTSy0yMDI2MDcxN19fZW5mb3JjZV9jb21taXR0ZWRfcmFuZ2Vfd2hpdGVzcGFjZS9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxN19fZW5mb3JjZV9wcm9jZXNzX291dGNvbWVfc2VtYW50aWNzL0VWSURFTkNFLm1kAG9wcy9UQVNLLTIwMjYwNzE3X19lbmZvcmNlX3Byb2Nlc3Nfb3V0Y29tZV9zZW1hbnRpY3MvVEFTS19MT0cubWQAb3BzL1RBU0stMjAyNjA3MTdfX2VuZm9yY2VfcHJvY2Vzc19vdXRjb21lX3NlbWFudGljcy9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxN19fZXN0YWJsaXNoX3Jldmlld19zdGF0ZS9FVklERU5DRS5tZABvcHMvVEFTSy0yMDI2MDcxN19fZXN0YWJsaXNoX3Jldmlld19zdGF0ZS9UQVNLX0xPRy5tZABvcHMvVEFTSy0yMDI2MDcxN19fZXN0YWJsaXNoX3Jldmlld19zdGF0ZS9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxN19faGFyZGVuX3N1cnByaXNpbmdfb3V0Y29tZV9wcmVzZXJ2YXRpb24vRVZJREVOQ0UubWQAb3BzL1RBU0stMjAyNjA3MTdfX2hhcmRlbl9zdXJwcmlzaW5nX291dGNvbWVfcHJlc2VydmF0aW9uL1RBU0tfTE9HLm1kAG9wcy9UQVNLLTIwMjYwNzE3X19oYXJkZW5fc3VycHJpc2luZ19vdXRjb21lX3ByZXNlcnZhdGlvbi9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxN19fcmVwYWlyX3Bvc3Rjb21taXRfcmV2aWV3X3N0YXRlL0VWSURFTkNFLm1kAG9wcy9UQVNLLTIwMjYwNzE3X19yZXBhaXJfcG9zdGNvbW1pdF9yZXZpZXdfc3RhdGUvVEFTS19MT0cubWQAb3BzL1RBU0stMjAyNjA3MTdfX3JlcGFpcl9wb3N0Y29tbWl0X3Jldmlld19zdGF0ZS9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxN19fcmVwYWlyX3Jldmlld19nb3Zlcm5hbmNlL0VWSURFTkNFLm1kAG9wcy9UQVNLLTIwMjYwNzE3X19yZXBhaXJfcmV2aWV3X2dvdmVybmFuY2UvVEFTS19MT0cubWQAb3BzL1RBU0stMjAyNjA3MTdfX3JlcGFpcl9yZXZpZXdfZ292ZXJuYW5jZS9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxOF9faXNvbGF0ZV93aGl0ZXNwYWNlX2dpdF9zZW1hbnRpY3MvRVZJREVOQ0UubWQAb3BzL1RBU0stMjAyNjA3MThfX2lzb2xhdGVfd2hpdGVzcGFjZV9naXRfc2VtYW50aWNzL1RBU0tfTE9HLm1kAG9wcy9UQVNLLTIwMjYwNzE4X19pc29sYXRlX3doaXRlc3BhY2VfZ2l0X3NlbWFudGljcy9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxOF9fc3VwcG9ydF9tdWx0aV93b3JrdHJlZV93aGl0ZXNwYWNlX2NoZWNrL0VWSURFTkNFLm1kAG9wcy9UQVNLLTIwMjYwNzE4X19zdXBwb3J0X211bHRpX3dvcmt0cmVlX3doaXRlc3BhY2VfY2hlY2svVEFTS19MT0cubWQAb3BzL1RBU0stMjAyNjA3MThfX3N1cHBvcnRfbXVsdGlfd29ya3RyZWVfd2hpdGVzcGFjZV9jaGVjay9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxOV9fYWxpZ25fYWN0aW9uX3Bpbl9kb2N1bWVudGF0aW9uL0VWSURFTkNFLm1kAG9wcy9UQVNLLTIwMjYwNzE5X19hbGlnbl9hY3Rpb25fcGluX2RvY3VtZW50YXRpb24vVEFTS19MT0cubWQAb3BzL1RBU0stMjAyNjA3MTlfX2FsaWduX2FjdGlvbl9waW5fZG9jdW1lbnRhdGlvbi9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxOV9fZGVmaW5lX2Vudmlyb25tZW50X3RydXN0X2JvdW5kYXJ5L0VWSURFTkNFLm1kAG9wcy9UQVNLLTIwMjYwNzE5X19kZWZpbmVfZW52aXJvbm1lbnRfdHJ1c3RfYm91bmRhcnkvVEFTS19MT0cubWQAb3BzL1RBU0stMjAyNjA3MTlfX2RlZmluZV9lbnZpcm9ubWVudF90cnVzdF9ib3VuZGFyeS9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxOV9fbWFrZV9pbnNwZWN0b3Jfc3RhYmlsaXR5X2V2aWRlbmNlX2F1ZGl0YWJsZS9FVklERU5DRS5tZABvcHMvVEFTSy0yMDI2MDcxOV9fbWFrZV9pbnNwZWN0b3Jfc3RhYmlsaXR5X2V2aWRlbmNlX2F1ZGl0YWJsZS9TVEFCSUxJVFlfRVZJREVOQ0UuanNvbgBvcHMvVEFTSy0yMDI2MDcxOV9fbWFrZV9pbnNwZWN0b3Jfc3RhYmlsaXR5X2V2aWRlbmNlX2F1ZGl0YWJsZS9UQVNLX0xPRy5tZABvcHMvVEFTSy0yMDI2MDcxOV9fbWFrZV9pbnNwZWN0b3Jfc3RhYmlsaXR5X2V2aWRlbmNlX2F1ZGl0YWJsZS9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxOV9fcGluX2dpdGh1Yl9hY3Rpb25zX2ltbXV0YWJsZV9zaGFzL0VWSURFTkNFLm1kAG9wcy9UQVNLLTIwMjYwNzE5X19waW5fZ2l0aHViX2FjdGlvbnNfaW1tdXRhYmxlX3NoYXMvVEFTS19MT0cubWQAb3BzL1RBU0stMjAyNjA3MTlfX3Bpbl9naXRodWJfYWN0aW9uc19pbW11dGFibGVfc2hhcy9UQVNLX1NUQVRVUy5tZABvcHMvVEFTSy0yMDI2MDcxOV9fc3RhYmlsaXplX2luc3BlY3Rvcl90aW1lb3V0X3Rlc3QvRVZJREVOQ0UubWQAb3BzL1RBU0stMjAyNjA3MTlfX3N0YWJpbGl6ZV9pbnNwZWN0b3JfdGltZW91dF90ZXN0L1RBU0tfTE9HLm1kAG9wcy9UQVNLLTIwMjYwNzE5X19zdGFiaWxpemVfaW5zcGVjdG9yX3RpbWVvdXRfdGVzdC9UQVNLX1NUQVRVUy5tZABweXByb2plY3QudG9tbAByZXNlYXJjaC9CSUJMSU9HUkFQSFkubWQAcmVzZWFyY2gvQ0xBSU1TX1JFR0lTVFJZLnlhbWwAcmVzZWFyY2gvRU5WSVJPTk1FTlRfTE9DS19JTlZFTlRPUlkuanNvbgByZXNlYXJjaC9FTlZJUk9OTUVOVF9UUlVTVF9CT1VOREFSWS5tZAByZXNlYXJjaC9LTk9XTl9SRVNVTFRTLm1kAHJlc2VhcmNoL05FR0FUSVZFX1JFU1VMVFMubWQAcmVzZWFyY2gvTkVYVF9SRVNFQVJDSF9TVEVQUy5tZAByZXNlYXJjaC9QUk9CTEVNX1NUQVRFTUVOVC5tZAByZXNlYXJjaC9QUlVOSU5HX1JFR0lTVFJZLm1kAHJlc2VhcmNoL1JFUFJPRFVDSUJJTElUWS5tZAByZXNlYXJjaC9TRUFSQ0hfTU9ERUwubWQAcmVzZWFyY2gvVVBTVFJFQU1fQUxHT1JJVEhNLm1kAHJlc2VhcmNoL1ZFUklGSUNBVElPTl9QUk9UT0NPTC5tZABzY2hlbWFzL2JlbmNobWFyay1yZXN1bHQuc2NoZW1hLmpzb24Ac2NoZW1hcy9jb3VudGVyZXhhbXBsZS5zY2hlbWEuanNvbgBzY2hlbWFzL2Vudmlyb25tZW50LWxvY2staW52ZW50b3J5LnNjaGVtYS5qc29uAHNjaGVtYXMvZXhwZXJpbWVudC1tYW5pZmVzdC5zY2hlbWEuanNvbgBzY2hlbWFzL2luc3BlY3Rvci10aW1lb3V0LXN0YWJpbGl0eS1ldmlkZW5jZS5zY2hlbWEuanNvbgBzY2hlbWFzL3NlYXJjaC1jZXJ0aWZpY2F0ZS5zY2hlbWEuanNvbgBzY2hlbWFzL3NlYXJjaC1wYXJ0aXRpb24uc2NoZW1hLmpzb24Ac2NoZW1hcy9zdXJwcmlzaW5nLXByb2Nlc3Mtb3V0Y29tZS5zY2hlbWEuanNvbgBzdGFydC5tZAB0ZXN0cy9kaWZmZXJlbnRpYWwvdGVzdF9zbWFsbF9ncmFwaF9vcmFjbGVzLnB5AHRlc3RzL2ZpeHR1cmVzL1JFQURNRS5tZAB0ZXN0cy9maXh0dXJlcy9jMTYuanNvbgB0ZXN0cy9maXh0dXJlcy9jMy5qc29uAHRlc3RzL2ZpeHR1cmVzL2M0Lmpzb24AdGVzdHMvZml4dHVyZXMvYzUuanNvbgB0ZXN0cy9maXh0dXJlcy9jOC5qc29uAHRlc3RzL2ZpeHR1cmVzL2Nob3JkZWQtcDQuanNvbgB0ZXN0cy9maXh0dXJlcy9jb21wbGV0ZS1rNC5qc29uAHRlc3RzL2ZpeHR1cmVzL2NvbXBsZXRlLWs1Lmpzb24AdGVzdHMvZml4dHVyZXMvZGlzY29ubmVjdGVkLmpzb24AdGVzdHMvZml4dHVyZXMvZW1wdHkuanNvbgB0ZXN0cy9maXh0dXJlcy9tYWxmb3JtZWQtZHVwbGljYXRlLWVkZ2UuanNvbgB0ZXN0cy9maXh0dXJlcy9tYWxmb3JtZWQtZHVwbGljYXRlLWtleS5qc29uAHRlc3RzL2ZpeHR1cmVzL21hbGZvcm1lZC1lbmRwb2ludC5qc29uAHRlc3RzL2ZpeHR1cmVzL21hbGZvcm1lZC1qc29uLmpzb24AdGVzdHMvZml4dHVyZXMvbWFsZm9ybWVkLWxvb3AuanNvbgB0ZXN0cy9maXh0dXJlcy9tYWxmb3JtZWQtbm9uZmluaXRlLmpzb24AdGVzdHMvZml4dHVyZXMvbWFuaWZlc3QtaGFzaC10YXJnZXQudHh0AHRlc3RzL2ZpeHR1cmVzL21hbmlmZXN0LWludmFsaWQtaGFzaC5qc29uAHRlc3RzL2ZpeHR1cmVzL21hbmlmZXN0LXZhbGlkLWhhc2guanNvbgB0ZXN0cy9maXh0dXJlcy9wYXRoLXAxMy5qc29uAHRlc3RzL2ZpeHR1cmVzL3BhdGgtcDE0Lmpzb24AdGVzdHMvZml4dHVyZXMvcGF0aC1wNC5qc29uAHRlc3RzL2ludGVncmF0aW9uL3Rlc3RfdXBzdHJlYW1fYnVpbGQucHkAdGVzdHMvaW50ZWdyYXRpb24vdGVzdF92ZXJpZmllcl9jbGkucHkAdGVzdHMvdW5pdC90ZXN0X2JlbmNobWFya19vdXRjb21lcy5weQB0ZXN0cy91bml0L3Rlc3RfY291bnRlcmV4YW1wbGUucHkAdGVzdHMvdW5pdC90ZXN0X2Vudmlyb25tZW50X2xvY2tfaW52ZW50b3J5LnB5AHRlc3RzL3VuaXQvdGVzdF9naXRodWJfYWN0aW9uX3BpbnMucHkAdGVzdHMvdW5pdC90ZXN0X2dyYXBoLnB5AHRlc3RzL3VuaXQvdGVzdF9pbnNwZWN0b3JfdGltZW91dF9zdGFiaWxpdHlfZXZpZGVuY2UucHkAdGVzdHMvdW5pdC90ZXN0X21hbmlmZXN0LnB5AHRlc3RzL3VuaXQvdGVzdF9wcmVkaWNhdGVzLnB5AHRlc3RzL3VuaXQvdGVzdF9yZXZpZXdfcmFuZ2Vfd2hpdGVzcGFjZS5weQB0ZXN0cy91bml0L3Rlc3RfcmV2aWV3X3Rhc2tfaWQucHkAdGVzdHMvdW5pdC90ZXN0X3Vwc3RyZWFtX2NhbmRpZGF0ZV9pbnNwZWN0aW9uLnB5AHRoaXJkX3BhcnR5L2VyZG9zLWd5YXJmYXMvLmdpdGlnbm9yZQB0aGlyZF9wYXJ0eS9lcmRvcy1neWFyZmFzL0NJVEFUSU9OLmNmZgB0aGlyZF9wYXJ0eS9lcmRvcy1neWFyZmFzL0xJQ0VOU0UAdGhpcmRfcGFydHkvZXJkb3MtZ3lhcmZhcy9NYWtlZmlsZQB0aGlyZF9wYXJ0eS9lcmRvcy1neWFyZmFzL1JFQURNRS5tZAB0aGlyZF9wYXJ0eS9lcmRvcy1neWFyZmFzL2luY2x1ZGUvZ3JhcGguaAB0aGlyZF9wYXJ0eS9lcmRvcy1neWFyZmFzL2luY2x1ZGUvbGliLmgAdGhpcmRfcGFydHkvZXJkb3MtZ3lhcmZhcy9zcmMvZ3JhcGguY3BwAHRoaXJkX3BhcnR5L2VyZG9zLWd5YXJmYXMvc3JjL2xpYi5jcHAAdGhpcmRfcGFydHkvZXJkb3MtZ3lhcmZhcy9zcmMvbWFpbi5jcHAAdG9vbHMvX2NvbW1vbi5weQB0b29scy9jaGVja19naXRodWJfYWN0aW9uX3BpbnMucHkAdG9vbHMvY2hlY2tfcmV2aWV3X3JhbmdlX3doaXRlc3BhY2UucHkAdG9vbHMvaGFzaF9hcnRpZmFjdHMucHkAdG9vbHMvaW5zcGVjdF91cHN0cmVhbV9jYW5kaWRhdGUucHkAdG9vbHMvbWFrZV9tYW5pZmVzdC5weQB0b29scy9yZXNvbHZlX3Jldmlld190YXNrX2lkLnB5AHRvb2xzL3J1bl9iZW5jaG1hcmsucHkAdG9vbHMvcnVuX2luc3BlY3Rvcl90aW1lb3V0X3N0YWJpbGl0eS5weQB0b29scy92YWxpZGF0ZV9zY2hlbWFzLnB5AHRvb2xzL3ZlcmlmeV9pbnNwZWN0b3JfdGltZW91dF9zdGFiaWxpdHkucHkAdG9vbHMvdmVyaWZ5X21hbmlmZXN0LnB5AHRvb2xzL3ZlcmlmeV91cHN0cmVhbV9zbmFwc2hvdC5weQB1cHN0cmVhbS9SRUFETUUubWQAdXBzdHJlYW0vVVBTVFJFQU1fUFJPVkVOQU5DRS5qc29uAHVwc3RyZWFtL1VQU1RSRUFNX1JFRlMuanNvbgB1cHN0cmVhbS9wYXRjaGVzL1JFQURNRS5tZAB2ZXJpZmllci9SRUFETUUubWQAdmVyaWZpZXIvZWd2ZXJpZnkvX19pbml0X18ucHkAdmVyaWZpZXIvZWd2ZXJpZnkvX19tYWluX18ucHkAdmVyaWZpZXIvZWd2ZXJpZnkvY2xpLnB5AHZlcmlmaWVyL2VndmVyaWZ5L2NvdW50ZXJleGFtcGxlLnB5AHZlcmlmaWVyL2VndmVyaWZ5L2dyYXBoLnB5AHZlcmlmaWVyL2VndmVyaWZ5L21hbmlmZXN0LnB5AHZlcmlmaWVyL2VndmVyaWZ5L3ByZWRpY2F0ZXMucHkA",
+            "byte_length": 6990,
+            "sha256": "188f005d5c0f0e0e82150aca2c02dc667f5900d2c9383819fbd66c7e067ca416"
+          }
+        },
+        "untracked": {
+          "argv": [
+            "C:/Program Files/Git/cmd/git.exe",
+            "-c",
+            "safe.directory=C:/Users/Falker/Desktop/Code/circle/erdos-gyarfas-p14",
+            "-c",
+            "core.excludesFile=",
+            "ls-files",
+            "--others",
+            "--exclude-standard",
+            "-z"
+          ],
+          "exit_code": 0,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "b3BzL1RBU0stMjAyNjA3MjBfX2JpbmRfc3RhYmlsaXR5X2V2aWRlbmNlX3RvX2V4YWN0X3dvcmt0cmVlL0VWSURFTkNFLm1kAG9wcy9UQVNLLTIwMjYwNzIwX19iaW5kX3N0YWJpbGl0eV9ldmlkZW5jZV90b19leGFjdF93b3JrdHJlZS9UQVNLX0xPRy5tZABvcHMvVEFTSy0yMDI2MDcyMF9fYmluZF9zdGFiaWxpdHlfZXZpZGVuY2VfdG9fZXhhY3Rfd29ya3RyZWUvVEFTS19TVEFUVVMubWQAc2NoZW1hcy9pbnNwZWN0b3ItdGltZW91dC1zdGFiaWxpdHktZXZpZGVuY2UtdjIuc2NoZW1hLmpzb24A",
+            "byte_length": 282,
+            "sha256": "65e2bb7ef618021946fe1d6d391891b8437edab6437942496928aa7c2384d4a3"
+          }
+        }
+      },
+      "diagnostic": "Git ignored probe emitted unexpected stderr",
+      "execution_state_sha256": null,
+      "label": "before:1:collect_focused",
+      "normalized_sha256": null,
+      "parsed": null,
+      "sequence": 1,
+      "source_fingerprint_sha256": null,
+      "task_status_file": {
+        "exists": true,
+        "kind": "regular_file",
+        "path": "ops/TASK-20260720__bind_stability_evidence_to_exact_worktree/TASK_STATUS.md",
+        "symlink": false
+      }
+    }
+  ]
+}

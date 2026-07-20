@@ -1,0 +1,718 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:erdos-gyarfas-p14:schema:inspector-timeout-stability-evidence-v2:2.0",
+  "title": "Inspector timeout stability evidence v2",
+  "description": "Closed-world machine-readable bounded V1 engineering-test evidence. Format version 2 binds collection and every pytest subprocess to recorded source and worktree identities; it is not mathematical evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_kind",
+    "classification",
+    "task_id",
+    "repository",
+    "review_base_commit",
+    "task_start_head",
+    "execution_project_revision",
+    "execution_started_at_utc",
+    "execution_finished_at_utc",
+    "completed",
+    "source_files",
+    "non_execution_task_paths",
+    "environment",
+    "expected_plan",
+    "report_persistence",
+    "collection_identity",
+    "worktree_snapshots",
+    "runs",
+    "summary",
+    "cleanup",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": { "const": "2.0" },
+    "artifact_kind": { "const": "inspector_timeout_stability_evidence" },
+    "classification": { "const": "EMPIRICAL_OBSERVATION" },
+    "task_id": { "const": "TASK-20260720__bind_stability_evidence_to_exact_worktree" },
+    "repository": { "const": "falker47/erdos-gyarfas-p14" },
+    "review_base_commit": { "const": "a7066e70b92d80be2d1772127f329c24222c1b41" },
+    "task_start_head": { "const": "b1eb792a2a771485f37979cd932303f14ab52f56" },
+    "execution_project_revision": { "$ref": "#/$defs/execution_project_revision" },
+    "execution_started_at_utc": { "$ref": "#/$defs/timestamp" },
+    "execution_finished_at_utc": { "$ref": "#/$defs/nullable_timestamp" },
+    "completed": { "type": "boolean" },
+    "source_files": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/source_file" }
+    },
+    "non_execution_task_paths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/repository_path" }
+    },
+    "environment": { "$ref": "#/$defs/environment" },
+    "expected_plan": { "$ref": "#/$defs/expected_plan" },
+    "report_persistence": { "$ref": "#/$defs/report_persistence" },
+    "collection_identity": { "$ref": "#/$defs/collection_identity" },
+    "worktree_snapshots": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 58,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/worktree_snapshot" }
+    },
+    "runs": {
+      "type": "array",
+      "maxItems": 27,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/run_record" }
+    },
+    "summary": { "$ref": "#/$defs/summary" },
+    "cleanup": { "$ref": "#/$defs/cleanup" },
+    "limitations": {
+      "type": "array",
+      "minItems": 6,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,9})?Z$"
+    },
+    "nullable_timestamp": {
+      "oneOf": [
+        { "$ref": "#/$defs/timestamp" },
+        { "type": "null" }
+      ]
+    },
+    "nullable_nonempty_string": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        { "type": "null" }
+      ]
+    },
+    "nullable_nonnegative_integer": {
+      "oneOf": [
+        { "type": "integer", "minimum": 0 },
+        { "type": "null" }
+      ]
+    },
+    "repository_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*[\\u0000-\\u001F\\u007F])[^/]+(?:/[^/]+)*$"
+    },
+    "captured_stream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base64", "byte_length", "sha256"],
+      "properties": {
+        "base64": {
+          "type": "string",
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        },
+        "byte_length": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "file_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effective_value",
+        "resolved_path",
+        "readable",
+        "byte_length",
+        "sha256",
+        "limitation"
+      ],
+      "properties": {
+        "effective_value": { "type": "string", "minLength": 1 },
+        "resolved_path": { "$ref": "#/$defs/nullable_nonempty_string" },
+        "readable": { "type": "boolean" },
+        "byte_length": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "sha256": {
+          "oneOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "limitation": { "$ref": "#/$defs/nullable_nonempty_string" }
+      }
+    },
+    "execution_project_revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "fingerprint_kind",
+        "fingerprint_sha256",
+        "fingerprint_scope",
+        "worktree_identity_sha256"
+      ],
+      "properties": {
+        "state": { "const": "dirty" },
+        "fingerprint_kind": { "const": "canonical_source_inventory_v2" },
+        "fingerprint_sha256": {
+          "oneOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "fingerprint_scope": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/repository_path" }
+        },
+        "worktree_identity_sha256": {
+          "oneOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "source_file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "byte_length", "sha256", "origin"],
+      "properties": {
+        "path": { "$ref": "#/$defs/repository_path" },
+        "byte_length": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "origin": { "enum": ["tracked", "untracked"] }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "python_version",
+        "python_implementation",
+        "python_executable",
+        "git_executable",
+        "operating_system",
+        "architecture",
+        "machine_identifier",
+        "processor_identifier",
+        "cpu_count",
+        "working_directory",
+        "tool_overrides",
+        "limitations"
+      ],
+      "properties": {
+        "python_version": { "type": "string", "minLength": 1 },
+        "python_implementation": { "type": "string", "minLength": 1 },
+        "python_executable": { "$ref": "#/$defs/file_identity" },
+        "git_executable": { "$ref": "#/$defs/file_identity" },
+        "operating_system": { "type": "string", "minLength": 1 },
+        "architecture": { "type": "string", "minLength": 1 },
+        "machine_identifier": { "$ref": "#/$defs/nullable_nonempty_string" },
+        "processor_identifier": { "$ref": "#/$defs/nullable_nonempty_string" },
+        "cpu_count": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "working_directory": { "type": "string", "minLength": 1 },
+        "tool_overrides": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["EG_CMAKE", "EG_CXX", "EG_NINJA", "EG_MAKE"],
+          "properties": {
+            "EG_CMAKE": { "$ref": "#/$defs/file_identity" },
+            "EG_CXX": { "$ref": "#/$defs/file_identity" },
+            "EG_NINJA": { "$ref": "#/$defs/file_identity" },
+            "EG_MAKE": { "$ref": "#/$defs/file_identity" }
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "expected_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "collection_preflight_runs",
+        "focused_runs",
+        "full_suite_runs",
+        "serial",
+        "retries",
+        "stop_on_first_failure"
+      ],
+      "properties": {
+        "collection_preflight_runs": { "const": 2 },
+        "focused_runs": { "const": 25 },
+        "full_suite_runs": { "const": 2 },
+        "serial": { "const": true },
+        "retries": { "const": 0 },
+        "stop_on_first_failure": { "const": true }
+      }
+    },
+    "report_persistence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "report_path",
+        "temporary_path",
+        "initial_write_mode",
+        "replacement_mode",
+        "fsync_file",
+        "atomic_replace",
+        "temporary_absent_at_finish"
+      ],
+      "properties": {
+        "report_path": { "$ref": "#/$defs/repository_path" },
+        "temporary_path": { "$ref": "#/$defs/repository_path" },
+        "initial_write_mode": { "const": "same_directory_temp_then_replace" },
+        "replacement_mode": { "const": "same_directory_temp_then_replace" },
+        "fsync_file": { "const": true },
+        "atomic_replace": { "const": true },
+        "temporary_absent_at_finish": { "type": "boolean" }
+      }
+    },
+    "environment_overrides": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["PYTHONPYCACHEPREFIX", "PYTEST_DISABLE_PLUGIN_AUTOLOAD"],
+      "properties": {
+        "PYTHONPYCACHEPREFIX": { "type": "string", "minLength": 1 },
+        "PYTEST_DISABLE_PLUGIN_AUTOLOAD": { "const": "1" },
+        "EG_CMAKE": { "type": "string", "minLength": 1 },
+        "EG_CXX": { "type": "string", "minLength": 1 },
+        "EG_NINJA": { "type": "string", "minLength": 1 },
+        "EG_MAKE": { "type": "string", "minLength": 1 }
+      }
+    },
+    "git_probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["argv", "exit_code", "stdout", "stderr"],
+      "properties": {
+        "argv": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "exit_code": { "type": "integer" },
+        "stdout": { "$ref": "#/$defs/captured_stream" },
+        "stderr": { "$ref": "#/$defs/captured_stream" }
+      }
+    },
+    "git_commands": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "tracked", "untracked", "ignored", "staged"],
+      "properties": {
+        "status": { "$ref": "#/$defs/git_probe" },
+        "tracked": { "$ref": "#/$defs/git_probe" },
+        "untracked": { "$ref": "#/$defs/git_probe" },
+        "ignored": { "$ref": "#/$defs/git_probe" },
+        "staged": { "$ref": "#/$defs/git_probe" }
+      }
+    },
+    "path_array": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/repository_path" }
+    },
+    "tracked_modified_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "index_status", "worktree_status"],
+      "properties": {
+        "path": { "$ref": "#/$defs/repository_path" },
+        "index_status": { "type": "string", "minLength": 1, "maxLength": 1 },
+        "worktree_status": { "type": "string", "minLength": 1, "maxLength": 1 }
+      }
+    },
+    "staged_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "index_status"],
+      "properties": {
+        "path": { "$ref": "#/$defs/repository_path" },
+        "index_status": { "type": "string", "minLength": 1, "maxLength": 1 }
+      }
+    },
+    "file_system_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["device", "inode"],
+      "properties": {
+        "device": { "type": "integer", "minimum": 0 },
+        "inode": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "worktree_parsed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tracked_clean",
+        "tracked_modified",
+        "tracked_deleted",
+        "staged",
+        "untracked",
+        "ignored_task_basetemps",
+        "ignored_other",
+        "task_owned_non_execution_paths",
+        "execution_input_paths",
+        "unexpected_paths"
+      ],
+      "properties": {
+        "tracked_clean": { "$ref": "#/$defs/path_array" },
+        "tracked_modified": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/tracked_modified_record" }
+        },
+        "tracked_deleted": { "$ref": "#/$defs/path_array" },
+        "staged": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/staged_record" }
+        },
+        "untracked": { "$ref": "#/$defs/path_array" },
+        "ignored_task_basetemps": { "$ref": "#/$defs/path_array" },
+        "ignored_other": { "$ref": "#/$defs/path_array" },
+        "task_owned_non_execution_paths": { "$ref": "#/$defs/path_array" },
+        "execution_input_paths": { "$ref": "#/$defs/path_array" },
+        "unexpected_paths": { "$ref": "#/$defs/path_array" }
+      }
+    },
+    "worktree_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "label",
+        "captured_at_utc",
+        "commands",
+        "task_status_file",
+        "parsed",
+        "normalized_sha256",
+        "execution_state_sha256",
+        "source_fingerprint_sha256",
+        "accepted",
+        "diagnostic"
+      ],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1, "maximum": 58 },
+        "label": { "type": "string", "minLength": 1 },
+        "captured_at_utc": { "$ref": "#/$defs/timestamp" },
+        "commands": { "$ref": "#/$defs/git_commands" },
+        "task_status_file": { "$ref": "#/$defs/task_status_file" },
+        "parsed": {
+          "oneOf": [
+            { "$ref": "#/$defs/worktree_parsed" },
+            { "type": "null" }
+          ]
+        },
+        "normalized_sha256": {
+          "oneOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "execution_state_sha256": {
+          "oneOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "source_fingerprint_sha256": {
+          "oneOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "accepted": { "type": "boolean" },
+        "diagnostic": { "$ref": "#/$defs/nullable_nonempty_string" }
+      }
+    },
+    "task_status_file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "exists", "kind", "symlink"],
+      "properties": {
+        "path": { "const": "ops/TASK-20260720__bind_stability_evidence_to_exact_worktree/TASK_STATUS.md" },
+        "exists": { "type": "boolean" },
+        "kind": { "enum": ["missing", "regular_file", "directory", "other"] },
+        "symlink": { "type": "boolean" }
+      }
+    },
+    "collection_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "process_sequence",
+        "phase",
+        "argv",
+        "working_directory",
+        "basetemp_path",
+        "environment_overrides",
+        "started_at_utc",
+        "finished_at_utc",
+        "wall_time_ns",
+        "exit_code",
+        "stdout",
+        "stderr",
+        "before_snapshot_sequence",
+        "after_snapshot_sequence",
+        "node_ids",
+        "collected_count",
+        "status",
+        "diagnostic"
+      ],
+      "properties": {
+        "process_sequence": { "type": "integer", "minimum": 1, "maximum": 2 },
+        "phase": { "enum": ["collect_focused", "collect_full_suite"] },
+        "argv": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "working_directory": { "type": "string", "minLength": 1 },
+        "basetemp_path": { "$ref": "#/$defs/repository_path" },
+        "environment_overrides": { "$ref": "#/$defs/environment_overrides" },
+        "started_at_utc": { "$ref": "#/$defs/timestamp" },
+        "finished_at_utc": { "$ref": "#/$defs/timestamp" },
+        "wall_time_ns": { "type": "integer", "minimum": 0 },
+        "exit_code": { "type": ["integer", "null"] },
+        "stdout": { "$ref": "#/$defs/captured_stream" },
+        "stderr": { "$ref": "#/$defs/captured_stream" },
+        "before_snapshot_sequence": { "type": "integer", "minimum": 1, "maximum": 58 },
+        "after_snapshot_sequence": { "type": "integer", "minimum": 1, "maximum": 58 },
+        "node_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "collected_count": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "status": { "enum": ["passed", "failed", "interrupted"] },
+        "diagnostic": { "$ref": "#/$defs/nullable_nonempty_string" }
+      }
+    },
+    "collection_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "records",
+        "focused_node_ids",
+        "full_suite_node_ids",
+        "focused_count",
+        "full_suite_count",
+        "digest_kind",
+        "digest_sha256",
+        "diagnostic"
+      ],
+      "properties": {
+        "status": { "enum": ["pending", "completed", "failed", "interrupted"] },
+        "records": {
+          "type": "array",
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/collection_record" }
+        },
+        "focused_node_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "full_suite_node_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "focused_count": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "full_suite_count": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "digest_kind": { "const": "canonical_collection_node_ids_v1" },
+        "digest_sha256": {
+          "oneOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "diagnostic": { "$ref": "#/$defs/nullable_nonempty_string" }
+      }
+    },
+    "pytest_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parsed", "passed", "failed", "errors", "skipped", "xfailed", "xpassed", "diagnostic"],
+      "properties": {
+        "parsed": { "type": "boolean" },
+        "passed": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "failed": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "errors": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "skipped": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "xfailed": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "xpassed": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "diagnostic": { "$ref": "#/$defs/nullable_nonempty_string" }
+      }
+    },
+    "run_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "process_sequence",
+        "sequence",
+        "phase",
+        "phase_index",
+        "argv",
+        "working_directory",
+        "basetemp_path",
+        "environment_overrides",
+        "started_at_utc",
+        "finished_at_utc",
+        "wall_time_ns",
+        "exit_code",
+        "stdout",
+        "stderr",
+        "pytest_summary",
+        "expected_pass_count",
+        "before_snapshot_sequence",
+        "after_snapshot_sequence",
+        "status",
+        "diagnostic"
+      ],
+      "properties": {
+        "process_sequence": { "type": "integer", "minimum": 3, "maximum": 29 },
+        "sequence": { "type": "integer", "minimum": 1, "maximum": 27 },
+        "phase": { "enum": ["focused", "full_suite"] },
+        "phase_index": { "type": "integer", "minimum": 1, "maximum": 25 },
+        "argv": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "working_directory": { "type": "string", "minLength": 1 },
+        "basetemp_path": { "$ref": "#/$defs/repository_path" },
+        "environment_overrides": { "$ref": "#/$defs/environment_overrides" },
+        "started_at_utc": { "$ref": "#/$defs/timestamp" },
+        "finished_at_utc": { "$ref": "#/$defs/timestamp" },
+        "wall_time_ns": { "type": "integer", "minimum": 0 },
+        "exit_code": { "type": ["integer", "null"] },
+        "stdout": { "$ref": "#/$defs/captured_stream" },
+        "stderr": { "$ref": "#/$defs/captured_stream" },
+        "pytest_summary": { "$ref": "#/$defs/pytest_summary" },
+        "expected_pass_count": { "$ref": "#/$defs/nullable_nonnegative_integer" },
+        "before_snapshot_sequence": { "type": "integer", "minimum": 1, "maximum": 58 },
+        "after_snapshot_sequence": {
+          "oneOf": [
+            { "type": "integer", "minimum": 1, "maximum": 58 },
+            { "type": "null" }
+          ]
+        },
+        "status": { "enum": ["passed", "failed", "interrupted"] },
+        "diagnostic": { "$ref": "#/$defs/nullable_nonempty_string" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recorded_process_count",
+        "recorded_run_count",
+        "focused_run_count",
+        "full_suite_run_count",
+        "successful_run_count",
+        "failed_run_count",
+        "retries",
+        "focused_pass_counts",
+        "full_suite_pass_counts",
+        "stop_reason",
+        "failure_detail"
+      ],
+      "properties": {
+        "recorded_process_count": { "type": "integer", "minimum": 0, "maximum": 29 },
+        "recorded_run_count": { "type": "integer", "minimum": 0, "maximum": 27 },
+        "focused_run_count": { "type": "integer", "minimum": 0, "maximum": 25 },
+        "full_suite_run_count": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "successful_run_count": { "type": "integer", "minimum": 0, "maximum": 27 },
+        "failed_run_count": { "type": "integer", "minimum": 0, "maximum": 27 },
+        "retries": { "const": 0 },
+        "focused_pass_counts": {
+          "type": "array",
+          "maxItems": 25,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "full_suite_pass_counts": {
+          "type": "array",
+          "maxItems": 2,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "stop_reason": { "enum": ["in_progress", "completed", "failure", "interrupted"] },
+        "failure_detail": { "$ref": "#/$defs/nullable_nonempty_string" }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "owner_marker",
+        "expected",
+        "created",
+        "removed",
+        "remaining",
+        "unexpected",
+        "root_identity",
+        "owner_marker_identity",
+        "identity_verified",
+        "root_removed",
+        "completed",
+        "diagnostic"
+      ],
+      "properties": {
+        "root": { "$ref": "#/$defs/repository_path" },
+        "owner_marker": { "$ref": "#/$defs/repository_path" },
+        "expected": {
+          "type": "array",
+          "maxItems": 29,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/repository_path" }
+        },
+        "created": {
+          "type": "array",
+          "maxItems": 29,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/repository_path" }
+        },
+        "removed": {
+          "type": "array",
+          "maxItems": 29,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/repository_path" }
+        },
+        "remaining": {
+          "type": "array",
+          "maxItems": 29,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/repository_path" }
+        },
+        "unexpected": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/repository_path" }
+        },
+        "root_identity": { "$ref": "#/$defs/file_system_identity" },
+        "owner_marker_identity": { "$ref": "#/$defs/file_system_identity" },
+        "identity_verified": { "type": "boolean" },
+        "root_removed": { "type": "boolean" },
+        "completed": { "type": "boolean" },
+        "diagnostic": { "$ref": "#/$defs/nullable_nonempty_string" }
+      }
+    }
+  }
+}

@@ -28,9 +28,9 @@ Objectives:
 
 Completion does not imply mathematical reproduction.
 
-### RFU-TEST-001 - Make inspector stability evidence auditable
+### RFU-TEST-001 - Bind inspector stability evidence to the exact worktree
 
-Status: `OPEN`; the corrective task is `READY_FOR_REVIEW`.
+Status: `OPEN`; the corrective task is `BLOCKED`.
 
 `TASK-20260719__define_environment_trust_boundary` remains accepted with
 `ACCEPT WITH FOLLOW-UP` at exact commit
@@ -38,29 +38,33 @@ Status: `OPEN`; the corrective task is `READY_FOR_REVIEW`.
 candidate at `c71d66995ae6a36620a2aa8f938faf6d84fe1af7` received `REJECT` at
 `2026-07-19T11:58:09Z`, so the accepted baseline remains unchanged.
 
-The rejected implementation separated controlled freeze-order verification
-from deterministic timeout/kill/drain/reap coverage. Its central repeated-run
-claim, however, was recorded only as Markdown transcription: the repository
-contained no raw output, JUnit result, machine-readable run bundle, CI
-artifact, or equivalent independently checkable record for the stated 25
-focused runs and two complete suites. The rejected dossier is immutable
-historical evidence.
+The cumulative candidate through
+`b1eb792a2a771485f37979cd932303f14ab52f56` received `REJECT`. The committed
+v1 report preserves raw pytest streams, but the runner inventories tracked
+paths through `git ls-files` and does not fail closed over arbitrary untracked
+files such as `pytest.ini`, `tests/conftest.py`, an additional test, or
+`sitecustomize.py`. Its full suites are also accepted using a minimum pass
+threshold rather than an exact recorded collection identity. Both earlier
+dossiers are immutable historical evidence.
 
-`TASK-20260719__make_inspector_stability_evidence_auditable` is the active
-correction. It has created a strict evidence schema, a serial no-retry runner,
-an independent verifier, focused tooling tests, and one canonical JSON report
-containing exactly 25 focused executions followed by two complete-suite
-executions. The single actual invocation completed all 27 attempts: every
-focused attempt reported 31 passes and both complete suites reported 333
-passes, with no failed attempt, non-passing outcome, or retry. The independent
-verifier passed with same-host source and tool rehashing. Markdown summarizes
-the report but does not duplicate its 27 run records. Final post-edit
-complete-diff, allowlist, protected-inventory, and whitespace inspections pass,
-so the corrective task is `READY_FOR_REVIEW`. The next review remains
-cumulative from `a7066e70b92d80be2d1772127f329c24222c1b41`; the candidate
-SHA is intentionally resolved from Git by the reviewer.
+`TASK-20260720__bind_stability_evidence_to_exact_worktree` implemented the
+recursively closed v2 schema, raw and normalized NUL-delimited Git snapshots,
+exact task path classification, execution-input fingerprinting, collection
+identity, independent verifier, and synthetic negative tests. Its single
+permitted real invocation failed before the first collection subprocess: the
+Git ignored-path probe emitted permission-denied warnings for nine
+pre-existing ignored `build/pytest-*` directories. The canonical partial
+report records zero subprocesses and zero stability runs; same-host independent
+verification accepts it only as partial with `completed=false` and
+`evidence_success=false`. The task is therefore `BLOCKED` and cannot retry.
 
-`RFU-TEST-001` remains `OPEN` until the cumulative candidate and its
+A new atomic task must first define and verify a safe handling strategy for
+unreadable pre-existing ignored paths under the actual execution authority,
+then create fresh evidence under its own one-run rule. No candidate from this
+blocked task is ready for review. The accepted baseline remains
+`a7066e70b92d80be2d1772127f329c24222c1b41`.
+
+`RFU-TEST-001` remains `OPEN` until the cumulative candidate and its v2
 machine-readable evidence receive independent review. This work changes no
 production inspector behavior and has no mathematical implication.
 
